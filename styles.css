@@ -30,8 +30,12 @@ nav .logo a {
     text-decoration: none;
 }
 
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
 .nav-links a {
-    margin: 0 15px;
     color: white;
     text-decoration: none;
     font-size: 1.1em;
@@ -61,6 +65,7 @@ nav .logo a {
 .hero p {
     font-size: 1.2em;
 }
+
 /* Mobile Styles */
 @media (max-width: 768px) {
     .nav-links {
@@ -69,10 +74,12 @@ nav .logo a {
         width: 100%;
         background-color: #333;
         text-align: center;
+        padding: 10px 0;
     }
 
     .nav-links a {
         margin: 10px 0;
+        padding: 10px;
     }
 
     .hamburger {
@@ -249,4 +256,5 @@ footer {
         font-size: 1.2rem;
     }
 }
+
 
