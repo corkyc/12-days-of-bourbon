@@ -27,21 +27,28 @@
             <div class="container">
                 <h2>Advent Calendar</h2>
                 <div class="doors">
-                    <!-- Dynamic doors will be injected here by JavaScript -->
+                    <!-- Create 12 doors -->
+                    <div class="door" data-day="1">Day 1</div>
+                    <div class="door" data-day="2">Day 2</div>
+                    <div class="door" data-day="3">Day 3</div>
+                    <div class="door" data-day="4">Day 4</div>
+                    <div class="door" data-day="5">Day 5</div>
+                    <div class="door" data-day="6">Day 6</div>
+                    <div class="door" data-day="7">Day 7</div>
+                    <div class="door" data-day="8">Day 8</div>
+                    <div class="door" data-day="9">Day 9</div>
+                    <div class="door" data-day="10">Day 10</div>
+                    <div class="door" data-day="11">Day 11</div>
+                    <div class="door" data-day="12">Day 12</div>
                 </div>
-                <button class="reset" onclick="resetProgress()">Reset Progress</button>
-                <button class="see-all" onclick="toggleAllBottles()">See All Bottles</button>
             </div>
         </section>
 
-        <section id="all-bottles" class="hidden">
+        <section id="bourbon-details" class="hidden">
             <div class="container">
-                <h2>All 12 Bottles</h2>
-                <div class="bottle-list">
-                    <!-- Static or dynamically added bottle previews -->
-                    <div class="bottle"><img src="images/bourbon1.jpg" alt="Bourbon 1"><h3>Bourbon A</h3><p>Description</p></div>
-                    <!-- More bottles here -->
-                </div>
+                <h2 id="bourbon-title">Bourbon of the Day</h2>
+                <p id="bourbon-description">Description of the bourbon will go here.</p>
+                <button onclick="closeBourbonDetails()">Close</button>
             </div>
         </section>
     </main>
