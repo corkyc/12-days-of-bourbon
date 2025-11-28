@@ -15,7 +15,89 @@ body {
     margin: 0;
     text-align: center;
 }
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    color: white;
+}
 
+nav .logo a {
+    font-size: 1.5em;
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+.hamburger {
+    display: none;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.hero {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f4f4f4;
+}
+
+.hero h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 1.2em;
+}
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #333;
+        text-align: center;
+    }
+
+    .nav-links a {
+        margin: 10px 0;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+}
+
+/* Desktop Styles */
+@media (min-width: 769px) {
+    .navbar {
+        padding: 20px 40px;
+    }
+
+    .nav-links {
+        display: flex;
+    }
+
+    .hero h1 {
+        font-size: 3em;
+    }
+}
 /* Header */
 header {
     background-color: #3e1f13;
@@ -167,3 +249,4 @@ footer {
         font-size: 1.2rem;
     }
 }
+
