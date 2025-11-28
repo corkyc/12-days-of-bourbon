@@ -76,6 +76,11 @@ function closeModal() {
     document.getElementById("bourbon-modal").style.display = 'none';
 }
 
+document.getElementById('hamburger').addEventListener('click', function() {
+    const navLinks = document.getElementById('nav-links');
+    navLinks.classList.toggle('active');
+});
+
 // Add event listeners to each door
 document.querySelectorAll('.door').forEach(door => {
     door.addEventListener('click', () => {
@@ -83,6 +88,7 @@ document.querySelectorAll('.door').forEach(door => {
         openModal(day);
     });
 });
+
 
 
 
