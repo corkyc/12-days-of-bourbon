@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12 Days of Bourbon</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>12 Days of Bourbon</h1>
+        <p>Unwrap a New Bottle Every Day</p>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#all-bottles">All Bottles</a>
+            <a href="#bourbon-list">Bourbon List</a>
+        </nav>
+    </header>
+
+    <main id="home">
+        <h2>Advent Calendar</h2>
+        <div class="calendar">
+            <!-- Each "door" is clickable -->
+            <div class="door" id="day1" onclick="revealBourbon(1)">1</div>
+            <div class="door" id="day2" onclick="revealBourbon(2)">2</div>
+            <div class="door" id="day3" onclick="revealBourbon(3)">3</div>
+            <div class="door" id="day4" onclick="revealBourbon(4)">4</div>
+            <div class="door" id="day5" onclick="revealBourbon(5)">5</div>
+            <div class="door" id="day6" onclick="revealBourbon(6)">6</div>
+            <div class="door" id="day7" onclick="revealBourbon(7)">7</div>
+            <div class="door" id="day8" onclick="revealBourbon(8)">8</div>
+            <div class="door" id="day9" onclick="revealBourbon(9)">9</div>
+            <div class="door" id="day10" onclick="revealBourbon(10)">10</div>
+            <div class="door" id="day11" onclick="revealBourbon(11)">11</div>
+            <div class="door" id="day12" onclick="revealBourbon(12)">12</div>
+        </div>
+
+        <button onclick="resetProgress()">Reset Progress</button>
+        <button onclick="window.location.href='#all-bottles'">See All Bottles</button>
+    </main>
+
+    <!-- All Bottles Page -->
+    <section id="all-bottles">
+        <h2>All 12 Bottles</h2>
+        <div class="bottle-list">
+            <div class="bottle">
+                <p>Day 1: Buffalo Trace</p>
+            </div>
+            <div class="bottle">
+                <p>Day 2: Evan Williams Single Barrel</p>
+            </div>
+            <div class="bottle">
+                <p>Day 3: Woodford Reserve</p>
+            </div>
+            <!-- Add all 12 bottles -->
+        </div>
+    </section>
+
+    <!-- Bourbon List Page -->
+    <section id="bourbon-list">
+        <h2>Bourbon List</h2>
+        <ul>
+            <li>Buffalo Trace</li>
+            <li>Evan Williams Single Barrel</li>
+            <li>Woodford Reserve</li>
+            <!-- Add all bourbon names -->
+        </ul>
+    </section>
+
+    <footer>
+        <p>© 2025 12 Days of Bourbon. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
