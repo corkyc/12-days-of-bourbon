@@ -9,22 +9,50 @@
 body {
     font-family: 'Georgia', serif;
     background-color: #f1e6d9;
-    color: #3e1f13;
+    color: #3e1f13; /* Default text color */
     line-height: 1.6;
     padding: 0;
     margin: 0;
     text-align: center;
 }
 
-h1 {
-    font-size: 3rem;
+h1, h2, h3 {
+    font-family: 'Georgia', serif;
     color: #3e1f13;
-    margin: 1rem 0;
 }
 
-p {
+/* Header */
+header {
+    background-color: #3e1f13;
+    color: #f8c13b; /* Set color for header background */
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    font-size: 3rem;
+    letter-spacing: 2px;
+    font-weight: bold;
+    color: #f8c13b; /* Ensure "12 Days of Bourbon" text matches the "unwrap a new bottle" text */
+}
+
+header p {
     font-size: 1.2rem;
-    color: #3e1f13;
+    color: #f8c13b; /* Set the same color as h1 */
+}
+
+/* Countdown Section */
+.countdown {
+    background-color: #3e1f13;
+    color: #f8c13b;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.countdown span {
+    font-size: 2rem;
+    font-weight: bold;
 }
 
 /* Calendar Section */
