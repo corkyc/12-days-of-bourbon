@@ -14,6 +14,7 @@ body {
     padding: 0;
     margin: 0;
     text-align: center;
+    transition: padding-top 0.3s;
 }
 nav {
     display: flex;
@@ -333,6 +334,7 @@ footer {
         font-size: 1.2rem;
     }
 }
+
 
 
 
