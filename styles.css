@@ -29,15 +29,28 @@ header h1 {
   color: #f0c674; /* A golden, warm touch */
 }
 
-/* Snowflake Decoration for the page */
+/* Snowflakes Decoration */
 body::before {
-  content: "❄️ ❄️ ❄️";
+  content: "❄️ ❄️ ❄️ ❄️ ❄️ ❄️";
   font-size: 2em;
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 10px; /* Adjusted to be closer to the top */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2; /* Ensure snowflakes are above content */
   opacity: 0.5;
-  z-index: -1;
+}
+
+/* Snowflakes Decoration - Centered, above the hamburger menu */
+body::after {
+  content: "❄️ ❄️ ❄️ ❄️";
+  font-size: 3em;
+  position: absolute;
+  top: 75px; /* Adjust to align with hamburger menu */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1; /* Ensure it appears above the page content */
+  opacity: 0.3;
 }
 
 /* Hamburger Menu Styling (Visible on Mobile) */
@@ -164,17 +177,6 @@ body::before {
   border-radius: 5px;
   margin-bottom: 10px;
 }
-/* Snowflakes on the page */
-body::after {
-  content: "❄️ ❄️ ❄️ ❄️";
-  font-size: 3em;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.2;
-  z-index: -1;
-}
 /* Mobile View: Hamburger Menu and Vertical Links */
 @media (max-width: 768px) {
   .hamburger {
@@ -206,4 +208,5 @@ body::after {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
 
