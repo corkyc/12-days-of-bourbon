@@ -1,76 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>12 Days of Bourbon</title>
-    <link href="https://fonts.googleapis.com/css2?family=Georgia&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>12 Days of Bourbon</title>
+  <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
 </head>
 <body>
-    <header>
-        <h1>12 Days of Bourbon</h1>
-        <p>Click on a door to unwrap a new bottle every day!</p>
-    </header>
-    <main>
 
-    <!-- Navigation Menu -->
-    <nav class="navbar">
-        <div class="hamburger" id="hamburger">
-            &#9776;
-        </div>
-        <div class="logo">
-            <a href="#">12 Days of Bourbon</a>
-        </div>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html">Home</a>
-            <a href="bourbon-list.html">Bourbon List</a>
-            <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
-        </div>
-    </nav>
-        <section class="calendar">
-            <div class="doors">
-                <!-- 12 doors, each with a data-day attribute -->
-                <div class="door" data-day="1">Day 1</div>
-                <div class="door" data-day="2">Day 2</div>
-                <div class="door" data-day="3">Day 3</div>
-                <div class="door" data-day="4">Day 4</div>
-                <div class="door" data-day="5">Day 5</div>
-                <div class="door" data-day="6">Day 6</div>
-                <div class="door" data-day="7">Day 7</div>
-                <div class="door" data-day="8">Day 8</div>
-                <div class="door" data-day="9">Day 9</div>
-                <div class="door" data-day="10">Day 10</div>
-                <div class="door" data-day="11">Day 11</div>
-                <div class="door" data-day="12">Day 12</div>
-            </div>
-        </section>
+  <!-- Header Section -->
+  <header>
+    <h1>12 Days of Bourbon</h1>
+  </header>
 
-        <!-- Modal to show bourbon details -->
-        <div id="bourbon-modal" class="hidden">
-            <div class="modal-content">
-                <h2 id="bourbon-name"></h2>
-                <p id="bourbon-description"></p>
-                <img id="bourbon-image" src="" alt="Bourbon Bottle" class="bourbon-image">
-                <button onclick="closeModal()">Close</button>
-            </div>
-        </div>
-    </main>
+  <!-- Hamburger Menu for Mobile -->
+  <div class="hamburger" id="hamburger">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
 
-    <footer>
-        <p>© 2025 12 Days of Bourbon. All rights reserved.</p>
-    </footer>
+  <!-- Navigation Menu (Hidden by Default, Toggle with Hamburger) -->
+  <nav class="nav-links">
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Products</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
 
-    <script src="scripts.js"></script>
+  <!-- Calendar Grid Section -->
+  <section class="calendar-grid">
+    <p>Calendar content goes here.</p>
+  </section>
+
+  <!-- 12 Days of Bourbon - Clickable Doors Section -->
+  <section class="doors">
+    <div class="door" id="door-1">
+      <span>1</span>
+      <div class="door-content">Bourbon Door 1 Content</div>
+    </div>
+    <div class="door" id="door-2">
+      <span>2</span>
+      <div class="door-content">Bourbon Door 2 Content</div>
+    </div>
+    <div class="door" id="door-3">
+      <span>3</span>
+      <div class="door-content">Bourbon Door 3 Content</div>
+    </div>
+    <div class="door" id="door-4">
+      <span>4</span>
+      <div class="door-content">Bourbon Door 4 Content</div>
+    </div>
+    <div class="door" id="door-5">
+      <span>5</span>
+      <div class="door-content">Bourbon Door 5 Content</div>
+    </div>
+    <div class="door" id="door-6">
+      <span>6</span>
+      <div class="door-content">Bourbon Door 6 Content</div>
+    </div>
+    <div class="door" id="door-7">
+      <span>7</span>
+      <div class="door-content">Bourbon Door 7 Content</div>
+    </div>
+    <div class="door" id="door-8">
+      <span>8</span>
+      <div class="door-content">Bourbon Door 8 Content</div>
+    </div>
+    <div class="door" id="door-9">
+      <span>9</span>
+      <div class="door-content">Bourbon Door 9 Content</div>
+    </div>
+    <div class="door" id="door-10">
+      <span>10</span>
+      <div class="door-content">Bourbon Door 10 Content</div>
+    </div>
+    <div class="door" id="door-11">
+      <span>11</span>
+      <div class="door-content">Bourbon Door 11 Content</div>
+    </div>
+    <div class="door" id="door-12">
+      <span>12</span>
+      <div class="door-content">Bourbon Door 12 Content</div>
+    </div>
+  </section>
+
+  <!-- JavaScript for Hamburger Toggle and Door Clicks -->
+  <script src="scripts.js"></script> <!-- Link to external JS file -->
 </body>
 </html>
-
-
-
-
-
-
-
-
-
