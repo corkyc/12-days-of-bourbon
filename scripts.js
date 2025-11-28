@@ -88,6 +88,7 @@ document.getElementById('hamburger').addEventListener('click', function() {
   // Toggle 'open' class on hamburger click
   hamburger.addEventListener('click', () => {
     navMenu.classList.toggle('open');
+    document.body.classList.toggle('nav-active'); // Toggle the body padding
   });
 
 // Add event listeners to each door
@@ -97,6 +98,7 @@ document.querySelectorAll('.door').forEach(door => {
         openModal(day);
     });
 });
+
 
 
 
