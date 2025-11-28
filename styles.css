@@ -14,10 +14,6 @@ body {
     padding: 0;
     margin: 0;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    justify-content: space-between;
 }
 
 /* Header */
@@ -41,25 +37,10 @@ header p {
     color: #f8c13b; /* Set the same color as h1 */
 }
 
-/* Countdown Section */
-.countdown {
-    background-color: #3e1f13;
-    color: #f8c13b;
-    padding: 2rem 0;
-    text-align: center;
-}
-
-.countdown span {
-    font-size: 2rem;
-    font-weight: bold;
-}
-
 /* Calendar Section */
 .calendar {
-    flex-grow: 1; /* Allow this section to take up available space */
     display: flex;
     justify-content: center;
-    align-items: center;
     padding: 2rem 0;
 }
 
@@ -115,6 +96,12 @@ header p {
     max-width: 600px;
 }
 
+.modal-content img {
+    width: 100%;
+    max-width: 300px; /* Adjust based on the size of the images */
+    margin: 1rem 0;
+}
+
 button {
     background-color: #f8c13b;
     color: #3e1f13;
@@ -128,58 +115,4 @@ button {
 
 button:hover {
     background-color: #d88f00;
-}
-
-/* Footer */
-footer {
-    background-color: #3e1f13;
-    color: #f8c13b;
-    padding: 1rem 0;
-    font-size: 1rem;
-    text-align: center;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .doors {
-        grid-template-columns: repeat(3, 1fr); /* 3 columns for tablets */
-    }
-
-    .calendar {
-        padding: 2rem 1rem;
-    }
-
-    header h1 {
-        font-size: 2.5rem;
-    }
-
-    header p {
-        font-size: 1.1rem;
-    }
-
-    .countdown span {
-        font-size: 1.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .doors {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
-    }
-
-    .calendar {
-        padding: 1rem;
-    }
-
-    header h1 {
-        font-size: 2rem;
-    }
-
-    header p {
-        font-size: 1rem;
-    }
-
-    .countdown span {
-        font-size: 1.2rem;
-    }
 }
