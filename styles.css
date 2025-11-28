@@ -30,11 +30,6 @@ nav .logo a {
     text-decoration: none;
 }
 
-.nav-links {
-    display: flex;
-    gap: 20px;
-}
-
 .nav-links a {
     color: white;
     text-decoration: none;
@@ -338,6 +333,7 @@ footer {
         font-size: 1.2rem;
     }
 }
+
 
 
 
