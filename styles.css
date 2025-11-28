@@ -98,7 +98,7 @@ nav .logo a {
   right: 0; /* Slide in from the right */
 }
 
-.nav-menu ul {
+/* .nav-menu ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -115,19 +115,8 @@ nav .logo a {
   text-decoration: none;
   text-align: center;
   display: block;
-}
+}     */
 
-/* Media Query for Mobile */
-@media (max-width: 768px) {
-  /* Ensuring the hamburger menu stays visible */
-  .hamburger {
-    display: block;
-  }
-
-  .nav-menu {
-    display: flex; /* Use flexbox for centering items */
-  }
-}
 /* Mobile Styles */
 @media (max-width: 768px) {
     .nav-links {
@@ -135,10 +124,12 @@ nav .logo a {
         flex-direction: column;
         width: 100%;
         background-color: #333;
-        text-align: center;
+        text-align: left;
         padding: 5px 0;
     }
-
+  .logo {
+    display: none; /* Adjust the selector to match the logo's class or ID */
+  }
     .nav-links a {
         margin: 0;
         padding: 5px;
@@ -151,12 +142,13 @@ nav .logo a {
     .nav-links.active {
         display: flex;
     }
-}
-/* CSS to hide logo on mobile */
-@media (max-width: 768px) {
-  .logo {
-    display: none; /* Adjust the selector to match the logo's class or ID */
+  .hamburger {
+    display: block;
   }
+
+  .nav-menu {
+    display: flex; /* Use flexbox for centering items */
+  }    
 }
 
 /* Desktop Styles */
@@ -324,6 +316,7 @@ footer {
         font-size: 1.2rem;
     }
 }
+
 
 
 
