@@ -3,7 +3,7 @@ const bourbons = [
     {
         name: "Bourbon A",
         description: "A rich and smooth bourbon with caramel and oak flavors.",
-        image: "https://github.com/corkyc/12-days-of-bourbon/blob/main/images/4R_SB.jpg" // Placeholder image
+        image: "https://raw.githubusercontent.com/corkyc/12-days-of-bourbon/refs/heads/main/images/4R_SB.jpg" // Placeholder image
     },
     {
         name: "Bourbon B",
@@ -83,4 +83,5 @@ document.querySelectorAll('.door').forEach(door => {
         openModal(day);
     });
 });
+
 
