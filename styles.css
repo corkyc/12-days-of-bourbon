@@ -11,6 +11,8 @@ body {
     background-color: #f1e6d9;
     color: #3e1f13;
     line-height: 1.6;
+    padding: 0;
+    margin: 0;
 }
 
 h1, h2, h3 {
@@ -209,24 +211,59 @@ footer p {
 /* Responsive Styles */
 @media (max-width: 768px) {
     .doors {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, 1fr); /* 3 columns on medium screens */
     }
+
     .calendar h2 {
         font-size: 2rem;
+    }
+
+    .door {
+        padding: 50px;
+        font-size: 1.5rem;
+    }
+
+    .door .bourbon-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .bottle {
+        width: 150px; /* Smaller bottles on mobile */
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 12px 18px;
     }
 }
 
 @media (max-width: 480px) {
     .doors {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
     }
+
     .calendar h2 {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
     }
-    .bottle-list {
-        flex-direction: column;
+
+    .door {
+        padding: 40px;
+        font-size: 1.2rem;
     }
+
+    .door .bourbon-info h3 {
+        font-size: 1rem;
+    }
+
     .bottle {
-        width: 100%;
+        width: 100%; /* Full width for bottles on mobile */
+    }
+
+    footer p {
+        font-size: 0.9rem;
+    }
+
+    .countdown span {
+        font-size: 1.5rem; /* Slightly smaller countdown text */
     }
 }
