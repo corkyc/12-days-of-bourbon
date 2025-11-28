@@ -1,64 +1,4 @@
-/* Reset default styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Body styles */
-body {
-    font-family: 'Georgia', serif;
-    background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-    background-color: #f1e6d9;  /* Light tan to simulate wood texture */
-    color: #4a2f27; /* Dark brown text color */
-    line-height: 1.6;
-}
-
-/* Header styles */
-header {
-    background-color: #3e1f13; /* Dark brown color */
-    color: #fff;
-    text-align: center;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-    font-family: 'Merriweather', serif;
-    font-size: 3rem;
-    margin-bottom: 10px;
-    font-weight: 700;
-    color: #f8c13b; /* Gold color */
-}
-
-h2 {
-    font-family: 'Merriweather', serif;
-    font-size: 2rem;
-    margin-top: 1rem;
-    font-weight: 700;
-}
-
-/* Navigation */
-nav a {
-    color: #f8c13b;
-    text-decoration: none;
-    font-weight: bold;
-    margin: 0 15px;
-}
-
-nav a:hover {
-    color: #fff;
-}
-
-/* Calendar Layout */
-.calendar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    padding: 2rem;
-    margin-top: 20px;
-}
-
+/* Door styling - initially showing the wood door image */
 .door {
     background-color: #f0a500;
     padding: 60px;
@@ -67,29 +7,39 @@ nav a:hover {
     font-size: 2rem;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
-    background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png'); /* Barrel texture */
+    background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png'); /* Wooden texture */
     background-size: cover;
-    color: #3e1f13;  /* Dark brown text */
+    background-position: center;
+    color: #3e1f13;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.door.locked {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
+/* When door is unlocked */
 .door.unlocked {
-    background-color: #d88f00;
     color: #fff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background-color: transparent;
 }
 
-.door:hover:not(.locked) {
-    transform: scale(1.05);
-    background-color: #c77c00; /* Slightly darker amber */
+.door.unlocked .bourbon-info {
+    text-align: center;
+    color: #fff;
+    padding: 15px;
 }
 
-/* Buttons */
+.door .bourbon-info h3 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #f8c13b;
+}
+
+.door .bourbon-info p {
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    color: #f1e6d9;
+}
+
+/* Reset button styling (optional) */
 button {
     background-color: #f8c13b;
     color: #3e1f13;
@@ -106,7 +56,7 @@ button:hover {
     background-color: #d88f00;
 }
 
-/* All Bottles Page */
+/* All Bottles View */
 .bottle-list {
     display: flex;
     flex-wrap: wrap;
@@ -133,45 +83,4 @@ footer {
     background-color: #3e1f13;
     color: #fff;
     margin-top: 50px;
-}
-
-/* Media Queries for Mobile Responsiveness */
-@media (max-width: 768px) {
-    .calendar {
-        grid-template-columns: repeat(2, 1fr);  /* Two columns on smaller screens */
-    }
-
-    .calendar .door {
-        font-size: 1.5rem;
-        padding: 50px;
-    }
-
-    .bottle-list {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    button {
-        width: 100%;
-        padding: 12px 0;
-    }
-}
-
-@media (max-width: 480px) {
-    header {
-        padding: 1rem;
-    }
-
-    .calendar .door {
-        font-size: 1.25rem;
-        padding: 40px;
-    }
-    
-    h1 {
-        font-size: 2.5rem;
-    }
-
-    button {
-        padding: 10px 0;
-    }
 }
