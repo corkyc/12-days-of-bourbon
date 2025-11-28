@@ -81,11 +81,23 @@ nav .logo a {
         margin: 10px 0;
         padding: 10px;
     }
-
+    
+  .nav-menu.open {
+    display: block; /* Show menu when open */
+  }
     .hamburger {
         display: block;
+        cursor: pointer;
+        z-index: 101; /* Keep above menu */
     }
-
+    
+  .hamburger div {
+    background-color: white;
+    height: 3px;
+    width: 25px;
+    margin: 5px 0;
+    transition: 0.3s;
+  }
     .nav-links.active {
         display: flex;
     }
@@ -262,6 +274,7 @@ footer {
         font-size: 1.2rem;
     }
 }
+
 
 
 
