@@ -164,7 +164,17 @@ body::before {
   border-radius: 5px;
   margin-bottom: 10px;
 }
-
+/* Snowflakes on the page */
+body::after {
+  content: "❄️ ❄️ ❄️ ❄️";
+  font-size: 3em;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.2;
+  z-index: -1;
+}
 /* Mobile View: Hamburger Menu and Vertical Links */
 @media (max-width: 768px) {
   .hamburger {
@@ -196,3 +206,4 @@ body::before {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
