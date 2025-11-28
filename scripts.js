@@ -1,4 +1,4 @@
-// Array of Bourbon bottles (You can replace these descriptions with your actual bourbons)
+// Bourbon Data
 const bourbons = [
     { name: "Bourbon A", description: "A rich and smooth bourbon with caramel and oak flavors." },
     { name: "Bourbon B", description: "A bold bourbon with hints of vanilla and spices." },
@@ -14,24 +14,23 @@ const bourbons = [
     { name: "Bourbon L", description: "A smooth bourbon with hints of vanilla, caramel, and light spice." }
 ];
 
-// Function to open the bourbon details
-function openBourbonDetails(day) {
-    const bourbon = bourbons[day - 1];
-    document.getElementById("bourbon-title").innerText = bourbon.name;
-    document.getElementById("bourbon-description").innerText = bourbon.description;
-    document.getElementById("bourbon-details").style.display = 'flex';
+// Open the modal and show bourbon details
+function openModal(day) {
+    const bourbon = bourbons[day - 1]; // Get the bourbon for the selected day
+    document.getElementById("bourbon-name").textContent = bourbon.name;
+    document.getElementById("bourbon-description").textContent = bourbon.description;
+    document.getElementById("bourbon-modal").style.display = 'flex';
 }
 
-// Close the bourbon details modal
-function closeBourbonDetails() {
-    document.getElementById("bourbon-details").style.display = 'none';
+// Close the modal
+function closeModal() {
+    document.getElementById("bourbon-modal").style.display = 'none';
 }
 
-// Add event listeners for each door
+// Add event listeners to each door
 document.querySelectorAll('.door').forEach(door => {
     door.addEventListener('click', () => {
         const day = door.getAttribute('data-day');
-        door.classList.add('unlocked');
-        openBourbonDetails(day);
+        openModal(day);
     });
 });
