@@ -81,59 +81,74 @@ nav .logo a {
   right: 0; /* Slide in from the right */
 }
 
-/* .nav-menu ul {
-  list-style-type: none;
+/* Navigation Menu */
+.nav-links {
+  display: none; /* Hide menu by default */
+  background-color: #333;
+  width: 100%;
+  position: absolute;
+  top: 80px; /* Space it below the header */
+  left: 0;
+  right: 0;
+  padding: 20px;
+  z-index: 99;
+  flex-direction: column;
+}
+
+.nav-links.active {
+  display: flex; /* Show menu when active */
+}
+
+.nav-links ul {
+  list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.nav-menu ul li {
-  padding: 5px 0;
-  margin: 0; 
+.nav-links ul li {
+  padding: 10px 0;
 }
 
-.nav-menu ul li a {
+.nav-links ul li a {
   color: white;
-  font-size: 18px;
   text-decoration: none;
   text-align: center;
   display: block;
-}     */
-
-/* Mobile Styles */
-@media (max-width: 768px) {
-/* Hamburger Menu Style */
+}
+/* Hamburger Menu Styling */
 .hamburger {
-  position: relative;
+  position: fixed; /* Keep it visible in the top left corner */
+  top: 20px;
+  left: 20px;
   display: flex;
   flex-direction: column;
   width: 30px;
   height: 25px;
-  margin: 20px auto; /* Centered horizontally and give space from the top */
   cursor: pointer;
   justify-content: space-between;
   align-items: center;
+  z-index: 100; /* Ensure it is above other content */
 }
 
 .hamburger div {
   background-color: white;
-  height: 3px;
-  width: 25px;
-  margin: 5px 0;
+  height: 4px;
+  width: 100%;
   transition: 0.3s;
 }
 
-.nav-links {
-    position: absolute;
-    display: none;
-    flex-direction: column;
-    left: 0;
-    right: 0;
-    background-color: #333;
-    text-align: left;
-    z-index: 99;
-    padding: 5px 0;
-    }
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex; /* Ensure hamburger stays visible */
+    top: 15px; /* Adjust top position on mobile if needed */
+    left: 15px; /* Adjust left position */
+  }
+
+  .nav-links {
+    top: 60px; /* Adjust top position to avoid overlap */
+  }
+
   .logo {
     display: none; /* Adjust the selector to match the logo's class or ID */
   }
@@ -323,6 +338,7 @@ footer {
         font-size: 1.2rem;
     }
 }
+
 
 
 
