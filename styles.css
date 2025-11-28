@@ -90,6 +90,12 @@ nav .logo a {
         display: flex;
     }
 }
+/* CSS to hide logo on mobile */
+@media (max-width: 768px) {
+  .logo {
+    display: none; /* Adjust the selector to match the logo's class or ID */
+  }
+}
 
 /* Desktop Styles */
 @media (min-width: 769px) {
@@ -256,5 +262,6 @@ footer {
         font-size: 1.2rem;
     }
 }
+
 
 
