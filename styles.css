@@ -42,15 +42,16 @@ header p {
     display: flex;
     justify-content: center;
     padding: 2rem 0;
+    margin-top: 2rem; /* Add margin-top to space it from the header */
 }
 
 .doors {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for larger screens */
     gap: 20px;
-    width: 80%;
-    max-width: 1200px; /* Limit maximum width */
-    margin: 0 auto;
+    width: 90%; /* Make sure the grid takes up most of the space but with some margin */
+    max-width: 1200px; /* Limit the max width of the grid */
+    margin: 0 auto; /* Center the grid horizontally */
 }
 
 .door {
@@ -98,7 +99,7 @@ header p {
 
 .modal-content img {
     width: 100%;
-    max-width: 300px; /* Adjust based on the size of the images */
+    max-width: 300px; /* Adjust the image size */
     margin: 1rem 0;
 }
 
@@ -115,4 +116,54 @@ button {
 
 button:hover {
     background-color: #d88f00;
+}
+
+/* Footer */
+footer {
+    background-color: #3e1f13;
+    color: #f8c13b;
+    padding: 1rem 0;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .doors {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns for tablets */
+    }
+
+    header h1 {
+        font-size: 2.5rem;
+    }
+
+    header p {
+        font-size: 1.1rem;
+    }
+
+    .countdown span {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .doors {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+    }
+
+    .calendar {
+        padding: 1rem;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    header p {
+        font-size: 1rem;
+    }
+
+    .countdown span {
+        font-size: 1.2rem;
+    }
 }
