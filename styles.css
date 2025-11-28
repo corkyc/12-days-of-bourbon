@@ -1,16 +1,32 @@
 /* General Reset */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Georgia', serif;
   box-sizing: border-box;
+  background-color: #2C1D1D; /* Deep, rich brown background */
+  color: #f8f8f8;
+  text-align: center;
 }
 
-/* Header Styling */
+/* Header Section Styling */
 header {
-  background-color: #333;
+  background-color: #8B5D3D; /* Whiskey brown color */
   color: white;
-  padding: 20px;
-  text-align: center;
+  padding: 40px 0;
+  font-family: 'Times New Roman', Times, serif;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+  font-size: 3em;
+  margin: 0;
+}
+
+.tagline {
+  font-size: 1.2em;
+  font-style: italic;
+  margin-top: 10px;
+  color: #f0c674; /* A golden, warm touch */
 }
 
 /* Hamburger Menu Styling (Visible on Mobile) */
@@ -26,7 +42,7 @@ header {
 }
 
 .hamburger div {
-  background-color: white;
+  background-color: #f8f8f8;
   height: 4px;
   width: 100%;
   transition: 0.3s;
@@ -36,7 +52,7 @@ header {
 .nav-links {
   display: flex; /* Default: Horizontal layout for Desktop */
   justify-content: center;
-  background-color: #333;
+  background-color: #8B5D3D; /* Same whiskey brown color */
   padding: 10px;
   z-index: 10;
 }
@@ -56,26 +72,34 @@ header {
   color: white;
   text-decoration: none;
   padding: 5px 10px;
-  display: block;
+  font-weight: bold;
+  transition: color 0.3s ease;
 }
 
-/* Calendar Grid Styling */
+.nav-links ul li a:hover {
+  color: #f0c674; /* Golden hover effect */
+}
+
+/* Calendar Grid Section */
 .calendar-grid {
   padding: 20px;
-  text-align: center;
+  font-size: 1.5em;
+  color: #f0c674;
+  background-color: #3C2F2F; /* Darker brown for contrast */
 }
 
-/* 12 Days of Bourbon Doors Styling */
+/* 12 Days of Christmas Whiskey Doors Styling */
 .doors {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 20px;
   padding: 20px;
+  background-color: #3C2F2F; /* Dark background for the doors section */
 }
 
 .door {
   position: relative;
-  background-color: #333;
+  background-color: #8B5D3D;
   color: white;
   display: flex;
   align-items: center;
@@ -83,13 +107,18 @@ header {
   height: 150px;
   cursor: pointer;
   transition: all 0.3s ease;
-  border-radius: 5px;
+  border-radius: 10px;
   overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  background-image: url('whiskey-background.png'); /* Optional background image */
+  background-size: cover;
+  background-position: center;
 }
 
 .door span {
-  font-size: 2em;
+  font-size: 2.5em;
   z-index: 10;
+  color: #f8f8f8; /* Light text */
 }
 
 .door-content {
@@ -98,21 +127,23 @@ header {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #222;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent overlay */
   display: none;
   align-items: center;
   justify-content: center;
   color: white;
-  padding: 10px;
+  font-size: 1.2em;
+  padding: 20px;
   text-align: center;
+  border-radius: 10px;
 }
 
 .door.open .door-content {
-  display: flex;
+  display: flex; /* Show content when door is clicked */
 }
 
 .door:hover {
-  background-color: #555;
+  background-color: #7A4C2A; /* Slight hover effect */
 }
 
 /* Mobile View: Hamburger Menu and Vertical Links */
@@ -121,17 +152,16 @@ header {
     display: flex; /* Show the hamburger menu on mobile */
   }
 
-  /* Hide the menu by default on mobile */
   .nav-links {
     display: none;
     flex-direction: column;
     align-items: center;
-    background-color: #333;
+    background-color: #8B5D3D;
     width: 100%;
   }
 
   .nav-links.active {
-    display: flex; /* Show menu when active */
+    display: flex;
   }
 
   .nav-links ul {
