@@ -64,8 +64,7 @@ nav .logo a {
 /* Hamburger Menu Style */
 .hamburger {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  display: flex;
   cursor: pointer;
   z-index: 100;
 }
@@ -316,6 +315,7 @@ footer {
         font-size: 1.2rem;
     }
 }
+
 
 
 
