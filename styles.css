@@ -1,45 +1,62 @@
-/* Door styling - initially showing the wood door image */
-.door {
-    background-color: #f0a500;
-    padding: 60px;
-    border-radius: 15px;
-    text-align: center;
-    font-size: 2rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png'); /* Wooden texture */
-    background-size: cover;
-    background-position: center;
-    color: #3e1f13;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* When door is unlocked */
-.door.unlocked {
-    color: #fff;
-    background-color: transparent;
-}
-
-.door.unlocked .bourbon-info {
-    text-align: center;
-    color: #fff;
-    padding: 15px;
-}
-
-.door .bourbon-info h3 {
-    font-family: 'Merriweather', serif;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #f8c13b;
-}
-
-.door .bourbon-info p {
+/* Global Styles */
+body {
     font-family: 'Georgia', serif;
-    font-size: 1rem;
-    color: #f1e6d9;
+    margin: 0;
+    padding: 0;
+    background-color: #f1e6d9;
+    color: #3e1f13;
 }
 
-/* Reset button styling (optional) */
+h1, h2, h3 {
+    font-family: 'Merriweather', serif;
+    margin: 0;
+}
+
+p {
+    font-family: 'Georgia', serif;
+    font-size: 1.1rem;
+    color: #3e1f13;
+}
+
+header {
+    background-color: #3e1f13;
+    color: #f8c13b;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+header h1 {
+    font-size: 3rem;
+    letter-spacing: 2px;
+}
+
+header p {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+}
+
+/* Navigation styling */
+nav {
+    margin-top: 1rem;
+}
+
+nav a {
+    color: #f8c13b;
+    margin: 0 1rem;
+    font-size: 1.1rem;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Main content styling */
+main {
+    padding: 2rem;
+    text-align: center;
+}
+
 button {
     background-color: #f8c13b;
     color: #3e1f13;
@@ -56,7 +73,85 @@ button:hover {
     background-color: #d88f00;
 }
 
+#home {
+    margin-top: 3rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+    font-family: 'Merriweather', serif;
+    margin-bottom: 1.5rem;
+}
+
+/* Calendar layout */
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
+    margin-bottom: 3rem;
+}
+
+.door {
+    background-color: #f0a500;
+    padding: 60px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png'); /* Wooden texture */
+    background-size: cover;
+    background-position: center;
+    color: #3e1f13;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 250px;
+}
+
+.door.locked {
+    color: #3e1f13;
+}
+
+.door.unlocked {
+    background-color: transparent;
+    color: #fff;
+    position: relative;
+    background-size: cover;
+}
+
+.door.unlocked .bourbon-info {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+    width: 80%;
+}
+
+.door .bourbon-info h3 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: #f8c13b;
+}
+
+.door .bourbon-info p {
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    color: #f1e6d9;
+}
+
 /* All Bottles View */
+#all-bottles {
+    background-color: #3e1f13;
+    color: #fff;
+    padding: 3rem 0;
+    text-align: center;
+}
+
 .bottle-list {
     display: flex;
     flex-wrap: wrap;
@@ -75,12 +170,88 @@ button:hover {
     background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png'); /* Barrel texture */
     background-size: cover;
     color: #3e1f13;
+    transition: transform 0.3s ease;
 }
 
+.bottle:hover {
+    transform: scale(1.05);
+}
+
+.bottle img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.bottle h3 {
+    font-family: 'Merriweather', serif;
+    font-size: 1.3rem;
+    margin-top: 1rem;
+}
+
+.bottle p {
+    font-family: 'Georgia', serif;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+/* Footer */
 footer {
     text-align: center;
     padding: 1.5rem;
     background-color: #3e1f13;
     color: #fff;
     margin-top: 50px;
+}
+
+footer p {
+    font-size: 1rem;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .calendar {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .bottle-list {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .door {
+        padding: 50px;
+        font-size: 1.5rem;
+    }
+
+    .door.unlocked .bourbon-info {
+        font-size: 1.1rem;
+    }
+
+    button {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .door {
+        padding: 40px;
+        font-size: 1.2rem;
+    }
+
+    .door.unlocked .bourbon-info {
+        font-size: 1rem;
+    }
+
+    .bottle {
+        width: 200px;
+    }
+
+    footer p {
+        font-size: 0.9rem;
+    }
 }
