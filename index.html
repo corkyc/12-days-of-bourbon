@@ -9,102 +9,42 @@
 </head>
 <body>
     <header>
-        <h1>12 Days of Bourbon</h1>
-        <p>Unwrap a New Bottle Every Day</p>
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#all-bottles">All Bottles</a>
-        </nav>
+        <div class="container">
+            <h1>12 Days of Bourbon</h1>
+            <p>Unwrap a New Bottle Every Day</p>
+        </div>
     </header>
 
-    <main id="home">
-        <h2>Advent Calendar</h2>
-        <div class="calendar">
-            <!-- Doors for each day -->
-            <div class="door locked" id="day1" onclick="revealBourbon(1)">1</div>
-            <div class="door locked" id="day2" onclick="revealBourbon(2)">2</div>
-            <div class="door locked" id="day3" onclick="revealBourbon(3)">3</div>
-            <div class="door locked" id="day4" onclick="revealBourbon(4)">4</div>
-            <div class="door locked" id="day5" onclick="revealBourbon(5)">5</div>
-            <div class="door locked" id="day6" onclick="revealBourbon(6)">6</div>
-            <div class="door locked" id="day7" onclick="revealBourbon(7)">7</div>
-            <div class="door locked" id="day8" onclick="revealBourbon(8)">8</div>
-            <div class="door locked" id="day9" onclick="revealBourbon(9)">9</div>
-            <div class="door locked" id="day10" onclick="revealBourbon(10)">10</div>
-            <div class="door locked" id="day11" onclick="revealBourbon(11)">11</div>
-            <div class="door locked" id="day12" onclick="revealBourbon(12)">12</div>
-        </div>
+    <main>
+        <section class="countdown">
+            <div class="container">
+                <h2>Countdown to Christmas</h2>
+                <p>Only <span id="countdown"></span> days until Christmas!</p>
+            </div>
+        </section>
 
-        <button onclick="resetProgress()">Reset Progress</button>
-        <button onclick="window.location.href='#all-bottles'">See All Bottles</button>
+        <section class="calendar">
+            <div class="container">
+                <h2>Advent Calendar</h2>
+                <div class="doors">
+                    <!-- Dynamic doors will be injected here by JavaScript -->
+                </div>
+                <button class="reset" onclick="resetProgress()">Reset Progress</button>
+                <button class="see-all" onclick="toggleAllBottles()">See All Bottles</button>
+            </div>
+        </section>
+
+        <section id="all-bottles" class="hidden">
+            <div class="container">
+                <h2>All 12 Bottles</h2>
+                <div class="bottle-list">
+                    <!-- Static or dynamically added bottle previews -->
+                    <div class="bottle"><img src="images/bourbon1.jpg" alt="Bourbon 1"><h3>Bourbon A</h3><p>Description</p></div>
+                    <!-- More bottles here -->
+                </div>
+            </div>
+        </section>
     </main>
-
-    <section id="all-bottles">
-        <h2>All 12 Bottles</h2>
-        <div class="bottle-list">
-            <!-- This will dynamically generate bottle info if needed -->
-            <div class="bottle">
-                <img src="images/bourbon1.jpg" alt="Bourbon 1">
-                <h3>Bourbon A</h3>
-                <p>A smooth, rich bourbon with hints of vanilla and caramel.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon2.jpg" alt="Bourbon 2">
-                <h3>Bourbon B</h3>
-                <p>A full-bodied bourbon with a smoky finish.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon3.jpg" alt="Bourbon 3">
-                <h3>Bourbon C</h3>
-                <p>A mellow bourbon with fruity and spicy notes.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon4.jpg" alt="Bourbon 4">
-                <h3>Bourbon D</h3>
-                <p>A bold bourbon with a peppery kick and oak undertones.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon5.jpg" alt="Bourbon 5">
-                <h3>Bourbon E</h3>
-                <p>A rich and creamy bourbon with chocolate notes.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon6.jpg" alt="Bourbon 6">
-                <h3>Bourbon F</h3>
-                <p>A spicy and sweet bourbon with a warm finish.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon7.jpg" alt="Bourbon 7">
-                <h3>Bourbon G</h3>
-                <p>A light, floral bourbon with a crisp finish.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon8.jpg" alt="Bourbon 8">
-                <h3>Bourbon H</h3>
-                <p>A well-rounded bourbon with hints of cinnamon and oak.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon9.jpg" alt="Bourbon 9">
-                <h3>Bourbon I</h3>
-                <p>A robust bourbon with smoky, caramelized flavors.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon10.jpg" alt="Bourbon 10">
-                <h3>Bourbon J</h3>
-                <p>A classic bourbon with a touch of sweetness and spice.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon11.jpg" alt="Bourbon 11">
-                <h3>Bourbon K</h3>
-                <p>A rich, complex bourbon with vanilla and nutmeg notes.</p>
-            </div>
-            <div class="bottle">
-                <img src="images/bourbon12.jpg" alt="Bourbon 12">
-                <h3>Bourbon L</h3>
-                <p>A smooth, oaky bourbon with a hint of maple syrup.</p>
-            </div>
-        </div>
-    </section>
 
     <footer>
         <p>© 2025 12 Days of Bourbon. All rights reserved.</p>
