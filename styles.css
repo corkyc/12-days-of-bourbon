@@ -1,19 +1,47 @@
-/* General Reset */
+/* ===========================
+   GLOBAL RESET & PAGE STYLING
+   =========================== */
 body {
   margin: 0;
   font-family: 'Georgia', serif;
   box-sizing: border-box;
-  background-color: #2C1D1D; /* Deep, rich brown background */
+  background-color: #2C1D1D;
   color: #f8f8f8;
   text-align: center;
+  position: relative;
 }
 
-/* Header Section Styling */
+/* Snowflakes */
+body::before {
+  content: "❄️ ❄️ ❄️ ❄️ ❄️ ❄️";
+  font-size: 2em;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  opacity: 0.5;
+}
+
+body::after {
+  content: "❄️ ❄️ ❄️ ❄️";
+  font-size: 3em;
+  position: absolute;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  opacity: 0.3;
+}
+
+/* ===========================
+   HEADER
+   =========================== */
 header {
-  background-color: #8B5D3D; /* Whiskey brown color */
+  background-color: #8B5D3D;
   color: white;
   padding: 40px 0;
-  font-family: 'Great Vibes', cursive; /* Holiday font for header */
+  font-family: 'Great Vibes', cursive;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
@@ -26,36 +54,14 @@ header h1 {
   font-size: 1.5em;
   font-style: italic;
   margin-top: 10px;
-  color: #f0c674; /* A golden, warm touch */
+  color: #f0c674;
 }
 
-/* Snowflakes Decoration */
-body::before {
-  content: "❄️ ❄️ ❄️ ❄️ ❄️ ❄️";
-  font-size: 2em;
-  position: absolute;
-  top: 10px; /* Adjusted to be closer to the top */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2; /* Ensure snowflakes are above content */
-  opacity: 0.5;
-}
-
-/* Snowflakes Decoration - Centered, above the hamburger menu */
-body::after {
-  content: "❄️ ❄️ ❄️ ❄️";
-  font-size: 3em;
-  position: absolute;
-  top: 75px; /* Adjust to align with hamburger menu */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1; /* Ensure it appears above the page content */
-  opacity: 0.3;
-}
-
-/* Hamburger Menu Styling (Visible on Mobile) */
+/* ===========================
+   NAVIGATION
+   =========================== */
 .hamburger {
-  display: none; /* Hidden by default on desktop */
+  display: none;
   flex-direction: column;
   width: 30px;
   height: 25px;
@@ -72,13 +78,12 @@ body::after {
   transition: 0.3s;
 }
 
-/* Navigation Menu Styling */
 .nav-links {
-  display: flex; /* Default: Horizontal layout for Desktop */
+  display: flex;
   justify-content: center;
-  background-color: #8B5D3D; /* Same whiskey brown color */
+  background-color: #8B5D3D;
   padding: 10px;
-  z-index: 10;
+  z-index: 15;
 }
 
 .nav-links ul {
@@ -101,151 +106,134 @@ body::after {
 }
 
 .nav-links ul li a:hover {
-  color: #f0c674; /* Golden hover effect */
+  color: #f0c674;
 }
 
-/* Calendar Grid Section */
+/* ===========================
+   CALENDAR GRID TITLE
+   =========================== */
 .calendar-grid {
   padding: 20px;
   font-size: 1.5em;
   color: #f0c674;
-  background-color: #3C2F2F; /* Darker brown for contrast */
+  background-color: #3C2F2F;
 }
 
-/* 12 Days of Christmas Whiskey Doors Styling */
+/* ===========================
+   DOOR GRID
+   =========================== */
 .doors {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   padding: 20px;
-  background-color: #3C2F2F; /* Dark background for the doors section */
+  background-color: #3C2F2F;
 }
 
+/* ===========================
+   INDIVIDUAL DOOR
+   =========================== */
 .door {
   position: relative;
+  height: 150px;
+  cursor: pointer;
+  border-radius: 10px;
+  overflow: hidden;
   background-color: #8B5D3D;
-  color: white;
+  background-image: url('whiskey-background.png');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 150px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  background-image: url('whiskey-background.png'); /* Optional whiskey background image */
-  background-size: cover;
-  background-position: center;
 }
 
-/* Add this for scratch-off functionality */
-.door {
-  position: relative;   /* you already have this, but important */
-  overflow: hidden;     /* allows the scratch layer to stay contained */
-}
-
-/* The scratch-off layer */
+/* ===========================
+   SCRATCH FOIL CANVAS
+   (TOP LAYER)
+   =========================== */
 .scratch-canvas {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;          /* match .door size */
+  width: 100%;
   height: 100%;
-  z-index: 5;           /* sits ABOVE the number + content */
-  touch-action: none;   /* needed for mobile scratching */
-  pointer-events: auto; /* allow finger interaction */
   border-radius: inherit;
+  z-index: 10;       /* <-- MUST BE ABOVE EVERYTHING */
+  pointer-events: auto;
+  touch-action: none;
 }
 
-/* Make sure the content shows under the scratch layer */
-.door > .door_number,
-.door > .door-content {
-  position: relative;
-  z-index: 2; 
-}
-/* allow clicks to reach the door behind the number */
+/* ===========================
+   DOOR NUMBER
+   (VISIBLE BEFORE SCRATCH)
+   =========================== */
 .door_number {
+  position: relative;
+  z-index: 5;        /* under scratch, above background */
+  font-size: 3em;
+  color: #fff;
   pointer-events: none;
-  transition: opacity 200ms ease;
   opacity: 1;
-  visibility: visible;
+  transition: opacity .3s;
 }
 
-/* when the door has this helper class, hide the number */
+/* hide number after JS flags it */
 .door.number-hidden .door_number {
   opacity: 0;
-  visibility: hidden;
 }
 
-.door span {
-  font-size: 3em;
-  z-index: 10;
-  color: #f8f8f8; /* Light text */
-}
-
+/* ===========================
+   DOOR CONTENT
+   (SHOWN AFTER SCRATCH)
+   Hidden by default
+   =========================== */
 .door-content {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent overlay */
-  display: none;
+  display: none;        /* hidden until .open class */
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  background-color: rgba(0,0,0,0.7);
   color: white;
   font-size: 1.2em;
   padding: 20px;
-  text-align: center;
-  border-radius: 10px;
+  z-index: 3;          /* BELOW number, BELOW scratch */
 }
 
 .door.open .door-content {
-  display: flex; /* Show content when door is clicked */
+  display: flex;
 }
 
-.door:hover {
-  background-color: #7A4C2A; /* Slight hover effect */
-}
-
-/* Whiskey Bottle Image inside door content */
 .whiskey-img {
   width: 100px;
-  height: auto;
   border-radius: 5px;
   margin-bottom: 10px;
 }
-/* Mobile View: Hamburger Menu and Vertical Links */
+
+/* ===========================
+   MOBILE RESPONSIVE
+   =========================== */
 @media (max-width: 768px) {
-  .hamburger {
-    display: flex; /* Show the hamburger menu on mobile */
-  }
+  .hamburger { display: flex; }
 
   .nav-links {
     display: none;
     flex-direction: column;
-    align-items: center;
     background-color: #8B5D3D;
     width: 100%;
   }
 
-  .nav-links.active {
-    display: flex;
-  }
+  .nav-links.active { display: flex; }
 
-  .nav-links ul {
-    display: block;
-  }
+  .nav-links ul { display: block; }
 
-  .nav-links ul li {
-    margin: 10px 0;
-  }
+  .nav-links ul li { margin: 10px 0; }
 
-  /* Adjust doors for mobile screens */
-  .doors {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .doors { grid-template-columns: repeat(2, 1fr); }
 }
-
-
