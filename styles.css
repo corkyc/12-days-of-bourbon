@@ -112,6 +112,14 @@ body::after {
   background-color: #3C2F2F; /* Darker brown for contrast */
 }
 
+.scratch-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  touch-action: none;  /* needed for mobile */
+}
+
 /* 12 Days of Christmas Whiskey Doors Styling */
 .doors {
   display: grid;
