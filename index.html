@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>12 Days of Christmas Whiskey</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,7 +11,7 @@
 
 <header>
   <h1>12 Days of Christmas Whiskey</h1>
-  <p class="tagline">A Whiskey Advent Calendar</p>
+  <p class="tagline">Scratch the number, then click to reveal!</p>
 </header>
 
 <div class="hamburger" id="hamburger">
@@ -28,36 +27,51 @@
   </ul>
 </nav>
 
-<section class="calendar-grid">
-  <p>Unwrap a new whiskey every day!</p>
-</section>
-
 <section class="doors">
 
-  <!-- DOOR TEMPLATE — repeated for all doors -->
-  <!-- Continue this pattern for all other doors -->
-  <div class="door" id="door-3">
+  <div class="door" data-day="1">
+    <canvas class="scratch-canvas"></canvas>
+    <span class="door_number">1</span>
+    
+    <div class="door-hidden-content">
+      <img src="images/whiskey1.jpg" alt="Whiskey 1" class="whiskey-img">
+      <h3>Bourbon Name #1</h3>
+      <p>Notes of vanilla, oak, and holiday cheer.</p>
+      <a href="#" class="btn">Buy Now</a>
+      <a href="#" class="btn">Read Review</a>
+    </div>
+  </div>
+
+  <div class="door" data-day="2">
+    <canvas class="scratch-canvas"></canvas>
+    <span class="door_number">2</span>
+    <div class="door-hidden-content">
+      <img src="images/whiskey2.jpg" alt="Whiskey 2" class="whiskey-img">
+      <h3>Bourbon Name #2</h3>
+      <p>A spicy rye finish with caramel undertones.</p>
+      <a href="#" class="btn">Buy Now</a>
+    </div>
+  </div>
+
+  <div class="door" data-day="3">
     <canvas class="scratch-canvas"></canvas>
     <span class="door_number">3</span>
-    <div class="door-content">
-      <img src="images/4R_SB.jpg" class="whiskey-img">
+    <div class="door-hidden-content">
+      <img src="images/4R_SB.jpg" alt="Four Roses" class="whiskey-img">
+      <h3>Four Roses Single Barrel</h3>
       <p>Enjoy a warm, smoky bourbon.</p>
     </div>
   </div>
 
-  <div class="door" id="door-4">
-    <canvas class="scratch-canvas"></canvas>
-    <span class="door_number">4</span>
-    <div class="door-content">
-      <img src="whiskey2.jpg" class="whiskey-img">
-      <p>Today, we have a rich, aged whiskey.</p>
-    </div>
-  </div>
-
-  <!-- Repeat properly up to door 12 -->
-  <!-- ... -->
-
 </section>
+
+<div id="whiskeyModal" class="modal">
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <div id="modal-body">
+        </div>
+  </div>
+</div>
 
 <script src="scripts.js"></script>
 </body>
