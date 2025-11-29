@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const checkReveal = () => {
       if (percentScratched() > 0.5) {
         canvas.remove();            // remove foil
+     if (number) number.remove();        // remove the door number
         door.classList.add('revealed');
       }
     };
