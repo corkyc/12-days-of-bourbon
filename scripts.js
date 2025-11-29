@@ -19,14 +19,8 @@ doors.forEach(door => {
 document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll('.door').forEach(door => {
     door.addEventListener('click', () => {
-      const number = door.querySelector('.door_number');
-      if (number) {
-        if (number.style.display === 'none') {
-          number.style.display = 'block';   // show it
-        } else {
-          number.style.display = 'none';    // hide it
-        }
-      }
+      // toggle a class on the door which CSS uses to hide/show the number
+      door.classList.toggle('number-hidden');
     });
   });
 });
