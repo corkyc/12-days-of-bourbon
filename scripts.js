@@ -15,3 +15,14 @@ doors.forEach(door => {
     door.classList.toggle('open'); // Toggle the door content visibility
   });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('.day-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const number = card.querySelector('.day-number');
+      if (number) {
+        number.style.display = 'none';
+      }
+    });
+  });
+});
