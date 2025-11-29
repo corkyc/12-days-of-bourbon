@@ -67,7 +67,7 @@ header h1 {
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: pan-y; /* FIX: allow vertical scroll, block horizontal */
+  touch-action: none
 }
 
 /* The scratch canvas must cover entire door */
