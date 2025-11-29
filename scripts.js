@@ -17,11 +17,15 @@ doors.forEach(door => {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll('.door').forEach(card => {
-    card.addEventListener('click', () => {
-      const number = card.querySelector('.door_number');
+  document.querySelectorAll('.door').forEach(door => {
+    door.addEventListener('click', () => {
+      const number = door.querySelector('.door_number');
       if (number) {
-        number.style.display = 'none';
+        if (number.style.display === 'none') {
+          number.style.display = 'block';   // show it
+        } else {
+          number.style.display = 'none';    // hide it
+        }
       }
     });
   });
