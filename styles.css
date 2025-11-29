@@ -138,8 +138,21 @@ body::after {
   background-size: cover;
   background-position: center;
 }
+
+/* allow clicks to reach the door behind the number */
 .door_number {
   pointer-events: none;
+  transition: opacity 200ms ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* when the door has this helper class, hide the number */
+.door.number-hidden .door_number {
+  opacity: 0;
+  visibility: hidden;
+}
+
 }
 .door span {
   font-size: 3em;
