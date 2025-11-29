@@ -138,7 +138,9 @@ body::after {
   background-size: cover;
   background-position: center;
 }
-
+.door_number {
+  pointer-events: none;
+}
 .door span {
   font-size: 3em;
   z-index: 10;
