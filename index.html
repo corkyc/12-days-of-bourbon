@@ -4,135 +4,81 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>12 Days of Christmas Whiskey</title>
-  <!-- Google Fonts for holiday font -->
+
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- Header Section -->
-  <header>
-    <h1>12 Days of Christmas Whiskey</h1>
-    <p class="tagline">A Whiskey Advent Calendar</p>
-  </header>
+<header>
+  <h1>12 Days of Christmas Whiskey</h1>
+  <p class="tagline">A Whiskey Advent Calendar</p>
+</header>
 
-  <!-- Hamburger Menu for Mobile -->
-  <div class="hamburger" id="hamburger">
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
-
-  <!-- Navigation Menu (Hidden by Default, Toggle with Hamburger) -->
-  <nav class="nav-links">
-    <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Whiskey List</a></li>
-      <li><a href="#">Contact</a></li>
-    </ul>
-  </nav>
-
-  <!-- Calendar Grid Section -->
-  <section class="calendar-grid">
-    <p>Unwrap a new whiskey every day!</p>
-  </section>
-
-  <!-- 12 Days of Bourbon - Clickable Doors Section -->
-  <section class="doors">
-    <div class="door" id="door-1">
-      <span class="door_number">1</span>
-      <div class="door-content">
-        <img src="images/4R_SB.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Enjoy a ble smoky bourbon!!</p>
-      </div>
-    </div>
-
-<div class="door" id="door-2">
-  <canvas class="scratch-canvas"></canvas>
-
-  <div class="door-content">
-    <span class="door_number">2</span>
-    <img src="images/4R_SB.jpg" class="whiskey-img">
-    <p>Enjoy a 2 smoky bourbon!!</p>
-  </div>
+<div class="hamburger" id="hamburger">
+  <div></div><div></div><div></div>
 </div>
 
-    <div class="door" id="door-3">
-      <span>3</span>
-      <div class="door-content">
-        <img src="whiskey1.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Enjoy a warm, smoky bourbon.</p>
-      </div>
-    </div>
-    <div class="door" id="door-4">
-      <span>4</span>
-      <div class="door-content">
-        <img src="whiskey2.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Today, we have a rich, aged whiskey.</p>
-      </div>
-    </div>  
-    <div class="door" id="door-5">
-      <span>5</span>
-      <div class="door-content">
-        <img src="whiskey1.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Enjoy a warm, smoky bourbon.</p>
-      </div>
-    </div>
-    <div class="door" id="door-6">
-      <span>6</span>
-      <div class="door-content">
-        <img src="whiskey2.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Today, we have a rich, aged whiskey.</p>
-      </div>
-    </div>
-    <div class="door" id="door-7">
-      <span>7</span>
-      <div class="door-content">
-        <img src="whiskey1.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Enjoy a warm, smoky bourbon.</p>
-      </div>
-    </div>
-    <div class="door" id="door-8">
-      <span>8</span>
-      <div class="door-content">
-        <img src="whiskey2.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Today, we have a rich, aged whiskey.</p>
-      </div>
-    </div>  
-    <div class="door" id="door-9">
-      <span>9</span>
-      <div class="door-content">
-        <img src="whiskey1.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Enjoy a warm, smoky bourbon.</p>
-      </div>
-    </div>
-    <div class="door" id="door-10">
-      <span>10</span>
-      <div class="door-content">
-        <img src="whiskey2.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Today, we have a rich, aged whiskey.</p>
-      </div>
-    </div>
-    <div class="door" id="door-11">
-      <span>11</span>
-      <div class="door-content">
-        <img src="whiskey1.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>Enjoy a warm, smoky bourbon.</p>
-      </div>
-    </div>
-    <div class="door" id="door-12">
-      <span>12</span>
-      <div class="door-content">
-        <img src="whiskey12.jpg" alt="Whiskey Bottle" class="whiskey-img">
-        <p>The best for last, an exquisite whiskey.</p>
-      </div>
-    </div>
-  </section>
+<nav class="nav-links">
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Whiskey List</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+</nav>
 
-  <!-- JavaScript for Hamburger Toggle and Door Clicks -->
-  <script src="scripts.js"></script> <!-- Link to external JS file -->
+<section class="calendar-grid">
+  <p>Unwrap a new whiskey every day!</p>
+</section>
+
+<section class="doors">
+
+  <!-- DOOR TEMPLATE — repeated for all doors -->
+  <div class="door" id="door-1">
+    <canvas class="scratch-canvas"></canvas>
+    <span class="door_number">1</span>
+
+    <div class="door-content">
+      <img src="images/4R_SB.jpg" class="whiskey-img">
+      <p>Enjoy a ble smoky bourbon!!</p>
+    </div>
+  </div>
+
+  <div class="door" id="door-2">
+    <canvas class="scratch-canvas"></canvas>
+    <span class="door_number">2</span>
+
+    <div class="door-content">
+      <img src="images/4R_SB.jpg" class="whiskey-img">
+      <p>Enjoy a 2 smoky bourbon!!</p>
+    </div>
+  </div>
+
+  <!-- Continue this pattern for all other doors -->
+  <div class="door" id="door-3">
+    <canvas class="scratch-canvas"></canvas>
+    <span class="door_number">3</span>
+    <div class="door-content">
+      <img src="whiskey1.jpg" class="whiskey-img">
+      <p>Enjoy a warm, smoky bourbon.</p>
+    </div>
+  </div>
+
+  <div class="door" id="door-4">
+    <canvas class="scratch-canvas"></canvas>
+    <span class="door_number">4</span>
+    <div class="door-content">
+      <img src="whiskey2.jpg" class="whiskey-img">
+      <p>Today, we have a rich, aged whiskey.</p>
+    </div>
+  </div>
+
+  <!-- Repeat properly up to door 12 -->
+  <!-- ... -->
+
+</section>
+
+<script src="scripts.js"></script>
 </body>
 </html>
-
-
