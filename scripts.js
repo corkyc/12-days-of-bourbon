@@ -1,103 +1,107 @@
-// Hamburger Menu
-const hamburger = document.getElementById('hamburger');
-const navMenu = document.querySelector('.nav-links');
-
-hamburger.addEventListener('click', () => {
-  navMenu.classList.toggle('active');
-});
-
-// Door opening + number hiding
-document.querySelectorAll('.door').forEach(door => {
-  door.addEventListener('click', () => {
-    door.classList.toggle('open');
-    door.classList.toggle('number-hidden');
-  });
-});
-
 document.addEventListener("DOMContentLoaded", () => {
+    
+    // --- 1. MODAL VARIABLES ---
+    const modal = document.getElementById("whiskeyModal");
+    const modalBody = document.getElementById("modal-body");
+    const closeBtn = document.querySelector(".close-button");
 
-  document.querySelectorAll('.scratch-canvas').forEach(canvas => {
-    const door = canvas.parentElement;
-    const number = door.querySelector('.door_number');
-    const content = door.querySelector('.door-content');
-    const ctx = canvas.getContext('2d');
+    // --- 2. SETUP SCRATCH CANVASES ---
+    const doors = document.querySelectorAll('.door');
 
-    // Size canvas same as door
-    const resize = () => {
-      canvas.width = door.offsetWidth;
-      canvas.height = door.offsetHeight;
+    doors.forEach(door => {
+        const canvas = door.querySelector('.scratch-canvas');
+        const number = door.querySelector('.door_number');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
 
-      ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "#AFAFAF"; // foil color
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    };
+        // Set Canvas Size
+        const resizeCanvas = () => {
+            canvas.width = door.offsetWidth;
+            canvas.height = door.offsetHeight;
+            
+            // Fill with Silver Foil
+            ctx.fillStyle = "#C0C0C0"; // Silver
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        };
+        
+        resizeCanvas();
+        // Handle window resize (optional, might reset scratch)
+        // window.addEventListener('resize', resizeCanvas);
 
-    resize();
-    window.addEventListener('resize', resize);
+        // --- SCRATCH LOGIC ---
+        const getBrushPos = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            // Handle both touch and mouse
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        };
 
-    let scratching = false;
-    const radius = 28;
+        const scratch = (e) => {
+            if (!isDrawing) return;
+            e.preventDefault(); // Stop scrolling while scratching
 
-    const scratch = (x, y) => {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fill();
-    };
+            const pos = getBrushPos(e);
+            ctx.globalCompositeOperation = "destination-out";
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, 20, 0, Math.PI * 2); // Brush size
+            ctx.fill();
+        };
 
-    const percentScratched = () => {
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let clear = 0;
+        const checkPercent = () => {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            let transparentPixels = 0;
 
-      for (let i = 3; i < data.length; i += 4) {
-        if (data[i] === 0) clear++;
-      }
+            // Check every 4th pixel (optimization)
+            for (let i = 3; i < pixels.length; i += 4) {
+                if (pixels[i] === 0) transparentPixels++;
+            }
 
-      return clear / (data.length / 4);
-    };
+            const percent = transparentPixels / (pixels.length / 4);
 
-    const checkReveal = () => {
-      if (percentScratched() > 0.5) {
-        canvas.remove();            // remove foil
-     if (number) number.remove();        // remove the door number
-        door.classList.add('revealed');
-      }
-    };
+            // If 40% scratched, reveal the door
+            if (percent > 0.4) {
+                revealDoor();
+            }
+        };
 
-    // TOUCH EVENTS
-    canvas.addEventListener("touchstart", e => {
-      scratching = true;
-      const rect = canvas.getBoundingClientRect();
-      scratch(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
-      checkReveal();
+        const revealDoor = () => {
+            canvas.style.display = 'none'; // Hide canvas
+            if(number) number.style.display = 'none'; // Hide number
+            door.classList.add('revealed'); // Mark as ready for clicking
+        };
+
+        // --- EVENTS FOR SCRATCHING ---
+        // Mouse
+        canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
+        canvas.addEventListener('mousemove', (e) => { scratch(e); });
+        canvas.addEventListener('mouseup', () => { isDrawing = false; checkPercent(); });
+        canvas.addEventListener('mouseleave', () => { isDrawing = false; });
+        
+        // Touch
+        canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); });
+        canvas.addEventListener('touchmove', (e) => { scratch(e); });
+        canvas.addEventListener('touchend', () => { isDrawing = false; checkPercent(); });
+
+
+        // --- 3. CLICK TO OPEN MODAL (ONLY AFTER REVEAL) ---
+        door.addEventListener('click', (e) => {
+            // Only open if the door is fully revealed
+            if (door.classList.contains('revealed')) {
+                const content = door.querySelector('.door-hidden-content').innerHTML;
+                modalBody.innerHTML = content;
+                modal.style.display = "block";
+            }
+        });
     });
 
-    canvas.addEventListener("touchmove", e => {
-      if (!scratching) return;
-      const rect = canvas.getBoundingClientRect();
-      scratch(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
-      checkReveal();
-    });
-
-    canvas.addEventListener("touchend", () => scratching = false);
-
-    // MOUSE EVENTS (desktop)
-    canvas.addEventListener("mousedown", e => {
-      scratching = true;
-      const rect = canvas.getBoundingClientRect();
-      scratch(e.clientX - rect.left, e.clientY - rect.top);
-      checkReveal();
-    });
-
-    canvas.addEventListener("mousemove", e => {
-      if (!scratching) return;
-      const rect = canvas.getBoundingClientRect();
-      scratch(e.clientX - rect.left, e.clientY - rect.top);
-      checkReveal();
-    });
-
-    canvas.addEventListener("mouseup", () => scratching = false);
-
-  });
-
+    // --- 4. CLOSE MODAL LOGIC ---
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => {
+        if (e.target == modal) modal.style.display = "none";
+    };
 });
