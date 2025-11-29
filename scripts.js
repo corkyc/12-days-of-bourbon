@@ -24,3 +24,43 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('.scratch-canvas').forEach(canvas => {
+    const ctx = canvas.getContext('2d');
+    const door = canvas.parentElement;
+
+    // Size canvas to match the door
+    canvas.width = door.offsetWidth;
+    canvas.height = door.offsetHeight;
+
+    // Fill with scratch-off covering color or image
+    ctx.fillStyle = "#AFAFAF";  // scratch-off color
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let scratching = false;
+
+    const scratch = (x, y) => {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    canvas.addEventListener("touchstart", e => {
+      scratching = true;
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+    });
+
+    canvas.addEventListener("touchmove", e => {
+      if (!scratching) return;
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+    });
+
+    canvas.addEventListener("touchend", () => scratching = false);
+  });
+});
