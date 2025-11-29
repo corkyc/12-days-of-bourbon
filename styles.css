@@ -158,6 +158,12 @@ body::after {
   border-radius: inherit;
 }
 
+/* Make sure the content shows under the scratch layer */
+.door > .door_number,
+.door > .door-content {
+  position: relative;
+  z-index: 2; 
+}
 /* allow clicks to reach the door behind the number */
 .door_number {
   pointer-events: none;
