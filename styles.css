@@ -1,242 +1,141 @@
 /* ===========================
-   GLOBAL RESET & PAGE STYLING
+   GLOBAL & HEADER
    =========================== */
 body {
   margin: 0;
   font-family: 'Georgia', serif;
-  box-sizing: border-box;
   background-color: #2C1D1D;
   color: #f8f8f8;
   text-align: center;
-  position: relative;
 }
 
-/* Snowflakes */
-body::before {
-  content: "❄️ ❄️ ❄️ ❄️ ❄️ ❄️";
-  font-size: 2em;
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  opacity: 0.5;
-}
-
-body::after {
-  content: "❄️ ❄️ ❄️ ❄️";
-  font-size: 3em;
-  position: absolute;
-  top: 75px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  opacity: 0.3;
-}
-
-/* ===========================
-   HEADER
-   =========================== */
 header {
   background-color: #8B5D3D;
-  color: white;
-  padding: 40px 0;
+  padding: 30px 0;
   font-family: 'Great Vibes', cursive;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-header h1 {
-  font-size: 3.5em;
-  margin: 0;
-}
-
-.tagline {
-  font-size: 1.5em;
-  font-style: italic;
-  margin-top: 10px;
-  color: #f0c674;
-}
+header h1 { font-size: 3em; margin: 0; }
+.tagline { color: #f0c674; font-size: 1.2em; }
 
 /* ===========================
-   NAVIGATION
-   =========================== */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  width: 30px;
-  height: 25px;
-  margin: 20px;
-  cursor: pointer;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.hamburger div {
-  background-color: #f8f8f8;
-  height: 4px;
-  width: 100%;
-  transition: 0.3s;
-}
-
-.nav-links {
-  display: flex;
-  justify-content: center;
-  background-color: #8B5D3D;
-  padding: 10px;
-  z-index: 15;
-}
-
-.nav-links ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-}
-
-.nav-links ul li {
-  margin: 0 15px;
-}
-
-.nav-links ul li a {
-  color: white;
-  text-decoration: none;
-  padding: 5px 10px;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.nav-links ul li a:hover {
-  color: #f0c674;
-}
-
-/* ===========================
-   CALENDAR GRID TITLE
-   =========================== */
-.calendar-grid {
-  padding: 20px;
-  font-size: 1.5em;
-  color: #f0c674;
-  background-color: #3C2F2F;
-}
-
-/* ===========================
-   DOOR GRID
+   GRID SYSTEM
    =========================== */
 .doors {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   padding: 20px;
-  background-color: #3C2F2F;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 /* ===========================
-   INDIVIDUAL DOOR
+   THE DOOR CARD
    =========================== */
 .door {
   position: relative;
-  height: 150px;
-  cursor: pointer;
+  height: 200px;
   border-radius: 10px;
-  overflow: hidden;
-  background-color: #8B5D3D;
-  background-image: url('whiskey-background.png');
-  background-size: cover;
-  background-position: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden; /* Keeps canvas inside rounded corners */
+  background-color: #3C2F2F; /* Dark background revealed after scratch */
+  border: 2px solid #5a3a25;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  cursor: pointer;
+  
+  /* Flex to center the "After Scratch" preview if you want one */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ===========================
-   SCRATCH FOIL CANVAS
-   (TOP LAYER)
-   =========================== */
-.scratch-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  z-index: 10;       /* <-- MUST BE ABOVE EVERYTHING */
-  pointer-events: auto;
-  touch-action: none;
-}
-
-/* ===========================
-   DOOR NUMBER
-   (VISIBLE BEFORE SCRATCH)
-   =========================== */
+/* 1. The Number (Sits on top of canvas? No, usually under or sandwich)
+   In this design: Number is on TOP of foil to be seen, 
+   but we remove it when foil is scratched. */
 .door_number {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 3em;
+  font-size: 4em;
   font-weight: bold;
-  z-index: 10;
-  pointer-events: none; /* allow scratching */
+  color: #333; /* Dark color to contrast with silver foil */
+  z-index: 15;
+  pointer-events: none; /* Let clicks pass through to canvas */
+  transition: opacity 0.5s;
 }
 
-/* hide number after JS flags it */
-.door.number-hidden .door_number {
-  opacity: 0;
-}
-
-/* ===========================
-   DOOR CONTENT
-   (SHOWN AFTER SCRATCH)
-   Hidden by default
-   =========================== */
-.door-content {
+/* 2. The Scratch Foil */
+.scratch-canvas {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: none;        /* hidden until .open class */
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  background-color: rgba(0,0,0,0.7);
-  color: white;
-  font-size: 1.2em;
-  padding: 20px;
-  z-index: 3;          /* BELOW number, BELOW scratch */
-}
-.door.revealed .door-content {
-  display: flex;
-}
-.door.open .door-content {
-  display: flex;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 10;
+  cursor: crosshair;
 }
 
-.whiskey-img {
-  width: 100px;
-  border-radius: 5px;
-  margin-bottom: 10px;
+/* 3. The Hidden Content (Stores data, not shown in grid) */
+.door-hidden-content {
+  display: none; 
+}
+
+/* Visual cue when door is revealed */
+.door.revealed {
+  border-color: #f0c674;
+}
+
+/* Background image for revealed door (Optional: generic whiskey pattern) */
+.door.revealed::after {
+  content: "🥃 Click for Details";
+  color: #f0c674;
+  font-weight: bold;
 }
 
 /* ===========================
-   MOBILE RESPONSIVE
+   MODAL POPUP
    =========================== */
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 2000; 
+  left: 0; top: 0;
+  width: 100%; height: 100%; 
+  background-color: rgba(0,0,0,0.8);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 30px;
+  width: 90%; max-width: 500px;
+  border-radius: 8px;
+  text-align: center;
+  color: #333;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  right: 15px; top: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  color: #888;
+}
+
+/* Button styling inside modal */
+.btn {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #8B5D3D;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+.btn:hover { background-color: #6d462e; }
+
+/* Responsive */
 @media (max-width: 768px) {
-  .hamburger { display: flex; }
-
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    background-color: #8B5D3D;
-    width: 100%;
-  }
-
-  .nav-links.active { display: flex; }
-
-  .nav-links ul { display: block; }
-
-  .nav-links ul li { margin: 10px 0; }
-
-  .doors { grid-template-columns: repeat(2, 1fr); }
+  .hamburger { display: block; /* Add your hamburger styles back if needed */ }
+  .nav-links { display: none; }
 }
