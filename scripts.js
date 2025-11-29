@@ -1,66 +1,79 @@
-// Get the hamburger menu and the nav links
+// Hamburger Menu
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.querySelector('.nav-links');
 
-// Toggle the active class to show/hide the navigation menu
 hamburger.addEventListener('click', () => {
   navMenu.classList.toggle('active');
 });
 
-// Handle door clicks to show the content behind each door
-const doors = document.querySelectorAll('.door');
-
-doors.forEach(door => {
+// Door opening + number hiding
+document.querySelectorAll('.door').forEach(door => {
   door.addEventListener('click', () => {
-    door.classList.toggle('open'); // Toggle the door content visibility
+    door.classList.toggle('open');
+    door.classList.toggle('number-hidden');
   });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll('.door').forEach(door => {
-    door.addEventListener('click', () => {
-      // toggle a class on the door which CSS uses to hide/show the number
-      door.classList.toggle('number-hidden');
-    });
-  });
-});
+// SCRATCH-OFF FUNCTION
+document.addEventListener("DOMContentLoaded", () => {
 
-document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll('.scratch-canvas').forEach(canvas => {
-    const ctx = canvas.getContext('2d');
     const door = canvas.parentElement;
+    const ctx = canvas.getContext('2d');
 
-    // Size canvas to match the door
-    canvas.width = door.offsetWidth;
-    canvas.height = door.offsetHeight;
+    // Resize canvas to match its door
+    const resizeCanvas = () => {
+      canvas.width = door.offsetWidth;
+      canvas.height = door.offsetHeight;
 
-    // Fill with scratch-off covering color or image
-    ctx.fillStyle = "#AFAFAF";  // scratch-off color
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "#AFAFAF"; // Gray scratch layer
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    };
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
     let scratching = false;
 
     const scratch = (x, y) => {
       ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.arc(x, y, 28, 0, Math.PI * 2);
       ctx.fill();
     };
 
+    // TOUCH
     canvas.addEventListener("touchstart", e => {
       scratching = true;
       const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+      const t = e.touches[0];
+      scratch(t.clientX - rect.left, t.clientY - rect.top);
     });
 
     canvas.addEventListener("touchmove", e => {
       if (!scratching) return;
       const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+      const t = e.touches[0];
+      scratch(t.clientX - rect.left, t.clientY - rect.top);
     });
 
     canvas.addEventListener("touchend", () => scratching = false);
+
+    // MOUSE (optional for desktop)
+    canvas.addEventListener("mousedown", e => {
+      scratching = true;
+      const rect = canvas.getBoundingClientRect();
+      scratch(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    canvas.addEventListener("mousemove", e => {
+      if (!scratching) return;
+      const rect = canvas.getBoundingClientRect();
+      scratch(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    canvas.addEventListener("mouseup", () => scratching = false);
   });
+
 });
