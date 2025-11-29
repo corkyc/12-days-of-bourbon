@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>12 Days of Christmas Whiskey</title>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -14,11 +14,11 @@
   <p class="tagline">Scratch the number, then click to reveal!</p>
 </header>
 
-<div class="hamburger" id="hamburger">
+<div class="hamburger" id="hamburger" aria-label="Toggle menu" role="button" tabindex="0">
   <div></div><div></div><div></div>
 </div>
 
-<nav class="nav-links">
+<nav class="nav-links" aria-label="Main navigation">
   <ul>
     <li><a href="#">Home</a></li>
     <li><a href="#">About</a></li>
@@ -27,13 +27,13 @@
   </ul>
 </nav>
 
-<section class="doors">
+<section class="doors" aria-live="polite">
 
-  <div class="door" data-day="1">
-    <canvas class="scratch-canvas"></canvas>
+  <div class="door" data-day="1" tabindex="0" role="button" aria-pressed="false">
+    <canvas class="scratch-canvas" aria-hidden="true"></canvas>
     <span class="door_number">1</span>
-    
-    <div class="door-hidden-content">
+
+    <div class="door-hidden-content" aria-hidden="true">
       <img src="images/whiskey1.jpg" alt="Whiskey 1" class="whiskey-img">
       <h3>Bourbon Name #1</h3>
       <p>Notes of vanilla, oak, and holiday cheer.</p>
@@ -42,10 +42,11 @@
     </div>
   </div>
 
-  <div class="door" data-day="2">
-    <canvas class="scratch-canvas"></canvas>
+  <div class="door" data-day="2" tabindex="0" role="button" aria-pressed="false">
+    <canvas class="scratch-canvas" aria-hidden="true"></canvas>
     <span class="door_number">2</span>
-    <div class="door-hidden-content">
+
+    <div class="door-hidden-content" aria-hidden="true">
       <img src="images/whiskey2.jpg" alt="Whiskey 2" class="whiskey-img">
       <h3>Bourbon Name #2</h3>
       <p>A spicy rye finish with caramel undertones.</p>
@@ -53,23 +54,25 @@
     </div>
   </div>
 
-  <div class="door" data-day="3">
-    <canvas class="scratch-canvas"></canvas>
+  <div class="door" data-day="3" tabindex="0" role="button" aria-pressed="false">
+    <canvas class="scratch-canvas" aria-hidden="true"></canvas>
     <span class="door_number">3</span>
-    <div class="door-hidden-content">
+
+    <div class="door-hidden-content" aria-hidden="true">
       <img src="images/4R_SB.jpg" alt="Four Roses" class="whiskey-img">
       <h3>Four Roses Single Barrel</h3>
       <p>Enjoy a warm, smoky bourbon.</p>
     </div>
   </div>
 
+  <!-- add more .door blocks for days 4..12 as needed -->
+
 </section>
 
-<div id="whiskeyModal" class="modal">
+<div id="whiskeyModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modal-content">
-    <span class="close-button">&times;</span>
-    <div id="modal-body">
-        </div>
+    <button class="close-button" aria-label="Close modal">&times;</button>
+    <div id="modal-body"></div>
   </div>
 </div>
 
