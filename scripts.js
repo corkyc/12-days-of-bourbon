@@ -14,66 +14,89 @@ document.querySelectorAll('.door').forEach(door => {
   });
 });
 
-// SCRATCH-OFF FUNCTION
 document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll('.scratch-canvas').forEach(canvas => {
     const door = canvas.parentElement;
+    const number = door.querySelector('.door_number');
+    const content = door.querySelector('.door-content');
     const ctx = canvas.getContext('2d');
 
-    // Resize canvas to match its door
-    const resizeCanvas = () => {
+    // Size canvas same as door
+    const resize = () => {
       canvas.width = door.offsetWidth;
       canvas.height = door.offsetHeight;
 
       ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "#AFAFAF"; // Gray scratch layer
+      ctx.fillStyle = "#AFAFAF"; // foil color
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    resize();
+    window.addEventListener('resize', resize);
 
     let scratching = false;
+    const radius = 28;
 
     const scratch = (x, y) => {
       ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
-      ctx.arc(x, y, 28, 0, Math.PI * 2);
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
       ctx.fill();
     };
 
-    // TOUCH
+    const percentScratched = () => {
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      let clear = 0;
+
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] === 0) clear++;
+      }
+
+      return clear / (data.length / 4);
+    };
+
+    const checkReveal = () => {
+      if (percentScratched() > 0.5) {
+        canvas.remove();            // remove foil
+        door.classList.add('revealed');
+      }
+    };
+
+    // TOUCH EVENTS
     canvas.addEventListener("touchstart", e => {
       scratching = true;
       const rect = canvas.getBoundingClientRect();
-      const t = e.touches[0];
-      scratch(t.clientX - rect.left, t.clientY - rect.top);
+      scratch(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+      checkReveal();
     });
 
     canvas.addEventListener("touchmove", e => {
       if (!scratching) return;
       const rect = canvas.getBoundingClientRect();
-      const t = e.touches[0];
-      scratch(t.clientX - rect.left, t.clientY - rect.top);
+      scratch(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+      checkReveal();
     });
 
     canvas.addEventListener("touchend", () => scratching = false);
 
-    // MOUSE (optional for desktop)
+    // MOUSE EVENTS (desktop)
     canvas.addEventListener("mousedown", e => {
       scratching = true;
       const rect = canvas.getBoundingClientRect();
       scratch(e.clientX - rect.left, e.clientY - rect.top);
+      checkReveal();
     });
 
     canvas.addEventListener("mousemove", e => {
       if (!scratching) return;
       const rect = canvas.getBoundingClientRect();
       scratch(e.clientX - rect.left, e.clientY - rect.top);
+      checkReveal();
     });
 
     canvas.addEventListener("mouseup", () => scratching = false);
+
   });
 
 });
