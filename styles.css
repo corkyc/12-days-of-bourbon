@@ -112,14 +112,6 @@ body::after {
   background-color: #3C2F2F; /* Darker brown for contrast */
 }
 
-.scratch-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 3;
-  touch-action: none;  /* needed for mobile */
-}
-
 /* 12 Days of Christmas Whiskey Doors Styling */
 .doors {
   display: grid;
@@ -145,6 +137,25 @@ body::after {
   background-image: url('whiskey-background.png'); /* Optional whiskey background image */
   background-size: cover;
   background-position: center;
+}
+
+/* Add this for scratch-off functionality */
+.door {
+  position: relative;   /* you already have this, but important */
+  overflow: hidden;     /* allows the scratch layer to stay contained */
+}
+
+/* The scratch-off layer */
+.scratch-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;          /* match .door size */
+  height: 100%;
+  z-index: 5;           /* sits ABOVE the number + content */
+  touch-action: none;   /* needed for mobile scratching */
+  pointer-events: auto; /* allow finger interaction */
+  border-radius: inherit;
 }
 
 /* allow clicks to reach the door behind the number */
