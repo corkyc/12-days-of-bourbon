@@ -1,141 +1,158 @@
 /* ===========================
-   GLOBAL & HEADER
+   1. GLOBAL RESET & FONTS
    =========================== */
 body {
   margin: 0;
   font-family: 'Georgia', serif;
-  background-color: #2C1D1D;
+  box-sizing: border-box;
+  background-color: #2C1D1D; /* Dark Christmas Brown */
   color: #f8f8f8;
   text-align: center;
+  position: relative;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-header {
-  background-color: #8B5D3D;
-  padding: 30px 0;
-  font-family: 'Great Vibes', cursive;
+/* Snowflakes Decoration (From your original code) */
+body::before {
+  content: "❄️ ❄️ ❄️ ❄️ ❄️ ❄️";
+  font-size: 2em;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1; /* Behind nav */
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-header h1 { font-size: 3em; margin: 0; }
-.tagline { color: #f0c674; font-size: 1.2em; }
+body::after {
+  content: "❄️ ❄️ ❄️ ❄️";
+  font-size: 3em;
+  position: absolute;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  opacity: 0.3;
+  pointer-events: none;
+}
 
 /* ===========================
-   GRID SYSTEM
+   2. HEADER & NAVIGATION
+   =========================== */
+header {
+  background-color: #8B5D3D;
+  color: white;
+  padding: 40px 0 20px 0;
+  font-family: 'Great Vibes', cursive;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 5;
+}
+
+header h1 {
+  font-size: 3.5em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.tagline {
+  font-size: 1.5em;
+  font-style: italic;
+  margin-top: 10px;
+  color: #f0c674; /* Gold */
+}
+
+/* Navigation Container */
+.nav-links {
+  display: flex;
+  justify-content: center;
+  background-color: #7a4e33;
+  padding: 15px;
+  border-bottom: 2px solid #5a3a25;
+}
+
+.nav-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+}
+
+.nav-links ul li {
+  margin: 0 20px;
+}
+
+.nav-links ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1em;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.nav-links ul li a:hover {
+  color: #f0c674;
+}
+
+/* ===========================
+   3. HAMBURGER MENU (MOBILE)
+   =========================== */
+.hamburger {
+  display: none; /* Hidden by default on desktop */
+  flex-direction: column;
+  width: 35px;
+  height: 25px;
+  cursor: pointer;
+  justify-content: space-between;
+  
+  /* Positioning absolute to sit in top-left */
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+}
+
+.hamburger div {
+  background-color: #fff;
+  height: 4px;
+  width: 100%;
+  border-radius: 4px;
+  transition: 0.3s;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+/* ===========================
+   4. DOORS GRID SYSTEM
    =========================== */
 .doors {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr); /* 4 columns for desktop */
   gap: 20px;
-  padding: 20px;
-  max-width: 1000px;
+  padding: 40px 20px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
-/* ===========================
-   THE DOOR CARD
-   =========================== */
+/* The Door Card */
 .door {
   position: relative;
-  height: 200px;
-  border-radius: 10px;
-  overflow: hidden; /* Keeps canvas inside rounded corners */
-  background-color: #3C2F2F; /* Dark background revealed after scratch */
-  border: 2px solid #5a3a25;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  cursor: pointer;
+  height: 250px; /* Taller for better scratching area */
+  border-radius: 12px;
+  overflow: hidden; 
+  background-color: #3C2F2F; /* The background seen AFTER scratching */
+  border: 4px solid #5a3a25;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
   
-  /* Flex to center the "After Scratch" preview if you want one */
+  /* Centering logic for the "Revealed" state */
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* 1. The Number (Sits on top of canvas? No, usually under or sandwich)
-   In this design: Number is on TOP of foil to be seen, 
-   but we remove it when foil is scratched. */
-.door_number {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 4em;
-  font-weight: bold;
-  color: #333; /* Dark color to contrast with silver foil */
-  z-index: 15;
-  pointer-events: none; /* Let clicks pass through to canvas */
-  transition: opacity 0.5s;
-}
-
-/* 2. The Scratch Foil */
-.scratch-canvas {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 10;
-  cursor: crosshair;
-}
-
-/* 3. The Hidden Content (Stores data, not shown in grid) */
-.door-hidden-content {
-  display: none; 
-}
-
-/* Visual cue when door is revealed */
-.door.revealed {
-  border-color: #f0c674;
-}
-
-/* Background image for revealed door (Optional: generic whiskey pattern) */
-.door.revealed::after {
-  content: "🥃 Click for Details";
-  color: #f0c674;
-  font-weight: bold;
+  flex-direction: column;
+  
+  cursor: pointer; /* Indicates it is clickable */
+  touch-action: none; /* Prevents scrolling while scratching on mobile */
 }
 
 /* ===========================
-   MODAL POPUP
-   =========================== */
-.modal {
-  display: none; 
-  position: fixed; 
-  z-index: 2000; 
-  left: 0; top: 0;
-  width: 100%; height: 100%; 
-  background-color: rgba(0,0,0,0.8);
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
-  background-color: #fff;
-  margin: 10% auto;
-  padding: 30px;
-  width: 90%; max-width: 500px;
-  border-radius: 8px;
-  text-align: center;
-  color: #333;
-  position: relative;
-}
-
-.close-button {
-  position: absolute;
-  right: 15px; top: 10px;
-  font-size: 30px;
-  cursor: pointer;
-  color: #888;
-}
-
-/* Button styling inside modal */
-.btn {
-  display: inline-block;
-  margin: 10px;
-  padding: 10px 20px;
-  background-color: #8B5D3D;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-}
-.btn:hover { background-color: #6d462e; }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .hamburger { display: block; /* Add your hamburger styles back if needed */ }
-  .nav-links { display: none; }
-}
+   5
