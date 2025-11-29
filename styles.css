@@ -170,13 +170,14 @@ header h1 {
    (VISIBLE BEFORE SCRATCH)
    =========================== */
 .door_number {
-  position: relative;
-  z-index: 5;        /* under scratch, above background */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-size: 3em;
-  color: #fff;
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity .3s;
+  font-weight: bold;
+  z-index: 10;
+  pointer-events: none; /* allow scratching */
 }
 
 /* hide number after JS flags it */
@@ -205,7 +206,9 @@ header h1 {
   padding: 20px;
   z-index: 3;          /* BELOW number, BELOW scratch */
 }
-
+.door.revealed .door-content {
+  display: flex;
+}
 .door.open .door-content {
   display: flex;
 }
