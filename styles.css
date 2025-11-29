@@ -1,158 +1,168 @@
-/* ===========================
-   1. GLOBAL RESET & FONTS
-   =========================== */
+/* Reset & basics */
+* { box-sizing: border-box; }
+html,body { height: 100%; }
 body {
   margin: 0;
-  font-family: 'Georgia', serif;
-  box-sizing: border-box;
-  background-color: #2C1D1D; /* Dark Christmas Brown */
+  font-family: Georgia, 'Times New Roman', serif;
+  background-color: #2C1D1D;
   color: #f8f8f8;
   text-align: center;
-  position: relative;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
 }
 
-/* Snowflakes Decoration (From your original code) */
-body::before {
-  content: "❄️ ❄️ ❄️ ❄️ ❄️ ❄️";
-  font-size: 2em;
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1; /* Behind nav */
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-body::after {
-  content: "❄️ ❄️ ❄️ ❄️";
-  font-size: 3em;
-  position: absolute;
-  top: 75px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-/* ===========================
-   2. HEADER & NAVIGATION
-   =========================== */
+/* Header */
 header {
-  background-color: #8B5D3D;
-  color: white;
-  padding: 40px 0 20px 0;
-  font-family: 'Great Vibes', cursive;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-  position: relative;
+  background: #8B5D3D;
+  padding: 32px 16px 18px;
   z-index: 5;
 }
-
 header h1 {
-  font-size: 3.5em;
   margin: 0;
-  line-height: 1.2;
+  font-family: 'Great Vibes', cursive;
+  font-size: 3rem;
+  line-height: 1.1;
 }
+.tagline { margin-top: 8px; color: #f0c674; }
 
-.tagline {
-  font-size: 1.5em;
-  font-style: italic;
-  margin-top: 10px;
-  color: #f0c674; /* Gold */
-}
+/* Nav */
+.nav-links { background:#7a4e33; padding:12px; }
+.nav-links ul { list-style:none; margin:0; padding:0; display:flex; gap:20px; justify-content:center; }
+.nav-links a { color:#fff; text-decoration:none; font-weight:600; }
 
-/* Navigation Container */
-.nav-links {
-  display: flex;
-  justify-content: center;
-  background-color: #7a4e33;
-  padding: 15px;
-  border-bottom: 2px solid #5a3a25;
-}
-
-.nav-links ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-}
-
-.nav-links ul li {
-  margin: 0 20px;
-}
-
-.nav-links ul li a {
-  color: white;
-  text-decoration: none;
-  font-size: 1.1em;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.nav-links ul li a:hover {
-  color: #f0c674;
-}
-
-/* ===========================
-   3. HAMBURGER MENU (MOBILE)
-   =========================== */
+/* Hamburger for small screens */
 .hamburger {
-  display: none; /* Hidden by default on desktop */
-  flex-direction: column;
-  width: 35px;
-  height: 25px;
-  cursor: pointer;
-  justify-content: space-between;
-  
-  /* Positioning absolute to sit in top-left */
+  display:none;
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 18px;
+  left: 18px;
+  width: 34px;
+  height: 26px;
   z-index: 100;
+  cursor: pointer;
 }
+.hamburger div { height: 4px; background: #fff; margin:4px 0; border-radius:3px; }
 
-.hamburger div {
-  background-color: #fff;
-  height: 4px;
-  width: 100%;
-  border-radius: 4px;
-  transition: 0.3s;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-}
-
-/* ===========================
-   4. DOORS GRID SYSTEM
-   =========================== */
+/* Doors grid */
 .doors {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columns for desktop */
-  gap: 20px;
-  padding: 40px 20px;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 32px auto;
+  padding: 0 16px 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
 
-/* The Door Card */
+/* Each door */
 .door {
   position: relative;
-  height: 250px; /* Taller for better scratching area */
+  overflow: hidden;
+  height: 250px;
   border-radius: 12px;
-  overflow: hidden; 
-  background-color: #3C2F2F; /* The background seen AFTER scratching */
   border: 4px solid #5a3a25;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
-  
-  /* Centering logic for the "Revealed" state */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  
-  cursor: pointer; /* Indicates it is clickable */
-  touch-action: none; /* Prevents scrolling while scratching on mobile */
+  background: linear-gradient(180deg,#412f2f,#2b201f);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none; /* avoid passive touch scrolling while interacting */
 }
 
-/* ===========================
-   5
+/* The scratch canvas must cover entire door */
+.scratch-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 30;
+}
+
+/* Number on top of the scratched area */
+.door_number {
+  position: relative; /* remains above the hidden content but under canvas visually — we hide it when revealed */
+  z-index: 40;
+  font-size: 3rem;
+  font-weight: 700;
+  pointer-events: none; /* allow pointer events to hit the canvas */
+  color: #fff;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+/* Hidden content shown when revealed and inside modal click */
+.door-hidden-content {
+  position: absolute;
+  inset: 0;
+  padding: 14px;
+  z-index: 10;
+  opacity: 0;           /* hidden while overlay present */
+  transition: opacity .25s ease;
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+  align-items:center;
+  justify-content:center;
+}
+.door.revealed .door-hidden-content { opacity: 1; z-index: 5; }
+.door.revealed .door_number { display: none; }
+
+/* When revealed, hide canvas */
+.door.revealed .scratch-canvas { display: none; }
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.modal[aria-hidden="false"], .modal.show { display: flex; }
+.modal-content {
+  background: #fff;
+  color: #111;
+  max-width: 720px;
+  width: 92%;
+  padding: 20px;
+  border-radius: 10px;
+  position: relative;
+}
+.close-button {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  background: none;
+  border: 0;
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+  background:#8B5D3D;
+  color:#fff;
+  padding:8px 12px;
+  text-decoration:none;
+  border-radius:6px;
+  display:inline-block;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .doors { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 680px) {
+  .doors { grid-template-columns: repeat(2, 1fr); }
+  .hamburger { display:block; }
+  .nav-links { display:none; }
+  .nav-links.active { display:flex; flex-direction:column; gap:8px; }
+}
+@media (max-width: 420px) {
+  .doors { grid-template-columns: repeat(1, 1fr); }
+  header h1 { font-size: 2.2rem; }
+}
