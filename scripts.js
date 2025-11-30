@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const DPR = window.devicePixelRatio || 1;
-  const cards = Array.from(document.querySelectorAll(".card"));
+  const cards = Array.from(document.querySelectorAll(".card")); 
   const modal = document.getElementById("modal");
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
       mobileMenu.setAttribute('aria-hidden', 'true');
     });
 
-    // Close menu when clicking outside of it (optional polish)
     document.addEventListener('click', (e) => {
       if (mobileMenu.classList.contains('open') && 
           !mobileMenu.contains(e.target) && 
@@ -39,6 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
     modalBody.innerHTML = "";
     if (node && node.cloneNode) {
       const clone = node.cloneNode(true);
+      // Remove the number plate from the cloned content in the modal
+      const plate = clone.querySelector('.number-plate');
+      if (plate) {
+        plate.remove();
+      }
       modalBody.appendChild(clone);
     }
     if (modal) modal.setAttribute("aria-hidden", "false");
@@ -52,58 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (modal) modal.addEventListener("click", (e) => { 
     if (e.target === modal) closeModal(); 
   });
-
-  // --- CANVAS INIT ---
-  function initCanvas(card) {
-    const canvas = card.querySelector(".scratch");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    const imgSrc = card.dataset.img;
-    if (imgSrc) {
-      card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
-      card.style.backgroundSize = "cover";
-      card.style.backgroundPosition = "center";
-    }
-
-    const cssW = Math.max(1, Math.round(card.clientWidth));
-    const cssH = Math.max(1, Math.round(card.clientHeight));
-
-    canvas.style.width = cssW + "px";
-    canvas.style.height = cssH + "px";
-    canvas.width = Math.floor(cssW * DPR);
-    canvas.height = Math.floor(cssH * DPR);
-
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#d8d8d8"; 
-    ctx.fillRect(0, 0, cssW, cssH);
-
-    ctx.globalCompositeOperation = "destination-out";
-
-    card._scratch = {
-      canvas,
-      ctx,
-      cssW,
-      cssH,
-      brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)), 
-      revealed: false
-    };
-  }
-
-  cards.forEach(initCanvas);
-
-  let rt = null;
-  window.addEventListener("resize", () => {
-    clearTimeout(rt);
-    rt = setTimeout(() => {
-      cards.forEach(card => { 
-        if (!card._scratch.revealed) initCanvas(card); 
-      });
-    }, 120);
-  });
-
+  
+  // --- UTILITY FUNCTIONS ---
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
     return { x: clientX - r.left, y: clientY - r.top };
@@ -113,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const s = card._scratch;
     if (!s || s.revealed) return;
     try {
+      // Performance optimization: sample pixels quickly
       const imageData = s.ctx.getImageData(0, 0, s.cssW, s.cssH);
       const data = imageData.data;
       let clear = 0;
@@ -132,84 +87,177 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {}
   }
 
-  // --- DRAWING LOGIC ---
+  // --- CARD INITIALIZATION AND INTERACTION ---
   cards.forEach(card => {
-    const s = card._scratch;
-    if (!s) return;
-    const { canvas, ctx } = s;
-    let drawing = false;
-    let last = null;
-    let moveCounter = 0;
+    const canvas = card.querySelector(".scratch");
+    
+    if (canvas) {
+      // ===================================
+      // SCRATCHABLE CARD SETUP (index.html)
+      // ===================================
+      const ctx = canvas.getContext("2d");
 
-    function eraseAt(x, y) {
-      ctx.beginPath();
-      ctx.arc(x, y, s.brush, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function onDown(x, y) {
-      if (s.revealed) return;
-      drawing = true;
-      last = { x, y };
-    }
-
-    function onMove(x, y) {
-      if (!drawing || s.revealed) return;
-
-      const dist = Math.hypot(x - last.x, y - last.y);
-      const steps = Math.ceil(dist / (s.brush * 0.25));
-      for (let i = 0; i < steps; i++) {
-        const t = i / steps;
-        eraseAt(last.x + (x - last.x) * t, last.y + (y - last.y) * t);
+      // Set background image via JS
+      const imgSrc = card.dataset.img;
+      if (imgSrc) {
+        card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
+        card.style.backgroundSize = "cover";
+        card.style.backgroundPosition = "center";
       }
-      last = { x, y };
 
-      // Throttle reveal check
-      moveCounter++;
-      if (moveCounter % 20 === 0) {
-        checkRevealed(card);
-      }
-    }
+      const cssW = Math.max(1, Math.round(card.clientWidth));
+      const cssH = Math.max(1, Math.round(card.clientHeight));
 
-    function onUp() {
-      if (drawing) {
-        drawing = false;
-        last = null;
-        checkRevealed(card);
-      }
-    }
+      canvas.style.width = cssW + "px";
+      canvas.style.height = cssH + "px";
+      canvas.width = Math.floor(cssW * DPR);
+      canvas.height = Math.floor(cssH * DPR);
 
-    // Pointer Events
-    canvas.addEventListener("pointerdown", e => {
-      // Mouse needs preventDefault to avoid drag, Touch does not (to allow scroll)
-      if (e.pointerType === "mouse") e.preventDefault();
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = "#d8d8d8"; 
+      ctx.fillRect(0, 0, cssW, cssH);
+
+      ctx.globalCompositeOperation = "destination-out";
+
+      card._scratch = {
+        canvas,
+        ctx,
+        cssW,
+        cssH,
+        brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)), 
+        revealed: false
+      };
       
-      const p = localPos(canvas, e.clientX, e.clientY);
-      onDown(p.x, p.y);
-    });
+      // Scratching Logic State
+      const s = card._scratch;
+      let drawing = false;
+      let last = null;
+      let moveCounter = 0;
+      
+      function eraseAt(x, y) {
+        s.ctx.beginPath();
+        s.ctx.arc(x, y, s.brush, 0, Math.PI * 2);
+        s.ctx.fill();
+      }
 
-    canvas.addEventListener("pointermove", e => {
-      if (drawing && e.cancelable) {
-        // If it's a mouse or an explicit touch move (not a scroll), scratch.
-        if (e.pointerType === "mouse" || e.pointerType === "touch") {
-          e.preventDefault(); 
-          const p = localPos(canvas, e.clientX, e.clientY);
-          onMove(p.x, p.y);
+      function onDown(x, y) {
+        if (s.revealed) return;
+        drawing = true;
+        last = { x, y };
+      }
+
+      function onMove(x, y) {
+        if (!drawing || s.revealed) return;
+
+        const dist = Math.hypot(x - last.x, y - last.y);
+        const steps = Math.ceil(dist / (s.brush * 0.25));
+        for (let i = 0; i < steps; i++) {
+          const t = i / steps;
+          eraseAt(last.x + (x - last.x) * t, last.y + (y - last.y) * t);
+        }
+        last = { x, y };
+
+        moveCounter++;
+        if (moveCounter % 20 === 0) {
+          checkRevealed(card);
         }
       }
-    });
 
-    canvas.addEventListener("pointerup", onUp);
-    canvas.addEventListener("pointercancel", onUp);
+      function onUp() {
+        if (drawing) {
+          drawing = false;
+          last = null;
+          checkRevealed(card);
+        }
+      }
 
-    card.addEventListener("click", () => {
-      if (card.classList.contains("revealed")) {
+      // Scratch Pointer Events
+      canvas.addEventListener("pointerdown", e => {
+        if (e.pointerType === "mouse") e.preventDefault();
+        const p = localPos(canvas, e.clientX, e.clientY);
+        onDown(p.x, p.y);
+      });
+
+      canvas.addEventListener("pointermove", e => {
+        if (drawing && e.cancelable) {
+          if (e.pointerType === "mouse" || e.pointerType === "touch") {
+            e.preventDefault(); 
+            const p = localPos(canvas, e.clientX, e.clientY);
+            onMove(p.x, p.y);
+          }
+        }
+      });
+
+      canvas.addEventListener("pointerup", onUp);
+      canvas.addEventListener("pointercancel", onUp);
+      
+      // Attach click listener for post-reveal interaction
+      card.addEventListener("click", (e) => {
+        if (e.target.closest('a') !== null) return; 
+
+        if (card.classList.contains("revealed")) {
+          const contentNode = card.querySelector(".content");
+          if (contentNode) openModal(contentNode);
+        }
+      });
+
+    } else if (card.classList.contains('revealed')) {
+      // ========================================
+      // REVEALED CARD SETUP (all-bottles*.html)
+      // ========================================
+      
+      card.addEventListener("click", (e) => {
+        // Stop if clicking the 'View Details' button (a tag)
+        if (e.target.closest('a') !== null) return; 
+        
         const contentNode = card.querySelector(".content");
         if (contentNode) openModal(contentNode);
+      });
+      
+      // Prevent card click handler from interfering with the anchor button click
+      const detailLink = card.querySelector('.btn');
+      if (detailLink) {
+        detailLink.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
       }
-    });
+    }
   });
 
+
+  // --- RESIZE HANDLER (simplified) ---
+  let rt = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      cards.forEach(card => { 
+        if (card.querySelector('.scratch') && card._scratch && !card._scratch.revealed) {
+          const canvas = card.querySelector(".scratch");
+          const cardEl = card.closest('.card');
+          const ctx = canvas.getContext("2d");
+          
+          const cssW = Math.max(1, Math.round(cardEl.clientWidth));
+          const cssH = Math.max(1, Math.round(cardEl.clientHeight));
+
+          canvas.style.width = cssW + "px";
+          canvas.style.height = cssH + "px";
+          canvas.width = Math.floor(cssW * DPR);
+          canvas.height = Math.floor(cssH * DPR);
+
+          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+          ctx.globalCompositeOperation = "source-over";
+          ctx.fillStyle = "#d8d8d8"; 
+          ctx.fillRect(0, 0, cssW, cssH);
+          ctx.globalCompositeOperation = "destination-out";
+        }
+      });
+    }, 120);
+  });
+
+  // --- SNOW GENERATOR ---
   (function createSnow(num = 30) {
     const container = document.getElementById('snow-container');
     if (!container) return;
