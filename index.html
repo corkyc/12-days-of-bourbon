@@ -11,7 +11,7 @@
 
 <header>
   <h1>12 Days of Christmas Whiskey</h1>
-  <p class="tagline">Scratch the number, then click to reveal!</p>
+  <p class="tagline">Scratch the number, reveal the whiskey, tap to learn more!</p>
 </header>
 
 <div class="hamburger" id="hamburger" aria-label="Toggle menu" role="button" tabindex="0">
@@ -29,7 +29,7 @@
 
 <section class="whiskey-grid">
 
-  <!-- TEMPLATE FOR 12 CARDS -->
+  <!-- CARD #1 -->
   <div class="whiskey-card" data-id="1">
     <canvas class="scratch-canvas"></canvas>
     <div class="scratch-overlay">Tap to Scratch</div>
@@ -43,17 +43,20 @@
     </div>
   </div>
 
+  <!-- CARD #2 -->
   <div class="whiskey-card" data-id="2">
     <canvas class="scratch-canvas"></canvas>
-      <div class="scratch-overlay">T</div>
-      <div class="hidden-modal-data">
-        <img src="images/whiskey2.jpg">
-        <h3>Bourbon Name #2</h3>
-        <p>A spicy rye finish with caramel undertones.</p>
-        <a href="#" class="btn">Buy Now</a>
-      </div>
+    <div class="scratch-overlay">Tap to Scratch</div>
+
+    <div class="hidden-modal-data">
+      <img src="images/whiskey2.jpg">
+      <h3>Bourbon Name #2</h3>
+      <p>A spicy rye finish with caramel undertones.</p>
+      <a href="#" class="btn">Buy Now</a>
+    </div>
   </div>
 
+  <!-- CARD #3 -->
   <div class="whiskey-card" data-id="3">
     <canvas class="scratch-canvas"></canvas>
     <div class="scratch-overlay">Tap to Scratch</div>
@@ -65,12 +68,9 @@
     </div>
   </div>
 
-  <!-- Duplicate cards up to 12 -->
-  <!-- I can generate the remaining 9 if you want them filled in with real whiskey data -->
-
 </section>
 
-
+<!-- MODAL -->
 <div id="whiskeyModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modal-content">
     <button class="close-button" aria-label="Close modal">&times;</button>
