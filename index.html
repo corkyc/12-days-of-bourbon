@@ -1,49 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>12 Days of Bourbon</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
     <h1>12 Days of Bourbon</h1>
-    <p>Scratch each door to reveal today’s bourbon!</p>
+    <p class="tagline">Scratch a door to reveal the bourbon — then tap to learn more.</p>
   </header>
 
-  <main class="grid">
-    <!-- 12 CARDS -->
-    <!-- Duplicate pattern for all 12 days -->
-    <!-- Each card contains: scratch overlay, canvas, hidden bourbon info -->
-
-    <!-- Example Google bourbon names - replace with your own -->
-    <!-- DAY 1 -->
-    <div class="door" data-day="1">
-      <div class="scratch-overlay">Day 1</div>
-      <canvas class="scratch-canvas"></canvas>
-
-      <div class="hidden-content">
-        <h2>Day 1 – Buffalo Trace</h2>
-        <p>A smooth Kentucky straight bourbon with caramel and vanilla notes.</p>
+  <main class="whiskey-grid" id="whiskeyGrid">
+    <!-- 12 doors (only first 3 filled, duplicate/replace images & text as needed) -->
+    <div class="whiskey-card" data-day="1">
+      <div class="scratch-overlay">Tap to Scratch — Day 1</div>
+      <canvas class="scratch-canvas" role="img" aria-label="Scratch area"></canvas>
+      <div class="hidden-modal-data">
+        <img src="images/whiskey1.jpg" alt="Buffalo Trace">
+        <h3>Buffalo Trace</h3>
+        <p>Notes of caramel, vanilla and a touch of oak.</p>
+        <a href="#" class="btn">Buy Now</a>
       </div>
     </div>
 
-    <!-- DAY 2 -->
-    <div class="door" data-day="2">
-      <div class="scratch-overlay">Day 2</div>
-      <canvas class="scratch-canvas"></canvas>
-
-      <div class="hidden-content">
-        <h2>Day 2 – Four Roses Small Batch</h2>
-        <p>Rich, spicy, and fruity with a balanced finish.</p>
+    <div class="whiskey-card" data-day="2">
+      <div class="scratch-overlay">Tap to Scratch — Day 2</div>
+      <canvas class="scratch-canvas" role="img" aria-label="Scratch area"></canvas>
+      <div class="hidden-modal-data">
+        <img src="images/whiskey2.jpg" alt="Four Roses">
+        <h3>Four Roses Small Batch</h3>
+        <p>Fruity, spicy, and balanced.</p>
+        <a href="#" class="btn">Buy Now</a>
       </div>
     </div>
 
-    <!-- DAY 3 -->
-    <div class="door" data-day="3">
-      <div class="scratch-overlay">Day 3</div>
-      <canvas class="scratch-canvas"></canvas>
+    <div class="whiskey-card" data-day="3">
+      <div class="scratch-overlay">Tap to Scratch — Day 3</div>
+      <canvas class="scratch-canvas" role="img" aria-label="Scratch area"></canvas>
+      <div class="hidden-modal-data">
+        <img src="images/whiskey3.jpg" alt="Woodford Reserve">
+        <h3>Woodford Reserve</h3>
+        <p>Full-bodied with dried fruit and sweet aromatics.</p>
+        <a href="#" class="btn">Buy Now</a>
+      </div>
+    </div>
 
-      <div class="hidden-content">
-        <h2>Day 3 – Woodford Reserve
+    <!-- copy/paste above blocks to create up to day 12, replacing images/text -->
+    <!-- Days 4..12 omitted here for brevity — add them following same structure -->
+  </main>
+
+  <!-- Modal (we will populate #modal-body from hidden-modal-data on click) -->
+  <div id="whiskeyModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-content" role="document">
+      <button class="close-button" aria-label="Close">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="services.js"></script>
+</body>
+</html>
