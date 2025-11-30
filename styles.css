@@ -27,23 +27,32 @@ body {
 /* --- HEADER --- */
 header {
   padding: 18px;
-  text-align: center;
   background: linear-gradient(180deg,#7a4e33,#6f432b);
   position: relative;
   z-index: 100;
+  
+  /* FIX: Use Flexbox to align content and button */
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: space-between; /* Space out the hamburger/content and the button */
+  align-items: flex-start; /* Vertically align top elements */
 }
 
+/* New container for H1 and P */
+.header-content {
+  text-align: center;
+  flex-grow: 1; /* Allows the content to fill the center space */
+  margin-left: 20px; /* Offset from hamburger */
+}
+/* Ensure H1 and Tagline are centered within their new container */
 header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 .tagline { margin-top:6px; font-size:0.95rem; color:#f0c674; }
 
 /* Hamburger Button */
 .hamburger {
-  position: absolute;
-  left: 20px;
-  top: 22px;
+  /* FIX: Now relative to the flex container, not absolute */
+  position: static; 
+  left: 20px; /* Keep position info for muscle memory */
+  top: 22px; 
   background: none;
   border: none;
   cursor: pointer;
@@ -54,6 +63,9 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   width: 30px;
   height: 22px;
   z-index: 101;
+  /* Push to the left edge of the header padding */
+  margin-right: 18px; 
+  align-self: center; /* Center vertically within the header height */
 }
 .hamburger span {
   display: block;
@@ -65,11 +77,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 
 /* Reset Button Style */
 .reset-btn {
-  position: absolute;
-  right: 18px;
-  /* FIX: Adjusted top position to prevent overlap with the main title and tagline */
-  top: 65px; 
-  
+  /* FIX: No longer absolutely positioned */
+  position: static; 
   padding: 6px 10px;
   background: #4a2e1f;
   color: #f6eedd;
@@ -79,6 +88,9 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   z-index: 101;
+  /* Push to the right edge of the header padding */
+  margin-left: 18px;
+  align-self: center; /* Center vertically within the header height */
 }
 .reset-btn:hover {
   background: #5a3624;
@@ -87,6 +99,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 .reset-btn:active {
   transform: translateY(0);
 }
+
 
 /* --- MOBILE NAVIGATION DRAWER --- */
 .mobile-menu {
@@ -164,7 +177,10 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 }
 @media (min-width: 768px) {
   .grid { grid-template-columns: repeat(4, 1fr); }
-  header { padding-left: 0; }
+  /* Remove margin on desktop header elements */
+  .hamburger, .reset-btn { margin: 0; }
+  /* Re-align header content for desktop */
+  header { justify-content: space-around; } 
 }
 
 /* --- CARD --- */
