@@ -31,12 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function resetProgress() {
-    // FIX: Removed confirm() because it is blocked in the sandbox.
-    // We clear storage and reload immediately.
+    // FIX: Clear storage and reload immediately (since standard confirm() is blocked)
     try {
       localStorage.removeItem(STORAGE_KEY);
       console.log("Local storage progress cleared. Reloading page.");
-      // Reload the page to reset the UI instantly
       window.location.reload();
     } catch (e) {
       console.error("Error clearing progress from localStorage", e);
@@ -122,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if ((clear / total) > 0.4) {
         s.revealed = true;
         card.classList.add("revealed");
-        saveProgress(card.dataset.day); // *** SAVE PROGRESS ON REVEAL ***
+        saveProgress(card.dataset.day); 
         const contentNode = card.querySelector(".content");
         if (contentNode) openModal(contentNode);
       }
@@ -139,7 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const ctx = canvas.getContext("2d");
 
-      // Initialize canvas dimensions and context
       const imgSrc = card.dataset.img;
       if (imgSrc) {
         card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
@@ -172,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
         revealed: false
       };
       
-      // 1b. Check Local Storage State (AFTER canvas initialized)
+      // FIX: Check Local Storage State AFTER canvas object is created
       if (scratchedDays[day]) {
         card.classList.add("revealed");
         card._scratch.revealed = true;
@@ -278,6 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearTimeout(rt);
     rt = setTimeout(() => {
       cards.forEach(card => { 
+        // Only run resize logic for cards that were NOT permanently scratched off and have a canvas
         if (card.querySelector('.scratch') && card._scratch && !scratchedDays[card.dataset.day]) {
           const canvas = card.querySelector(".scratch");
           const cardEl = card.closest('.card');
