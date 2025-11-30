@@ -1,142 +1,110 @@
-/* Reset & basics */
-* { box-sizing: border-box; }
-html,body { height: 100%; }
 body {
   margin: 0;
-  font-family: Georgia, 'Times New Roman', serif;
-  background-color: #2C1D1D;
-  color: #f8f8f8;
+  background: #2a1e12;
+  font-family: "Georgia", serif;
+  color: #f2e4c9;
   text-align: center;
-  overflow-x: hidden;
 }
 
-/* Header */
 header {
-  background: #8B5D3D;
-  padding: 32px 16px 18px;
-  z-index: 5;
+  padding: 20px;
 }
-header h1 {
+
+h1 {
   margin: 0;
-  font-family: 'Great Vibes', cursive;
-  font-size: 3rem;
-  line-height: 1.1;
-}
-.tagline { margin-top: 8px; color: #f0c674; }
-
-/* Nav */
-.nav-links { background:#7a4e33; padding:12px; }
-.nav-links ul { list-style:none; margin:0; padding:0; display:flex; gap:20px; justify-content:center; }
-.nav-links a { color:#fff; text-decoration:none; font-weight:600; }
-
-/* Hamburger */
-.hamburger {
-  display:none;
-  position:absolute;
-  top:18px;
-  left:18px;
-  width:34px;
-  height:26px;
-  z-index:100;
-  cursor:pointer;
-}
-.hamburger div { height:4px; background:#fff; margin:4px 0; border-radius:3px; }
-
-/* Modal */
-.modal {
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-.modal[aria-hidden="false"] { display:flex; }
-.modal-content {
-  background:#fff;
-  color:#111;
-  max-width:720px;
-  width:92%;
-  padding:20px;
-  border-radius:10px;
-  position:relative;
-}
-.close-button {
-  position:absolute;
-  right:8px;
-  top:8px;
-  background:none;
-  border:0;
-  font-size:1.6rem;
-  cursor:pointer;
+  font-size: 2.4rem;
 }
 
-/* Whiskey grid */
-.whiskey-grid {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:16px;
-  padding:16px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 20px;
 }
 
-@media (min-width:768px) {
-  .whiskey-grid { grid-template-columns:repeat(4,1fr); }
+.door {
+  position: relative;
+  height: 200px;
+  background: #5a3d2c;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 0 8px #0005;
 }
 
-.whiskey-card {
-  position:relative;
-  width:100%;
-  aspect-ratio:1/1;
-  background:#ddd;
-  border-radius:12px;
-  overflow:hidden;
-  cursor:pointer;
-}
-
-/* Scratch layer */
-.scratch-canvas {
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  background:#bfbfbf;
-  touch-action:none;
-  z-index:5;
-}
-
-/* Overlay text */
+/* Scratch overlay label */
 .scratch-overlay {
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,0.55);
-  color:white;
-  font-size:1.1rem;
-  font-weight:bold;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  user-select:none;
-  z-index:6;
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background: #c0c0c0;
+  color: #000;
+  font-size: 1.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Hidden content (shown only after scratch) */
-.hidden-modal-data {
-  display:none;
-  padding:10px;
-}
-.hidden-modal-data img {
-  width:100%;
-  border-radius:10px;
+/* Canvas for scratch effect */
+.scratch-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  touch-action: none;
 }
 
-.btn {
-  display:inline-block;
-  margin:6px 4px;
-  padding:8px 12px;
-  background:#8B5D3D;
-  color:white;
-  text-decoration:none;
-  border-radius:6px;
+/* Content shown after scratch */
+.hidden-content {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: #442e1e;
+  padding: 14px;
+  font-size: 0.9rem;
+  z-index: 1;
 }
 
+/* When revealed */
+.door.revealed .hidden-content {
+  display: block;
+}
+
+.door.revealed .scratch-overlay,
+.door.revealed .scratch-canvas {
+  display: none;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: #000a;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal[aria-hidden="false"] {
+  display: flex;
+}
+
+.modal-content {
+  background: #fefefe;
+  color: #000;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 380px;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 24px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
