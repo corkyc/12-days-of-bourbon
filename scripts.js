@@ -168,14 +168,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Pointer Events (Mouse + Touch)
     canvas.addEventListener("pointerdown", e => {
-      e.preventDefault(); // Prevent scrolling
+      if (e.pointerType === "mouse") {
+        e.preventDefault();
+        }
       const p = localPos(canvas, e.clientX, e.clientY);
       onDown(p.x, p.y);
-      canvas.setPointerCapture(e.pointerId);
-    });
+    );
 
     canvas.addEventListener("pointermove", e => {
-      if (drawing) e.preventDefault();
+      if (drawing && e.cancelable) {
+        e.preventDefault();
+        }
       const p = localPos(canvas, e.clientX, e.clientY);
       onMove(p.x, p.y);
     });
