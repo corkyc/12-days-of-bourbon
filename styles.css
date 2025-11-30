@@ -42,77 +42,6 @@ header h1 {
 }
 .hamburger div { height: 4px; background: #fff; margin:4px 0; border-radius:3px; }
 
-/* Doors grid */
-.doors {
-  max-width: 1200px;
-  margin: 32px auto;
-  padding: 0 16px 60px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-/* Each door */
-.door {
-  position: relative;
-  overflow: hidden;
-  height: 250px;
-  border-radius: 12px;
-  border: 4px solid #5a3a25;
-  background: linear-gradient(180deg,#412f2f,#2b201f);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.45);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: none
-}
-
-/* The scratch canvas must cover entire door */
-.scratch-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  background: transparent
-  z-index: 30;
-}
-
-/* Number on top of the scratched area */
-.door_number {
-  position: relative; /* remains above the hidden content but under canvas visually — we hide it when revealed */
-  z-index: 40;
-  font-size: 3rem;
-  font-weight: 700;
-  pointer-events: none; /* allow pointer events to hit the canvas */
-  color: #fff;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
-}
-
-/* Hidden content shown when revealed and inside modal click */
-.door-hidden-content {
-  position: absolute;
-  inset: 0;
-  padding: 14px;
-  z-index: 10;
-  opacity: 0;           /* hidden while overlay present */
-  transition: opacity .25s ease;
-  display:flex;
-  flex-direction:column;
-  gap: 8px;
-  align-items:center;
-  justify-content:center;
-}
-.door.revealed .door-hidden-content { opacity: 1; z-index: 5; }
-.door.revealed .door_number { display: none; }
-
-/* When revealed, hide canvas */
-.door.revealed .scratch-canvas { display: none; }
-
 /* Modal */
 .modal {
   display: none;
@@ -190,13 +119,19 @@ header h1 {
   overflow: hidden;
 }
 
-/* Scratch canvas */
+/* FINAL — Working scratch canvas */
 .scratch-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   display: block;
+  background: #bfbfbf; /* Optional: helps iOS render it */
   touch-action: none;
+  z-index: 5; /* Sits above the card, under the overlay */
 }
+
 
 /* Overlay text */
 .scratch-overlay {
@@ -211,6 +146,7 @@ header h1 {
   justify-content: center;
   pointer-events: auto;
   user-select: none;
+  z-index: 6;
 }
 
 /* Hidden content stored inside card */
