@@ -287,39 +287,4 @@ document.addEventListener("DOMContentLoaded", () => {
           canvas.style.width = cssW + "px";
           canvas.style.height = cssH + "px";
           canvas.width = Math.floor(cssW * DPR);
-          canvas.height = Math.floor(cssH * DPR);
-
-          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-          ctx.globalCompositeOperation = "source-over";
-          ctx.fillStyle = "#d8d8d8"; 
-          ctx.fillRect(0, 0, cssW, cssH);
-          ctx.globalCompositeOperation = "destination-out";
-        }
-      });
-    }, 120);
-  });
-
-  // --- SNOW GENERATOR ---
-  (function createSnow(num = 30) {
-    const container = document.getElementById('snow-container');
-    if (!container) return;
-    for (let i = 0; i < num; i++) {
-      const el = document.createElement('div');
-      el.className = 'snowflake';
-      el.textContent = '❄';
-      const left = Math.random() * 100;
-      const size = 10 + Math.random() * 15;
-      const dur = 8 + Math.random() * 10;
-      el.style.left = left + 'vw';
-      el.style.fontSize = size + 'px';
-      el.style.setProperty('--fall-duration', `${dur}s`);
-      el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
-      container.appendChild(el);
-      el.addEventListener('animationend', () => {
-        el.style.left = (Math.random() * 100) + 'vw';
-        el.style.setProperty('--fall-duration', `${8 + Math.random() * 12}s`);
-      });
-    }
-  })();
-});
+          canvas
