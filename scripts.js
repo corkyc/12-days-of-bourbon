@@ -108,6 +108,7 @@ function reveal(card, canvas, overlay) {
 
   setTimeout(() => openModal(card), 450);
 }
+console.log("FOUND:", card.querySelector(".hidden-modal-data"));
 
 
 // ---------------------------
