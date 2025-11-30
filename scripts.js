@@ -129,6 +129,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let drawing = false;
     let last = null;
 
+// ... inside the cards.forEach loop ...
+
+    // --- DRAWING LOGIC (Updated for Mobile Scrolling) ---
+    
     function eraseAt(x, y) {
       ctx.beginPath();
       ctx.arc(x, y, s.brush, 0, Math.PI * 2);
@@ -144,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function onMove(x, y) {
       if (!drawing || s.revealed) return;
+      
       const dist = Math.hypot(x - last.x, y - last.y);
       const steps = Math.ceil(dist / (s.brush * 0.25));
       for (let i = 0; i < steps; i++) {
@@ -166,25 +171,37 @@ document.addEventListener("DOMContentLoaded", () => {
       last = null;
     }
 
-    // Pointer Events (Mouse + Touch)
+    // Pointer Events
     canvas.addEventListener("pointerdown", e => {
+      // FIX: Do NOT preventDefault here for touch. 
+      // This allows the browser to start a scroll if the user moves vertically.
+      // We only preventDefault for mouse so it doesn't drag the image.
       if (e.pointerType === "mouse") {
         e.preventDefault();
-        }
+      }
+      
       const p = localPos(canvas, e.clientX, e.clientY);
       onDown(p.x, p.y);
-    );
+      
+      // FIX: Do not setPointerCapture immediately. 
+      // Let the browser claim the pointer if it decides this is a scroll.
+    });
 
     canvas.addEventListener("pointermove", e => {
+      // If the user is drawing (and the browser hasn't taken over for scrolling),
+      // we prevent default to stop text selection or native zooming.
       if (drawing && e.cancelable) {
         e.preventDefault();
-        }
+      }
       const p = localPos(canvas, e.clientX, e.clientY);
       onMove(p.x, p.y);
     });
 
+    // Cleanup events
     canvas.addEventListener("pointerup", onUp);
-    canvas.addEventListener("pointercancel", onUp);
+    
+    // This fires if the browser decides "This is actually a scroll, stop the JS."
+    canvas.addEventListener("pointercancel", onUp); 
 
     // Click handler for already revealed cards
     card.addEventListener("click", () => {
@@ -193,8 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (contentNode) openModal(contentNode);
       }
     });
-  });
-
   // --- SNOW GENERATOR ---
   (function createSnow(num = 30) {
     const container = document.getElementById('snow-container');
