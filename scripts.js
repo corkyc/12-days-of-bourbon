@@ -27,11 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function drawCover() {
-      ctx.fillStyle = "#b19cd9";  // purple/silver scratch surface
+      ctx.fillStyle = "#b19cd9";  
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 24px sans-serif";
+      ctx.font = "bold 28px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(card.dataset.id, canvas.width / 2, canvas.height / 2);
@@ -42,41 +42,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let scratching = false;
 
-    // Mobile: prevent scrolling while scratching
-    function preventScroll(e) {
+    // Prevent page scroll while scratching on mobile
+    canvas.addEventListener("touchmove", e => {
       if (scratching) e.preventDefault();
-    }
-    canvas.addEventListener("touchmove", preventScroll, { passive: false });
+    }, { passive: false });
 
-    // Start scratching
     function start(e) {
       scratching = true;
       scratch(e);
     }
 
-    // Stop scratching
     function stop() {
       scratching = false;
       checkReveal();
     }
 
-    // Scratch logic
     function scratch(e) {
       if (!scratching) return;
 
       const rect = canvas.getBoundingClientRect();
-      const x =
-        (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const y =
-        (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
       ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
-      ctx.arc(x, y, 28, 0, Math.PI * 2);
+      ctx.arc(x, y, 30, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Events
     canvas.addEventListener("mousedown", start);
     canvas.addEventListener("mousemove", scratch);
     canvas.addEventListener("mouseup", stop);
@@ -86,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.addEventListener("touchmove", scratch, { passive: false });
     canvas.addEventListener("touchend", stop);
 
-    // Reveal when 60% scratched
     function checkReveal() {
       const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       let cleared = 0;
@@ -97,27 +89,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const percent = cleared / (pixels.length / 4);
 
-      if (percent > 0.60) reveal(card, canvas, overlay);
+      if (percent > 0.55) reveal(card, canvas, overlay);
     }
   });
 });
 
 
 // ---------------------------
-// OPEN MODAL ON REVEAL
+// OPEN MODAL (POP-UP) ON REVEAL
 // ---------------------------
-
 function reveal(card, canvas, overlay) {
+  canvas.style.transition = "opacity .4s ease";
+  overlay.style.transition = "opacity .4s ease";
+
   canvas.style.opacity = 0;
   overlay.style.opacity = 0;
   canvas.style.pointerEvents = "none";
 
-  setTimeout(() => openModal(card), 300);
+  setTimeout(() => openModal(card), 450);
 }
 
 
 // ---------------------------
-// MODAL BEHAVIOR
+// MODAL LOGIC
 // ---------------------------
 const modal = document.getElementById("whiskeyModal");
 const modalBody = document.getElementById("modal-body");
@@ -130,7 +124,7 @@ function openModal(card) {
     <img src="${hidden.querySelector("img").src}" class="modal-image">
     <h3>${hidden.querySelector("h3").textContent}</h3>
     <p>${hidden.querySelector("p").textContent}</p>
-    ${hidden.querySelectorAll("a")
+    ${[...hidden.querySelectorAll("a")]
       .map(a => `<a href="${a.href}" class="btn">${a.textContent}</a>`)
       .join("")}
   `;
