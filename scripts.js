@@ -1,4 +1,3 @@
-// scripts.js — working scratch logic + door visuals + snow generator
 document.addEventListener("DOMContentLoaded", () => {
   const DPR = window.devicePixelRatio || 1;
   const cards = Array.from(document.querySelectorAll(".card"));
@@ -6,24 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
 
-  // --- FIXED MODAL: accepts a DOM node and clones it before inserting ---
+  // --- MODAL LOGIC ---
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
 
-    // If the caller passed a string accidentally, convert to node then clone.
-    if (typeof node === "string") {
-      const temp = document.createElement("div");
-      temp.innerHTML = node.trim();
-      modalBody.appendChild(temp.cloneNode(true));
-    } else if (node && node.cloneNode) {
-      // Clone the real node so the original stays in the card.
-      modalBody.appendChild(node.cloneNode(true));
-    } else {
-      // nothing to show
-      modalBody.textContent = "";
+    if (node && node.cloneNode) {
+      // Clone the content node so the original stays in the grid
+      const clone = node.cloneNode(true);
+      modalBody.appendChild(clone);
     }
-
     if (modal) modal.setAttribute("aria-hidden", "false");
   }
 
@@ -32,17 +23,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (modalClose) modalClose.addEventListener("click", closeModal);
-  if (modal) modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  if (modal) modal.addEventListener("click", (e) => { 
+    if (e.target === modal) closeModal(); 
+  });
 
-  // Initialize each canvas properly (DPR-aware) and apply image backgrounds
+  // --- CANVAS INIT ---
   function initCanvas(card) {
     const canvas = card.querySelector(".scratch");
+    if (!canvas) return; // Guard clause
     const ctx = canvas.getContext("2d");
 
-    // apply wood/bottle image if provided
+    // Apply the "cover" image (e.g. wood barrel) to the card background
     const imgSrc = card.dataset.img;
     if (imgSrc) {
-      // Preload small thumbnail as background behind canvas using content image
+      // We set this inline. Note: CSS !important on .revealed overrides this.
       card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
       card.style.backgroundSize = "cover";
       card.style.backgroundPosition = "center";
@@ -52,201 +46,173 @@ document.addEventListener("DOMContentLoaded", () => {
     const cssW = Math.max(1, Math.round(card.clientWidth));
     const cssH = Math.max(1, Math.round(card.clientHeight));
 
-    // Set CSS & backing-store sizes
+    // Canvas size (DPR adjusted)
     canvas.style.width = cssW + "px";
     canvas.style.height = cssH + "px";
     canvas.width = Math.floor(cssW * DPR);
     canvas.height = Math.floor(cssH * DPR);
 
-    // Scale drawing operations so 1 unit = 1 CSS pixel (ctx scaled for DPR)
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-    // Draw scratch coating via JS (so CSS background doesn't interfere)
+    // Draw scratch coating (grey/silver)
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#cfcfcf";
+    ctx.fillStyle = "#d8d8d8"; 
+    // You could also draw an image here for the scratch surface if desired
     ctx.fillRect(0, 0, cssW, cssH);
 
-    // Switch to erase mode for user drawing
+    // Switch to erase mode
     ctx.globalCompositeOperation = "destination-out";
 
-    // store helpers
+    // Store state
     card._scratch = {
       canvas,
       ctx,
       cssW,
       cssH,
-      brush: Math.max(14, Math.round(Math.max(cssW, cssH) * 0.06)),
+      brush: Math.max(20, Math.round(Math.max(cssW, cssH) * 0.08)), // Slightly larger brush
       revealed: false
     };
   }
 
-  // Setup all
+  // Init all
   cards.forEach(initCanvas);
 
-  // Reinit on resize for cards not yet revealed (debounced)
+  // Resize handler
   let rt = null;
   window.addEventListener("resize", () => {
     clearTimeout(rt);
     rt = setTimeout(() => {
-      cards.forEach(card => { if (!card._scratch.revealed) initCanvas(card); });
+      cards.forEach(card => { 
+        if (!card._scratch.revealed) initCanvas(card); 
+      });
     }, 120);
   });
 
-  // Convert client coordinates -> CSS coords
+  // Helper for coordinates
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
-    const x = (clientX - r.left);
-    const y = (clientY - r.top);
-    return { x: x, y: y };
+    return { 
+      x: clientX - r.left, 
+      y: clientY - r.top 
+    };
   }
 
-  // Fast alpha sampling to detect reveal
+  // Check how much is scratched
   function isRevealed(card) {
     const s = card._scratch;
     if (!s || s.revealed) return true;
     try {
-      const ctx = s.ctx;
-      // read CSS-sized image (ctx scaled), so use cssW/cssH
-      const image = ctx.getImageData(0, 0, s.cssW, s.cssH).data;
-      let clear = 0, total = 0;
-      const stride = 4 * 8; // sample every 8th pixel
-      for (let i = 3; i < image.length; i += stride) {
+      // Sample pixels
+      const imageData = s.ctx.getImageData(0, 0, s.cssW, s.cssH);
+      const data = imageData.data;
+      let clear = 0;
+      // We only need to check alpha channel (every 4th byte)
+      // Step by 32 to speed up loop (approx sampling)
+      const len = data.length;
+      const step = 4 * 32; 
+      let total = 0;
+      for (let i = 3; i < len; i += step) {
         total++;
-        if (image[i] === 0) clear++;
+        if (data[i] === 0) clear++;
       }
-      const ratio = clear / Math.max(1, total);
-      return ratio > 0.45;
+      return (clear / total) > 0.4; // 40% cleared triggers reveal
     } catch (err) {
-      return true;
+      return true; // Fallback
     }
   }
 
-  // Main pointer logic (pointer events preferred)
+  // --- DRAWING LOGIC ---
   cards.forEach(card => {
     const s = card._scratch;
     if (!s) return;
-    const canvas = s.canvas;
-    const ctx = s.ctx;
-    const brush = s.brush;
-
+    const { canvas, ctx } = s;
     let drawing = false;
     let last = null;
 
     function eraseAt(x, y) {
       ctx.beginPath();
-      ctx.arc(x, y, brush, 0, Math.PI * 2);
+      ctx.arc(x, y, s.brush, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    function pointerDown(e) {
+    function onDown(x, y) {
       if (s.revealed) return;
       drawing = true;
-      last = localPos(canvas, e.clientX, e.clientY);
-      eraseAt(last.x, last.y);
-      if (e.pointerType === "touch") e.preventDefault();
+      last = { x, y };
+      eraseAt(x, y);
     }
 
-    function pointerMove(e) {
+    function onMove(x, y) {
       if (!drawing || s.revealed) return;
-      const pos = localPos(canvas, e.clientX, e.clientY);
-      const dx = pos.x - last.x;
-      const dy = pos.y - last.y;
-      const dist = Math.hypot(dx, dy);
-      const steps = Math.max(1, Math.floor(dist / (brush * 0.35)));
-      for (let i = 0; i <= steps; i++) {
-        const x = last.x + (dx * i) / steps;
-        const y = last.y + (dy * i) / steps;
-        eraseAt(x, y);
+      const dist = Math.hypot(x - last.x, y - last.y);
+      const steps = Math.ceil(dist / (s.brush * 0.25));
+      for (let i = 0; i < steps; i++) {
+        const t = i / steps;
+        eraseAt(last.x + (x - last.x) * t, last.y + (y - last.y) * t);
       }
-      last = pos;
+      last = { x, y };
+      
+      // Check reveal status
       if (isRevealed(card)) {
         s.revealed = true;
         card.classList.add("revealed");
-        // after reveal, open the modal automatically
         const contentNode = card.querySelector(".content");
-        if (contentNode) openModal(contentNode); // PASS NODE, NOT innerHTML
+        if (contentNode) openModal(contentNode);
       }
-      if (e.pointerType === "touch") e.preventDefault();
     }
 
-    function pointerUp() {
-      if (!drawing) return;
+    function onUp() {
       drawing = false;
       last = null;
-      if (!s.revealed && isRevealed(card)) {
-        s.revealed = true;
-        card.classList.add("revealed");
-        const contentNode = card.querySelector(".content");
-        if (contentNode) openModal(contentNode); // PASS NODE, NOT innerHTML
-      }
     }
 
-    if (window.PointerEvent) {
-      canvas.addEventListener("pointerdown", pointerDown, { passive: false });
-      canvas.addEventListener("pointermove", pointerMove, { passive: false });
-      window.addEventListener("pointerup", pointerUp, { passive: false });
-      window.addEventListener("pointercancel", pointerUp, { passive: false });
-    } else {
-      // fallback to touch/mouse
-      canvas.addEventListener("touchstart", (e) => {
-        const t = e.touches[0];
-        pointerDown({ clientX: t.clientX, clientY: t.clientY, pointerType: "touch", preventDefault: () => e.preventDefault() });
-      }, { passive: false });
+    // Pointer Events (Mouse + Touch)
+    canvas.addEventListener("pointerdown", e => {
+      e.preventDefault(); // Prevent scrolling
+      const p = localPos(canvas, e.clientX, e.clientY);
+      onDown(p.x, p.y);
+      canvas.setPointerCapture(e.pointerId);
+    });
 
-      canvas.addEventListener("touchmove", (e) => {
-        const t = e.touches[0];
-        pointerMove({ clientX: t.clientX, clientY: t.clientY, pointerType: "touch", preventDefault: () => e.preventDefault() });
-      }, { passive: false });
+    canvas.addEventListener("pointermove", e => {
+      if (drawing) e.preventDefault();
+      const p = localPos(canvas, e.clientX, e.clientY);
+      onMove(p.x, p.y);
+    });
 
-      window.addEventListener("touchend", pointerUp, { passive: false });
+    canvas.addEventListener("pointerup", onUp);
+    canvas.addEventListener("pointercancel", onUp);
 
-      canvas.addEventListener("mousedown", (e) => pointerDown(e));
-      window.addEventListener("mousemove", (e) => pointerMove(e));
-      window.addEventListener("mouseup", pointerUp);
-    }
-
-    // prevent page scroll while actively drawing on the canvas
-    canvas.addEventListener("touchmove", (ev) => {
-      if (drawing) ev.preventDefault();
-    }, { passive: false });
-
-    // Clicking revealed card also opens modal
+    // Click handler for already revealed cards
     card.addEventListener("click", () => {
-      if (!card.classList.contains("revealed")) return;
-      const contentNode = card.querySelector(".content");
-      if (contentNode) openModal(contentNode); // PASS NODE, NOT innerHTML
+      if (card.classList.contains("revealed")) {
+        const contentNode = card.querySelector(".content");
+        if (contentNode) openModal(contentNode);
+      }
     });
   });
 
-  /* ========== Snow generator (lightweight) ========== */
-  (function createSnow(num = 26) {
+  // --- SNOW GENERATOR ---
+  (function createSnow(num = 30) {
     const container = document.getElementById('snow-container');
     if (!container) return;
     for (let i = 0; i < num; i++) {
       const el = document.createElement('div');
       el.className = 'snowflake';
       el.textContent = '❄';
-      // randomize size, left position, fall duration, sway
       const left = Math.random() * 100;
-      const size = 8 + Math.random() * 18; // px
-      const dur = 8 + Math.random() * 10; // seconds
-      const sway = (Math.random() - 0.5) * 40; // px
+      const size = 10 + Math.random() * 15;
+      const dur = 8 + Math.random() * 10;
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
       el.style.setProperty('--fall-duration', `${dur}s`);
       el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
-      el.style.setProperty('--sway', `${sway}px`);
       container.appendChild(el);
-      // remove & respawn after animation ends to keep variety
+      
       el.addEventListener('animationend', () => {
-        // recycle: reset top and left
         el.style.left = (Math.random() * 100) + 'vw';
-        el.style.fontSize = (8 + Math.random() * 18) + 'px';
         el.style.setProperty('--fall-duration', `${8 + Math.random() * 12}s`);
-        el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
-        el.style.setProperty('--sway', `${(Math.random() - 0.5) * 50}px`);
       });
     }
   })();
-
-}); // DOMContentLoaded end
+});
