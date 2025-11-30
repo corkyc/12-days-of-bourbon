@@ -99,7 +99,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   position: absolute;
   inset: 0;
   z-index: 5;
-  touch-action: none;
+  touch-action: pan-y;
   display: block;
 }
 
