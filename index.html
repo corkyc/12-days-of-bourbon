@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Snow container (JS will populate with flakes) -->
   <div id="snow-container" aria-hidden="true"></div>
 
   <header>
@@ -16,7 +15,7 @@
   </header>
 
   <main class="grid" id="grid">
-    <!-- 12 cards: keep image filenames you already have in images/ -->
+    
     <article class="card" data-day="1" data-img="images/whiskey1.jpg">
       <canvas class="scratch"></canvas>
       <div class="number-plate">1</div>
@@ -50,7 +49,6 @@
       </div>
     </article>
 
-    <!-- Days 4 - 12 -->
     <article class="card" data-day="4" data-img="images/bourbon4.jpg"><canvas class="scratch"></canvas><div class="number-plate">4</div><div class="content"><img src="images/bourbon4.jpg" alt=""><h3>Maker's Mark</h3><p>Wheated, gentle finish.</p></div></article>
     <article class="card" data-day="5" data-img="images/bourbon5.jpg"><canvas class="scratch"></canvas><div class="number-plate">5</div><div class="content"><img src="images/bourbon5.jpg" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy.</p></div></article>
     <article class="card" data-day="6" data-img="images/bourbon6.jpg"><canvas class="scratch"></canvas><div class="number-plate">6</div><div class="content"><img src="images/bourbon6.jpg" alt=""><h3>Elijah Craig</h3><p>Warm spice.</p></div></article>
@@ -63,7 +61,6 @@
 
   </main>
 
-  <!-- Modal (use this modal and the script will populate #modal-body) -->
   <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
       <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
