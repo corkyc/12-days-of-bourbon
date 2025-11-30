@@ -348,7 +348,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 /* --- SNOW --- */
 .snowflake {
   position: fixed;
-  top: -10vh; /* Start above viewport */
+  top: 0; /* Changed to start at the top edge */
   /* Z-Index increased to ensure visibility */
   z-index: 201; 
   /* Snow size increase for visibility */
