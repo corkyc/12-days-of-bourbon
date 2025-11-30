@@ -1,229 +1,159 @@
-/* Reset & basics */
-* { box-sizing: border-box; }
-html,body { height: 100%; }
+document.addEventListener("DOMContentLoaded", () => {
+  const DPR = window.devicePixelRatio || 1;
+  const cards = Array.from(document.querySelectorAll(".card"));
+  const modal = document.getElementById("modal");
+  const modalBody = document.getElementById("modal-body");
+  const modalClose = document.getElementById("modalClose");
 
-body {
-  margin: 0;
-  font-family: Georgia, serif;
-  background: linear-gradient(180deg,#19100e,#2a1f16);
-  color: #f6eedd;
-  -webkit-font-smoothing:antialiased;
-  overflow-x: hidden;
-  
-  /* --- FIX 1: STOP PULL-TO-REFRESH --- */
-  /* This prevents the page from reloading when dragging down on mobile */
-  overscroll-behavior-y: none; 
-}
+  // --- MODAL LOGIC ---
+  function openModal(node) {
+    if (!modalBody) return;
+    modalBody.innerHTML = "";
+    if (node && node.cloneNode) {
+      const clone = node.cloneNode(true);
+      modalBody.appendChild(clone);
+    }
+    if (modal) modal.setAttribute("aria-hidden", "false");
+  }
 
-/* Snow container sits behind content */
-#snow-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
+  function closeModal() {
+    if (modal) modal.setAttribute("aria-hidden", "true");
+  }
 
-/* Header */
-header {
-  padding: 18px;
-  text-align: center;
-  background: linear-gradient(180deg,#7a4e33,#6f432b);
-  position: relative;
-  z-index: 3;
-}
-header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
-.tagline { margin-top:6px; font-size:0.95rem; color:#f0c674; }
+  if (modalClose) modalClose.addEventListener("click", closeModal);
+  if (modal) modal.addEventListener("click", (e) => { 
+    if (e.target === modal) closeModal(); 
+  });
 
-/* Grid */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  padding: 18px;
-  max-width: 1100px;
-  margin: 12px auto;
-  position: relative;
-  z-index: 3;
-}
-@media (min-width: 768px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
-}
+  // --- CANVAS INIT ---
+  function initCanvas(card) {
+    const canvas = card.querySelector(".scratch");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
 
-/* Card */
-.card {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  min-height: 0;
-  height: 0;
-  padding-bottom: 100%;
-  cursor: pointer;
-  background: linear-gradient(180deg,#5a3624 0%, #4a2e1f 40%, #3b2417 100%);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 2px 8px rgba(255,255,255,0.02);
-  transition: transform .18s ease, box-shadow .18s ease;
-}
+    const imgSrc = card.dataset.img;
+    if (imgSrc) {
+      card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
+      card.style.backgroundSize = "cover";
+      card.style.backgroundPosition = "center";
+    }
 
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(transparent 0 60%, rgba(255,255,255,0.02) 60%),
-    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 30%),
-    linear-gradient(90deg, rgba(0,0,0,0.05) 0%, rgba(255,255,255,0.02) 100%);
-  mix-blend-mode: overlay;
-  z-index: 0;
-  pointer-events: none;
-}
+    const cssW = Math.max(1, Math.round(card.clientWidth));
+    const cssH = Math.max(1, Math.round(card.clientHeight));
 
-.card:hover {
-  transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.6), 0 2px 10px rgba(255,200,90,0.04);
-}
+    canvas.style.width = cssW + "px";
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.floor(cssW * DPR);
+    canvas.height = Math.floor(cssH * DPR);
 
-/* Number Plate */
-.number-plate {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  z-index: 6;
-  background: linear-gradient(180deg,#f3d07a,#d29b32);
-  color: #1b1209;
-  font-weight: 700;
-  font-size: 18px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5);
-  border: 1px solid rgba(0,0,0,0.25);
-}
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-/* Scratch Canvas */
-.scratch {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: block;
-  /* Allows vertical scroll but captures horizontal swipes */
-  touch-action: pan-y; 
-}
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#d8d8d8"; 
+    ctx.fillRect(0, 0, cssW, cssH);
 
-/* Content (Hidden until revealed) */
-.card .content {
-  position: absolute;
-  inset: 0;
-  padding: 0;
-  display: none; 
-  color: #fff;
-  z-index: 2;
-  text-align: center;
-  overflow: hidden;
-}
+    ctx.globalCompositeOperation = "destination-out";
 
-/* REVEALED STATE */
-.card.revealed .content { display: block; }
-.card.revealed .scratch { display: none; }
-.card.revealed {
-  background-image: none !important;
-  background-color: #3b2417; 
-}
-.card.revealed .content img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0; 
-  margin: 0;
-}
-.card.revealed .content h3,
-.card.revealed .content p,
-.card.revealed .content .btn {
-  display: none; 
-}
+    card._scratch = {
+      canvas,
+      ctx,
+      cssW,
+      cssH,
+      // Increased brush size slightly for easier scratching
+      brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)), 
+      revealed: false
+    };
+  }
 
-/* Modal */
-.modal {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.6);
-  z-index: 9999;
-}
-.modal[aria-hidden="false"] { display: flex; }
+  cards.forEach(initCanvas);
 
-.modal-inner {
-  background: #fff;
-  color: #111;
-  width: 92%;
-  max-width: 520px;
-  border-radius: 10px;
-  padding: 24px;
-  position: relative;
-  text-align: center;
-}
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  font-size: 28px;
-  line-height: 1;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #333;
-}
+  let rt = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      cards.forEach(card => { 
+        if (!card._scratch.revealed) initCanvas(card); 
+      });
+    }, 120);
+  });
 
-/* Modal Content Overrides */
-#modal-body .content {
-  display: block;
-  position: static;
-  color: #222;
-}
-#modal-body .content img {
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  object-fit: contain;
-  margin: 0 auto 16px;
-  border-radius: 8px;
-  display: block;
-}
-#modal-body .content h3,
-#modal-body .content p,
-#modal-body .content .btn {
-  display: block; 
-}
-#modal-body h3 { margin: 0 0 8px; font-size: 1.5rem; color: #5a3624; }
-#modal-body p { margin: 0 0 20px; font-size: 1.1rem; line-height: 1.5; }
+  function localPos(canvas, clientX, clientY) {
+    const r = canvas.getBoundingClientRect();
+    return { x: clientX - r.left, y: clientY - r.top };
+  }
 
-.btn {
-  display:inline-block;
-  padding:10px 20px;
-  background:#8B5D3D;
-  color:#fff;
-  text-decoration:none;
-  border-radius:6px;
-  font-weight: bold;
-}
+  function checkRevealed(card) {
+    const s = card._scratch;
+    if (!s || s.revealed) return;
+    try {
+      const imageData = s.ctx.getImageData(0, 0, s.cssW, s.cssH);
+      const data = imageData.data;
+      let clear = 0;
+      const len = data.length;
+      const step = 4 * 40; 
+      let total = 0;
+      for (let i = 3; i < len; i += step) {
+        total++;
+        if (data[i] === 0) clear++;
+      }
+      if ((clear / total) > 0.4) {
+        s.revealed = true;
+        card.classList.add("revealed");
+        const contentNode = card.querySelector(".content");
+        if (contentNode) openModal(contentNode);
+      }
+    } catch (err) {}
+  }
 
-/* Snow */
-.snowflake {
-  position: fixed;
-  top: -10vh;
-  z-index: 2;
-  color: rgba(255,255,255,0.95);
-  font-size: 14px;
-  pointer-events: none;
-  will-change: transform;
-  animation-name: fall, sway;
-  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s);
-  animation-timing-function: linear, ease-in-out;
-  animation-iteration-count: infinite, infinite;
-  opacity: 0.9;
-}
-@keyframes fall { to { transform: translateY(120vh); } }
-@keyframes sway {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(var(--sway, 20px)); }
-  100% { transform: translateX(0); }
-}
+  // --- DRAWING LOGIC ---
+  cards.forEach(card => {
+    const s = card._scratch;
+    if (!s) return;
+    const { canvas, ctx } = s;
+    let drawing = false;
+    let last = null;
+    let moveCounter = 0;
+
+    function eraseAt(x, y) {
+      ctx.beginPath();
+      ctx.arc(x, y, s.brush, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function onDown(x, y) {
+      if (s.revealed) return;
+      drawing = true;
+      last = { x, y };
+      // No immediate scratch on down to allow scrolling logic
+    }
+
+    function onMove(x, y) {
+      if (!drawing || s.revealed) return;
+
+      const dist = Math.hypot(x - last.x, y - last.y);
+      const steps = Math.ceil(dist / (s.brush * 0.25));
+      for (let i = 0; i < steps; i++) {
+        const t = i / steps;
+        eraseAt(last.x + (x - last.x) * t, last.y + (y - last.y) * t);
+      }
+      last = { x, y };
+
+      // Throttle reveal check
+      moveCounter++;
+      if (moveCounter % 20 === 0) {
+        checkRevealed(card);
+      }
+    }
+
+    function onUp() {
+      if (drawing) {
+        drawing = false;
+        last = null;
+        checkRevealed(card);
+      }
+    }
+
+    // Pointer Events
+    canvas.addEventListener("pointerdown", e => {
+      // Mouse needs preventDefault to avoid drag, Touch does not (to allow scroll)
+      if (e.pointer
