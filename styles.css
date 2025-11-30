@@ -1,6 +1,7 @@
 /* Reset & basics */
 * { box-sizing: border-box; }
 html,body { height: 100%; }
+
 body {
   margin: 0;
   font-family: Georgia, serif;
@@ -8,6 +9,10 @@ body {
   color: #f6eedd;
   -webkit-font-smoothing:antialiased;
   overflow-x: hidden;
+  
+  /* --- FIX 1: STOP PULL-TO-REFRESH --- */
+  /* This prevents the page from reloading when dragging down on mobile */
+  overscroll-behavior-y: none; 
 }
 
 /* Snow container sits behind content */
@@ -56,10 +61,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   background: linear-gradient(180deg,#5a3624 0%, #4a2e1f 40%, #3b2417 100%);
   box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 2px 8px rgba(255,255,255,0.02);
   transition: transform .18s ease, box-shadow .18s ease;
-  /* Background image is set by JS, see scripts.js */
 }
 
-/* Wood grain overlay */
 .card::before {
   content: "";
   position: absolute;
@@ -99,17 +102,16 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   position: absolute;
   inset: 0;
   z-index: 5;
-  touch-action: pan-y;
   display: block;
+  /* Allows vertical scroll but captures horizontal swipes */
+  touch-action: pan-y; 
 }
 
-/* CONTENT LAYOUT 
-   This handles the "revealed" content inside the card.
-*/
+/* Content (Hidden until revealed) */
 .card .content {
   position: absolute;
   inset: 0;
-  padding: 0; /* Remove padding in grid view so image fills */
+  padding: 0;
   display: none; 
   color: #fff;
   z-index: 2;
@@ -117,19 +119,13 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   overflow: hidden;
 }
 
-/* --- REVEALED STATE FIXES --- */
-
-/* 1. When revealed, show content, hide canvas */
+/* REVEALED STATE */
 .card.revealed .content { display: block; }
 .card.revealed .scratch { display: none; }
-
-/* 2. IMPORTANT: Remove the cover image background so it doesn't bleed through */
 .card.revealed {
   background-image: none !important;
-  background-color: #3b2417; /* Fallback solid wood color */
+  background-color: #3b2417; 
 }
-
-/* 3. In Grid View: Show ONLY the image, hide text/buttons to avoid clutter */
 .card.revealed .content img {
   width: 100%;
   height: 100%;
@@ -140,10 +136,10 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 .card.revealed .content h3,
 .card.revealed .content p,
 .card.revealed .content .btn {
-  display: none; /* Hide details on the grid card */
+  display: none; 
 }
 
-/* --- MODAL STYLES --- */
+/* Modal */
 .modal {
   position: fixed;
   inset: 0;
@@ -177,16 +173,12 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   color: #333;
 }
 
-/* MODAL CONTENT OVERRIDES 
-   We cloned the .content div into the modal. Now we must un-hide the text 
-   and style the image to look like a modal, not a grid card.
-*/
+/* Modal Content Overrides */
 #modal-body .content {
   display: block;
   position: static;
   color: #222;
 }
-
 #modal-body .content img {
   width: 100%;
   max-width: 200px;
@@ -196,18 +188,14 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   border-radius: 8px;
   display: block;
 }
-
-/* Force text display in modal even if hidden in grid */
 #modal-body .content h3,
 #modal-body .content p,
 #modal-body .content .btn {
   display: block; 
 }
-
 #modal-body h3 { margin: 0 0 8px; font-size: 1.5rem; color: #5a3624; }
 #modal-body p { margin: 0 0 20px; font-size: 1.1rem; line-height: 1.5; }
 
-/* Button style */
 .btn {
   display:inline-block;
   padding:10px 20px;
@@ -217,9 +205,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   border-radius:6px;
   font-weight: bold;
 }
-.btn:hover { background: #6f432b; }
 
-/* Snow Animation */
+/* Snow */
 .snowflake {
   position: fixed;
   top: -10vh;
