@@ -5,6 +5,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
 
+  // --- MENU LOGIC ---
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuClose = document.getElementById('menuClose');
+
+  if (hamburgerBtn && mobileMenu && menuClose) {
+    hamburgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.add('open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+    });
+
+    menuClose.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+    });
+
+    // Close menu when clicking outside of it (optional polish)
+    document.addEventListener('click', (e) => {
+      if (mobileMenu.classList.contains('open') && 
+          !mobileMenu.contains(e.target) && 
+          e.target !== hamburgerBtn && 
+          !hamburgerBtn.contains(e.target)) {
+        mobileMenu.classList.remove('open');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
+
   // --- MODAL LOGIC ---
   function openModal(node) {
     if (!modalBody) return;
@@ -59,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx,
       cssW,
       cssH,
-      // Increased brush size slightly for easier scratching
       brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)), 
       revealed: false
     };
@@ -124,7 +151,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (s.revealed) return;
       drawing = true;
       last = { x, y };
-      // No immediate scratch on down to allow scrolling logic
     }
 
     function onMove(x, y) {
