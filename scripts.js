@@ -1,4 +1,4 @@
-// scripts.js — robust scratch + reveal + modal (no "tap to scratch")
+// scripts.js — working scratch logic + door visuals + snow generator
 document.addEventListener("DOMContentLoaded", () => {
   const DPR = window.devicePixelRatio || 1;
   const cards = Array.from(document.querySelectorAll(".card"));
@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
 
-  // Modal handlers
+  // Modal handlers (kept from your working code)
   function openModal(html) {
     modalBody.innerHTML = html;
     modal.setAttribute("aria-hidden", "false");
@@ -14,13 +14,22 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeModal() {
     modal.setAttribute("aria-hidden", "true");
   }
-  modalClose.addEventListener("click", closeModal);
+  if (modalClose) modalClose.addEventListener("click", closeModal);
   modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
-  // Initialize each canvas properly (DPR-aware)
+  // Initialize each canvas properly (DPR-aware) and apply image backgrounds
   function initCanvas(card) {
     const canvas = card.querySelector(".scratch");
     const ctx = canvas.getContext("2d");
+
+    // apply wood/bottle image if provided
+    const imgSrc = card.dataset.img;
+    if (imgSrc) {
+      // Preload small thumbnail as background behind canvas using content image
+      card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
+      card.style.backgroundSize = "cover";
+      card.style.backgroundPosition = "center";
+    }
 
     // CSS size
     const cssW = Math.max(1, Math.round(card.clientWidth));
@@ -32,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.width = Math.floor(cssW * DPR);
     canvas.height = Math.floor(cssH * DPR);
 
-    // Scale drawing operations so 1 unit = 1 CSS pixel
+    // Scale drawing operations so 1 unit = 1 CSS pixel (ctx scaled for DPR)
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
     // Draw scratch coating via JS (so CSS background doesn't interfere)
@@ -66,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 120);
   });
 
-  // Convert client coordinates -> backing-store coords
+  // Convert client coordinates -> CSS coords
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
     const x = (clientX - r.left);
@@ -91,7 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const ratio = clear / Math.max(1, total);
       return ratio > 0.45;
     } catch (err) {
-      // if CORS or read failure, fallback to true to avoid blocking
       return true;
     }
   }
@@ -138,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
         s.revealed = true;
         card.classList.add("revealed");
         // after reveal, open the modal automatically
-        // populate modal with card content
         const content = card.querySelector(".content");
         if (content) openModal(content.innerHTML);
       }
@@ -194,4 +201,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-}); // DOMContentLoaded end
+  /* ========== Snow generator (lightweight) ========== */
+  (function createSnow(num = 26) {
+    const container = document.getElementById('snow-container');
+    if (!container) return;
+    for (let i = 0; i < num; i++) {
+      const el = document.createElement('div');
+      el.className = 'snowflake';
+      el.textContent = '❄';
+      // randomize size, left position, fall duration, sway
+      const left = Math.random() * 100;
+      const size = 8 + Math.random() * 18; // px
+      const dur = 8 + Math.random() * 10; // seconds
+      const sway = (Math.random() - 0.5) * 40; // px
+      el.style.left = left + 'vw';
+      el.style.fontSize = size + 'px';
+      el.style.setProperty('--fall-duration', `${dur}s`);
+      el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
+      el.style.setProperty('--sway', `${sway}px`);
+      container.appendChild(el);
+      // remove & respawn after animation ends to keep variety
+      el.addEventListener('animationend', () => {
+        // recycle: reset top and left
+        el.style.left = (Math.random() * 100) + 'vw';
+        el.style.fontSize = (8 + Math.random() * 18) + 'px';
+        el.style.setProperty('--fall-duration', `${8 + Math.random() * 12}s`);
+        el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
+        el.style.setProperty('--sway', `${(Math.random() - 0.5) * 50}px`);
+      });
+    }
+  })();
+
+});
