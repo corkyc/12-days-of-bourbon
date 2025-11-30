@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
   const DPR = window.devicePixelRatio || 1;
-  const cards = Array.from(document.querySelectorAll(".card")); 
+  const cards = Array.from(document.querySelectorAll(".card"));
   const modal = document.getElementById("modal");
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
   const resetBtn = document.getElementById('resetProgressBtn');
 
-  // --- LOCAL STORAGE STATE ---
+  // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
   let scratchedDays = {};
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
       scratchedDays = {};
     }
   }
-  
+
   function saveProgress(day) {
     if (!day) return;
     scratchedDays[day] = true;
@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function resetProgress() {
-    // FIX: Clear storage and reload immediately (since standard confirm() is blocked)
     try {
       localStorage.removeItem(STORAGE_KEY);
       console.log("Local storage progress cleared. Reloading page.");
@@ -40,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error clearing progress from localStorage", e);
     }
   }
-  
+
   loadProgress();
   if (resetBtn) {
     resetBtn.addEventListener('click', resetProgress);
@@ -63,10 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener('click', (e) => {
-      if (mobileMenu.classList.contains('open') && 
-          !mobileMenu.contains(e.target) && 
-          e.target !== hamburgerBtn && 
-          !hamburgerBtn.contains(e.target)) {
+      if (mobileMenu.classList.contains('open') &&
+        !mobileMenu.contains(e.target) &&
+        e.target !== hamburgerBtn &&
+        !hamburgerBtn.contains(e.target)) {
         mobileMenu.classList.remove('open');
         mobileMenu.setAttribute('aria-hidden', 'true');
       }
@@ -93,11 +92,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (modalClose) modalClose.addEventListener("click", closeModal);
-  if (modal) modal.addEventListener("click", (e) => { 
-    if (e.target === modal) closeModal(); 
+  if (modal) modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
   });
-  
-  // --- UTILITY FUNCTIONS ---
+
+  // --- CANVAS UTILITIES ---
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
     return { x: clientX - r.left, y: clientY - r.top };
@@ -111,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = imageData.data;
       let clear = 0;
       const len = data.length;
-      const step = 4 * 40; 
+      const step = 4 * 40;
       let total = 0;
       for (let i = 3; i < len; i += step) {
         total++;
@@ -120,23 +119,27 @@ document.addEventListener("DOMContentLoaded", () => {
       if ((clear / total) > 0.4) {
         s.revealed = true;
         card.classList.add("revealed");
-        saveProgress(card.dataset.day); 
+        saveProgress(card.dataset.day);
         const contentNode = card.querySelector(".content");
         if (contentNode) openModal(contentNode);
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error("Error during checkRevealed:", err);
+    }
   }
 
-  // --- CARD INITIALIZATION AND INTERACTION ---
-  cards.forEach(card => {
+  /**
+   * Initializes the scratch canvas size, drawing context, and state.
+   */
+  function initCanvas(card) {
     const canvas = card.querySelector(".scratch");
-    const day = card.dataset.day;
+    if (!canvas) return;
 
-    // 1. Scratchable Card Setup (Only runs on index.html)
-    if (canvas) {
-      
+    try {
       const ctx = canvas.getContext("2d");
+      const day = card.dataset.day;
 
+      // Apply background image style
       const imgSrc = card.dataset.img;
       if (imgSrc) {
         card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
@@ -144,6 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.style.backgroundPosition = "center";
       }
 
+      // Set size properties
       const cssW = Math.max(1, Math.round(card.clientWidth));
       const cssH = Math.max(1, Math.round(card.clientHeight));
 
@@ -154,137 +158,209 @@ document.addEventListener("DOMContentLoaded", () => {
 
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
+      // Draw initial scratch cover
       ctx.globalCompositeOperation = "source-over";
-      ctx.fillStyle = "#d8d8d8"; 
+      ctx.fillStyle = "#d8d8d8";
       ctx.fillRect(0, 0, cssW, cssH);
 
+      // Set composite operation for erasing
       ctx.globalCompositeOperation = "destination-out";
 
+      // Store scratch state
       card._scratch = {
         canvas,
         ctx,
         cssW,
         cssH,
-        brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)), 
+        brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)),
         revealed: false
       };
-      
-      // FIX: Check Local Storage State AFTER canvas object is created
+
+      // Apply saved progress
       if (scratchedDays[day]) {
         card.classList.add("revealed");
         card._scratch.revealed = true;
-        canvas.style.display = 'none'; // Hide canvas immediately
+        canvas.style.display = 'none';
       }
+      return card._scratch;
 
-      // 1c. Scratching Logic
-      const s = card._scratch;
-      let drawing = false;
-      let last = null;
-      let moveCounter = 0;
-      
-      function eraseAt(x, y) {
-        s.ctx.beginPath();
-        s.ctx.arc(x, y, s.brush, 0, Math.PI * 2);
-        s.ctx.fill();
+    } catch (e) {
+      console.error("Failed to initialize canvas for card:", day, e);
+      return null;
+    }
+  }
+
+  // --- CARD INTERACTION LOGIC (Applies only to index.html cards with canvas) ---
+  function setupScratchLogic(card, s) {
+    if (!s) return;
+
+    const { canvas } = s;
+    let drawing = false;
+    let last = null;
+    let moveCounter = 0;
+
+    function eraseAt(x, y) {
+      s.ctx.beginPath();
+      s.ctx.arc(x, y, s.brush, 0, Math.PI * 2);
+      s.ctx.fill();
+    }
+
+    function onDown(x, y) {
+      if (s.revealed) return;
+      drawing = true;
+      last = { x, y };
+    }
+
+    function onMove(x, y) {
+      if (!drawing || s.revealed) return;
+
+      const dist = Math.hypot(x - last.x, y - last.y);
+      const steps = Math.ceil(dist / (s.brush * 0.25));
+      for (let i = 0; i < steps; i++) {
+        const t = i / steps;
+        eraseAt(last.x + (x - last.x) * t, last.y + (y - last.y) * t);
       }
+      last = { x, y };
 
-      function onDown(x, y) {
-        if (s.revealed) return;
-        drawing = true;
-        last = { x, y };
+      moveCounter++;
+      if (moveCounter % 20 === 0) {
+        checkRevealed(card);
       }
+    }
 
-      function onMove(x, y) {
-        if (!drawing || s.revealed) return;
+    function onUp() {
+      if (drawing) {
+        drawing = false;
+        last = null;
+        checkRevealed(card);
+      }
+    }
 
-        const dist = Math.hypot(x - last.x, y - last.y);
-        const steps = Math.ceil(dist / (s.brush * 0.25));
-        for (let i = 0; i < steps; i++) {
-          const t = i / steps;
-          eraseAt(last.x + (x - last.x) * t, last.y + (y - last.y) * t);
-        }
-        last = { x, y };
+    // Pointer Events
+    canvas.addEventListener("pointerdown", e => {
+      if (e.pointerType === "mouse") e.preventDefault();
+      const p = localPos(canvas, e.clientX, e.clientY);
+      onDown(p.x, p.y);
+    });
 
-        moveCounter++;
-        if (moveCounter % 20 === 0) {
-          checkRevealed(card);
+    canvas.addEventListener("pointermove", e => {
+      if (drawing && e.cancelable) {
+        if (e.pointerType === "mouse" || e.pointerType === "touch") {
+          e.preventDefault();
+          const p = localPos(canvas, e.clientX, e.clientY);
+          onMove(p.x, p.y);
         }
       }
+    });
 
-      function onUp() {
-        if (drawing) {
-          drawing = false;
-          last = null;
-          checkRevealed(card);
-        }
-      }
+    canvas.addEventListener("pointerup", onUp);
+    canvas.addEventListener("pointercancel", onUp);
 
-      // Scratch Pointer Events
-      canvas.addEventListener("pointerdown", e => {
-        if (e.pointerType === "mouse") e.preventDefault();
-        const p = localPos(canvas, e.clientX, e.clientY);
-        onDown(p.x, p.y);
-      });
+    // Click listener for modal on scratched cards
+    card.addEventListener("click", (e) => {
+      if (e.target.closest('a') !== null) return;
 
-      canvas.addEventListener("pointermove", e => {
-        if (drawing && e.cancelable) {
-          if (e.pointerType === "mouse" || e.pointerType === "touch") {
-            e.preventDefault(); 
-            const p = localPos(canvas, e.clientX, e.clientY);
-            onMove(p.x, p.y);
-          }
-        }
-      });
-
-      canvas.addEventListener("pointerup", onUp);
-      canvas.addEventListener("pointercancel", onUp);
-      
-      // Click listener for modal
-      card.addEventListener("click", (e) => {
-        if (e.target.closest('a') !== null) return; 
-
-        if (card.classList.contains("revealed")) {
-          const contentNode = card.querySelector(".content");
-          if (contentNode) openModal(contentNode);
-        }
-      });
-
-    } else if (card.classList.contains('revealed')) {
-      // 2. Revealed Card Setup (Runs on all-bottles*.html)
-      card.addEventListener("click", (e) => {
-        if (e.target.closest('a') !== null) return; 
-        
+      if (card.classList.contains("revealed")) {
         const contentNode = card.querySelector(".content");
         if (contentNode) openModal(contentNode);
-      });
-      
-      // Stop button click propagation
-      const detailLink = card.querySelector('.btn');
-      if (detailLink) {
-        detailLink.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
       }
+    });
+  }
+
+  // --- CARD INTERACTION LOGIC (Applies to all-bottles*.html revealed cards) ---
+  function setupClickableCardLogic(card) {
+    // Only set up for cards that are meant to be purely clickable (i.e., not the scratch card page)
+    card.addEventListener("click", (e) => {
+      // Prevent modal opening if user clicks the actual 'Buy' link
+      if (e.target.closest('a') !== null) return;
+
+      const contentNode = card.querySelector(".content");
+      if (contentNode) openModal(contentNode);
+    });
+
+    // Stop button click propagation
+    const detailLink = card.querySelector('.btn');
+    if (detailLink) {
+      detailLink.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+  }
+
+  // --- MAIN INITIALIZATION LOOP ---
+  cards.forEach(card => {
+    const canvas = card.querySelector(".scratch");
+
+    if (canvas) {
+      // Index page (Scratchable Cards)
+      const scratchState = initCanvas(card);
+      setupScratchLogic(card, scratchState);
+    } else if (card.classList.contains('revealed')) {
+      // All Bottles pages (Pre-revealed, clickable cards)
+      setupClickableCardLogic(card);
     }
   });
 
-
-  // --- RESIZE HANDLER (simplified) ---
+  // --- RESIZE HANDLER (Re-initializes canvas properties without drawing) ---
   let rt = null;
   window.addEventListener("resize", () => {
     clearTimeout(rt);
     rt = setTimeout(() => {
-      cards.forEach(card => { 
-        // Only run resize logic for cards that were NOT permanently scratched off and have a canvas
-        if (card.querySelector('.scratch') && card._scratch && !scratchedDays[card.dataset.day]) {
+      cards.forEach(card => {
+        if (card.querySelector('.scratch') && card._scratch && !card._scratch.revealed) {
           const canvas = card.querySelector(".scratch");
           const cardEl = card.closest('.card');
-          const ctx = canvas.getContext("2d");
-          
+
           const cssW = Math.max(1, Math.round(cardEl.clientWidth));
           const cssH = Math.max(1, Math.round(cardEl.clientHeight));
 
           canvas.style.width = cssW + "px";
           canvas.style.height = cssH + "px";
           canvas.width = Math.floor(cssW * DPR);
-          canvas
+          canvas.height = Math.floor(cssH * DPR);
+
+          // Re-apply DPR transform
+          card._scratch.ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+          // Redraw cover if needed (in a production environment, you'd save the scratch path, but here we just reset the context)
+          card._scratch.ctx.globalCompositeOperation = "source-over";
+          card._scratch.ctx.fillStyle = "#d8d8d8";
+          card._scratch.ctx.fillRect(0, 0, cssW, cssH);
+          card._scratch.ctx.globalCompositeOperation = "destination-out";
+        }
+      });
+    }, 120);
+  });
+  
+  // --- SNOW GENERATOR ---
+  (function createSnow(num = 30) {
+    const container = document.getElementById('snow-container');
+    if (!container) return;
+    for (let i = 0; i < num; i++) {
+      const el = document.createElement('div');
+      el.className = 'snowflake';
+      el.textContent = '❄';
+      const left = Math.random() * 100;
+      const size = 10 + Math.random() * 15;
+      const dur = 8 + Math.random() * 10;
+      const sway = (Math.random() - 0.5) * 40; // px
+      
+      el.style.left = left + 'vw';
+      el.style.fontSize = size + 'px';
+      el.style.setProperty('--fall-duration', `${dur}s`);
+      el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
+      el.style.setProperty('--sway', `${sway}px`);
+      
+      container.appendChild(el);
+      
+      // Recycle/Respawn snowflakes
+      el.addEventListener('animationend', () => {
+        el.style.left = (Math.random() * 100) + 'vw';
+        el.style.fontSize = (10 + Math.random() * 15) + 'px';
+        el.style.setProperty('--fall-duration', `${8 + Math.random() * 12}s`);
+        el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
+        el.style.setProperty('--sway', `${(Math.random() - 0.5) * 50}px`);
+      });
+    }
+  })();
+
+});
