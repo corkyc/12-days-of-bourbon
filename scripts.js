@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
-    // Background image
     const imgSrc = card.dataset.img;
     if (imgSrc) {
       card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
@@ -49,12 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-    // Cover with grey
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = "#d8d8d8"; 
     ctx.fillRect(0, 0, cssW, cssH);
 
-    // Switch to erase mode
     ctx.globalCompositeOperation = "destination-out";
 
     card._scratch = {
@@ -62,7 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx,
       cssW,
       cssH,
-      brush: Math.max(20, Math.round(Math.max(cssW, cssH) * 0.08)),
+      // Increased brush size slightly for easier scratching
+      brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)), 
       revealed: false
     };
   }
@@ -84,33 +82,27 @@ document.addEventListener("DOMContentLoaded", () => {
     return { x: clientX - r.left, y: clientY - r.top };
   }
 
-  // --- REVEAL CHECK (Expensive Operation) ---
   function checkRevealed(card) {
     const s = card._scratch;
     if (!s || s.revealed) return;
-    
     try {
-      // We only scan a subset of pixels to save CPU
       const imageData = s.ctx.getImageData(0, 0, s.cssW, s.cssH);
       const data = imageData.data;
       let clear = 0;
       const len = data.length;
-      const step = 4 * 40; // Skip more pixels for speed
+      const step = 4 * 40; 
       let total = 0;
       for (let i = 3; i < len; i += step) {
         total++;
         if (data[i] === 0) clear++;
       }
-      
       if ((clear / total) > 0.4) {
         s.revealed = true;
         card.classList.add("revealed");
         const contentNode = card.querySelector(".content");
         if (contentNode) openModal(contentNode);
       }
-    } catch (err) {
-      // Cross-origin issues or errors
-    }
+    } catch (err) {}
   }
 
   // --- DRAWING LOGIC ---
@@ -120,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const { canvas, ctx } = s;
     let drawing = false;
     let last = null;
-    let moveCounter = 0; // Optimization counter
+    let moveCounter = 0;
 
     function eraseAt(x, y) {
       ctx.beginPath();
@@ -132,14 +124,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (s.revealed) return;
       drawing = true;
       last = { x, y };
-      // Note: We do NOT erase on initial touch to allow clean scrolling start
+      // No immediate scratch on down to allow scrolling logic
     }
 
     function onMove(x, y) {
       if (!drawing || s.revealed) return;
 
       const dist = Math.hypot(x - last.x, y - last.y);
-      // Interpolate for smooth lines
       const steps = Math.ceil(dist / (s.brush * 0.25));
       for (let i = 0; i < steps; i++) {
         const t = i / steps;
@@ -147,8 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       last = { x, y };
 
-      // --- FIX: PERFORMANCE THROTTLE ---
-      // Reading pixels (getImageData) is slow. Only do it every 20 moves.
+      // Throttle reveal check
       moveCounter++;
       if (moveCounter % 20 === 0) {
         checkRevealed(card);
@@ -159,14 +149,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (drawing) {
         drawing = false;
         last = null;
-        // Check one last time on lift
         checkRevealed(card);
       }
     }
 
     // Pointer Events
     canvas.addEventListener("pointerdown", e => {
-      // Allow browser to handle scrolling logic (no preventDefault here for touch)
+      // Mouse needs preventDefault to avoid drag, Touch does not (to allow scroll)
       if (e.pointerType === "mouse") e.preventDefault();
       
       const p = localPos(canvas, e.clientX, e.clientY);
@@ -174,11 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     canvas.addEventListener("pointermove", e => {
-      // If browser hasn't taken over (cancelable is true), and we are drawing:
       if (drawing && e.cancelable) {
-        // We only block the browser if the user is scratching (e.g. mouse or explicit touch)
-        // With touch-action: pan-y, vertical moves are handled by browser, 
-        // horizontal moves come here.
+        // If it's a mouse or an explicit touch move (not a scroll), scratch.
         if (e.pointerType === "mouse" || e.pointerType === "touch") {
           e.preventDefault(); 
           const p = localPos(canvas, e.clientX, e.clientY);
@@ -190,7 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.addEventListener("pointerup", onUp);
     canvas.addEventListener("pointercancel", onUp);
 
-    // Click on revealed
     card.addEventListener("click", () => {
       if (card.classList.contains("revealed")) {
         const contentNode = card.querySelector(".content");
@@ -199,7 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Snow
   (function createSnow(num = 30) {
     const container = document.getElementById('snow-container');
     if (!container) return;
