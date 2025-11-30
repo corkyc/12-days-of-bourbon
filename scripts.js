@@ -1,212 +1,153 @@
+// ---------------------------
+// HAMBURGER MENU
+// ---------------------------
+const hamburger = document.getElementById("hamburger");
+const nav = document.querySelector(".nav-links");
+
+hamburger.addEventListener("click", () => {
+  nav.classList.toggle("open");
+});
+
+
+// ---------------------------
+// SCRATCH-OFF FUNCTION
+// ---------------------------
 document.addEventListener("DOMContentLoaded", () => {
+  const cards = document.querySelectorAll(".whiskey-card");
 
-  /* -----------------------
-      MOBILE NAVIGATION
-  ------------------------*/
-  const hamburger = document.getElementById("hamburger");
-  const navMenu = document.querySelector(".nav-links");
+  cards.forEach(card => {
+    const canvas = card.querySelector(".scratch-canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const overlay = card.querySelector(".scratch-overlay");
 
-  if (hamburger && navMenu) {
-    hamburger.addEventListener("click", () => {
-      navMenu.classList.toggle("active");
-    });
-  }
+    function resizeCanvas() {
+      canvas.width = card.clientWidth;
+      canvas.height = card.clientHeight;
+      drawCover();
+    }
 
-  /* -----------------------
-      MODAL LOGIC
-  ------------------------*/
-  const modal = document.getElementById("whiskeyModal");
-  const modalBody = document.getElementById("modal-body");
-  const closeButton = document.querySelector(".close-button");
+    function drawCover() {
+      ctx.fillStyle = "#b19cd9";  // purple/silver scratch surface
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  function showModal(html) {
-    modalBody.innerHTML = html;
-    modal.style.display = "flex";
-    modal.setAttribute("aria-hidden", "false");
-  }
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 24px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(card.dataset.id, canvas.width / 2, canvas.height / 2);
+    }
 
-  function hideModal() {
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden", "true");
-  }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
-  if (closeButton) closeButton.addEventListener("click", hideModal);
+    let scratching = false;
 
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) hideModal();
-  });
+    // Mobile: prevent scrolling while scratching
+    function preventScroll(e) {
+      if (scratching) e.preventDefault();
+    }
+    canvas.addEventListener("touchmove", preventScroll, { passive: false });
 
-  /* -----------------------
-      SCRATCH CARDS
-  ------------------------*/
-  const DPR = window.devicePixelRatio || 1;
-  const doors = document.querySelectorAll(".door");
+    // Start scratching
+    function start(e) {
+      scratching = true;
+      scratch(e);
+    }
 
-  doors.forEach((door) => {
-    const canvas = door.querySelector(".scratch-canvas");
-    const numberEl = door.querySelector(".door_number");
-    const hidden = door.querySelector(".door-hidden-content");
+    // Stop scratching
+    function stop() {
+      scratching = false;
+      checkReveal();
+    }
 
-    if (!canvas) return;
+    // Scratch logic
+    function scratch(e) {
+      if (!scratching) return;
 
-    const ctx = canvas.getContext("2d");
-    let drawing = false;
-    let pointerDown = false;
-    let lastPt = null;
-
-    /* Force canvas ON TOP */
-    canvas.style.zIndex = "999";
-
-    /* Force scratch enabling on mobile Safari */
-    canvas.style.touchAction = "none";
-
-    /* -----------------------
-        SETUP CANVAS
-    ------------------------*/
-    function setupCanvas() {
-      const width = door.offsetWidth;
-      const height = door.offsetHeight;
-
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-
-      canvas.width = width * DPR;
-      canvas.height = height * DPR;
-
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-      ctx.globalCompositeOperation = "source-over";
-
-      ctx.fillStyle = "#c0c0c0";
-      ctx.fillRect(0, 0, width, height);
+      const rect = canvas.getBoundingClientRect();
+      const x =
+        (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y =
+        (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
       ctx.globalCompositeOperation = "destination-out";
-    }
-
-    function brushSize() {
-      return Math.max(16, Math.min(60, door.offsetWidth * 0.1));
-    }
-
-    function getPos(e) {
-      const rect = canvas.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-      return { x, y };
-    }
-
-    function erase(pt) {
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, brushSize(), 0, Math.PI * 2);
+      ctx.arc(x, y, 28, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    function draw(pt) {
-      if (!lastPt) {
-        erase(pt);
-        lastPt = pt;
-        return;
-      }
+    // Events
+    canvas.addEventListener("mousedown", start);
+    canvas.addEventListener("mousemove", scratch);
+    canvas.addEventListener("mouseup", stop);
+    canvas.addEventListener("mouseleave", stop);
 
-      const dx = pt.x - lastPt.x;
-      const dy = pt.y - lastPt.y;
-      const dist = Math.hypot(dx, dy);
-      const steps = Math.ceil(dist / 4);
+    canvas.addEventListener("touchstart", start, { passive: false });
+    canvas.addEventListener("touchmove", scratch, { passive: false });
+    canvas.addEventListener("touchend", stop);
 
-      for (let i = 0; i < steps; i++) {
-        erase({
-          x: lastPt.x + (dx * i) / steps,
-          y: lastPt.y + (dy * i) / steps,
-        });
-      }
-
-      lastPt = pt;
-    }
-
+    // Reveal when 60% scratched
     function checkReveal() {
       const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let clear = 0;
-      let total = 0;
+      let cleared = 0;
 
-      for (let i = 3; i < pixels.length; i += 40) {
-        total++;
-        if (pixels[i] === 0) clear++;
+      for (let i = 3; i < pixels.length; i += 4) {
+        if (pixels[i] === 0) cleared++;
       }
 
-      if (clear / total > 0.45) reveal();
+      const percent = cleared / (pixels.length / 4);
+
+      if (percent > 0.60) reveal(card, canvas, overlay);
     }
-
-    function reveal() {
-      canvas.style.display = "none";
-      numberEl.style.display = "none";
-      door.classList.add("revealed");
-      hidden.style.opacity = 1;
-    }
-
-    /* -----------------------
-        POINTER + TOUCH
-    ------------------------*/
-
-    function start(e) {
-      pointerDown = true;
-      drawing = true;
-      lastPt = null;
-      draw(getPos(e));
-      e.preventDefault();
-    }
-
-    function move(e) {
-      if (!drawing) return;
-      draw(getPos(e));
-      e.preventDefault();
-    }
-
-    function end() {
-      if (!pointerDown) return;
-      pointerDown = false;
-      drawing = false;
-      lastPt = null;
-      setTimeout(checkReveal, 100);
-    }
-
-    /* Use Pointer Events where possible */
-    if (window.PointerEvent) {
-      canvas.addEventListener("pointerdown", start, { passive: false });
-      canvas.addEventListener("pointermove", move, { passive: false });
-      window.addEventListener("pointerup", end, { passive: false });
-    } else {
-      canvas.addEventListener("mousedown", start, { passive: false });
-      window.addEventListener("mousemove", move, { passive: false });
-      window.addEventListener("mouseup", end, { passive: false });
-
-      canvas.addEventListener("touchstart", start, { passive: false });
-      canvas.addEventListener("touchmove", move, { passive: false });
-      window.addEventListener("touchend", end, { passive: false });
-    }
-
-    /* Allow scrolling when not scratching */
-    canvas.addEventListener(
-      "touchmove",
-      (e) => {
-        if (pointerDown) e.preventDefault();
-      },
-      { passive: false }
-    );
-
-    /* -----------------------
-        MODAL CLICK
-    ------------------------*/
-    door.addEventListener("click", () => {
-      if (!door.classList.contains("revealed")) return;
-      if (pointerDown) return;
-      showModal(hidden.innerHTML);
-    });
-
-    /* Initialize */
-    setupCanvas();
-
-    /* Resize handler */
-    window.addEventListener("resize", () => {
-      if (!door.classList.contains("revealed")) setupCanvas();
-    });
   });
 });
+
+
+// ---------------------------
+// OPEN MODAL ON REVEAL
+// ---------------------------
+
+function reveal(card, canvas, overlay) {
+  canvas.style.opacity = 0;
+  overlay.style.opacity = 0;
+  canvas.style.pointerEvents = "none";
+
+  setTimeout(() => openModal(card), 300);
+}
+
+
+// ---------------------------
+// MODAL BEHAVIOR
+// ---------------------------
+const modal = document.getElementById("whiskeyModal");
+const modalBody = document.getElementById("modal-body");
+const closeBtn = document.querySelector(".close-button");
+
+function openModal(card) {
+  const hidden = card.querySelector(".hidden-modal-data");
+
+  modalBody.innerHTML = `
+    <img src="${hidden.querySelector("img").src}" class="modal-image">
+    <h3>${hidden.querySelector("h3").textContent}</h3>
+    <p>${hidden.querySelector("p").textContent}</p>
+    ${hidden.querySelectorAll("a")
+      .map(a => `<a href="${a.href}" class="btn">${a.textContent}</a>`)
+      .join("")}
+  `;
+
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+closeBtn.addEventListener("click", closeModal);
+
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) closeModal();
+});
+
+function closeModal() {
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
