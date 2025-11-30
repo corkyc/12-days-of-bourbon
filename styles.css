@@ -1,123 +1,88 @@
-/* Basic reset */
-* { box-sizing: border-box; }
-html,body { height: 100%; }
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Georgia, serif;
-  background: #2b1f16;
-  color: #f6f0e6;
-  -webkit-font-smoothing:antialiased;
-}
-
-/* Header */
-header {
-  padding: 22px 16px;
+  background: #2b1b19;
+  color: #fff;
   text-align: center;
-  background: #8b5d3d;
 }
-header h1 { margin: 0; font-size: 2.2rem; font-family: 'Great Vibes', cursive; }
-.tagline { margin-top: 6px; font-size: 0.95rem; color: #f0c674; }
 
-/* Grid */
-.whiskey-grid {
+header {
+  padding: 20px;
+  background: #7a4e33;
+}
+
+.grid {
+  padding: 20px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+  grid-template-columns: repeat(2, 1fr);
   gap: 14px;
-  padding: 16px;
-  max-width: 1100px;
-  margin: 16px auto;
 }
 
 @media (min-width: 768px) {
-  .whiskey-grid { grid-template-columns: repeat(4, 1fr); } /* 4 columns on desktop */
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
-/* Card */
-.whiskey-card {
+.door {
   position: relative;
-  aspect-ratio: 1/1;
-  border-radius: 12px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #222;
+  border-radius: 14px;
   overflow: hidden;
-  background: linear-gradient(180deg,#513527,#3d2a20);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.45);
-  cursor: pointer;
 }
 
-/* Hidden content (inside card) */
-.hidden-modal-data {
-  position: absolute;
-  inset: 0;
-  padding: 12px;
-  display: none;
-  color: #fff;
-  z-index: 1;
-  align-items: center;
-  justify-content: center;
-}
-.hidden-modal-data img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 8px; }
-.hidden-modal-data h3 { margin: 6px 0 4px; font-size: 1.05rem; }
-.hidden-modal-data p { margin: 0 0 8px; font-size: 0.9rem; }
-
-/* Buttons inside modal-data */
-.btn { display:inline-block; padding:8px 10px; background:#8B5D3D; color:#fff; border-radius:6px; text-decoration:none; margin-right:6px; }
-
-/* Scratch overlay label (sits above canvas until removed) */
-.scratch-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight:700;
-  font-size: 1.05rem;
-  color: #141414;
-  background: rgba(255,255,255,0.9);
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-/* Canvas (scratch layer) - sits above card but under overlay.
-   We position it absolutely and fill it via JS so style background doesn't block erase. */
+/* Scratch Canvas */
 .scratch-canvas {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
   z-index: 5;
   touch-action: none;
-  display: block;
 }
 
-/* When door is revealed, show the hidden content and hide overlay/canvas */
-.whiskey-card.revealed .hidden-modal-data { display: block; z-index: 2; }
-.whiskey-card.revealed .scratch-overlay,
-.whiskey-card.revealed .scratch-canvas { display: none; }
+/* Hidden content */
+.hidden-data {
+  display: none;
+}
 
-/* Modal styles */
+/* Modal */
 .modal {
+  display: none;
   position: fixed;
   inset: 0;
-  display: none;
+  background: rgba(0,0,0,0.6);
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.6);
-  z-index: 9999;
+  z-index: 2000;
 }
-.modal[aria-hidden="false"] { display: flex; }
 
 .modal-content {
-  width: 92%;
-  max-width: 520px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 16px;
-  color: #222;
+  background: white;
+  color: black;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  padding: 18px;
+  position: relative;
 }
-.close-button {
+
+#closeModal {
   position: absolute;
+  right: 12px;
   top: 8px;
-  right: 10px;
-  font-size: 22px;
-  background: none;
-  border: 0;
   cursor: pointer;
+  font-size: 26px;
+}
+
+.modal-content img {
+  width: 100%;
+  border-radius: 10px;
 }
