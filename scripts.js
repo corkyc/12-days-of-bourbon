@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     modalBody.innerHTML = "";
 
     if (node && node.cloneNode) {
-      // Clone the content node so the original stays in the grid
       const clone = node.cloneNode(true);
       modalBody.appendChild(clone);
     }
@@ -30,23 +29,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- CANVAS INIT ---
   function initCanvas(card) {
     const canvas = card.querySelector(".scratch");
-    if (!canvas) return; // Guard clause
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
 
-    // Apply the "cover" image (e.g. wood barrel) to the card background
+    // Apply "cover" image
     const imgSrc = card.dataset.img;
     if (imgSrc) {
-      // We set this inline. Note: CSS !important on .revealed overrides this.
       card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
       card.style.backgroundSize = "cover";
       card.style.backgroundPosition = "center";
     }
 
-    // CSS size
     const cssW = Math.max(1, Math.round(card.clientWidth));
     const cssH = Math.max(1, Math.round(card.clientHeight));
 
-    // Canvas size (DPR adjusted)
     canvas.style.width = cssW + "px";
     canvas.style.height = cssH + "px";
     canvas.width = Math.floor(cssW * DPR);
@@ -54,22 +50,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-    // Draw scratch coating (grey/silver)
+    // Draw scratch coating
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = "#d8d8d8"; 
-    // You could also draw an image here for the scratch surface if desired
     ctx.fillRect(0, 0, cssW, cssH);
 
     // Switch to erase mode
     ctx.globalCompositeOperation = "destination-out";
 
-    // Store state
     card._scratch = {
       canvas,
       ctx,
       cssW,
       cssH,
-      brush: Math.max(20, Math.round(Math.max(cssW, cssH) * 0.08)), // Slightly larger brush
+      brush: Math.max(20, Math.round(Math.max(cssW, cssH) * 0.08)),
       revealed: false
     };
   }
@@ -97,17 +91,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // Check how much is scratched
+  // Check revealed percentage
   function isRevealed(card) {
     const s = card._scratch;
     if (!s || s.revealed) return true;
     try {
-      // Sample pixels
       const imageData = s.ctx.getImageData(0, 0, s.cssW, s.cssH);
       const data = imageData.data;
       let clear = 0;
-      // We only need to check alpha channel (every 4th byte)
-      // Step by 32 to speed up loop (approx sampling)
       const len = data.length;
       const step = 4 * 32; 
       let total = 0;
@@ -115,13 +106,13 @@ document.addEventListener("DOMContentLoaded", () => {
         total++;
         if (data[i] === 0) clear++;
       }
-      return (clear / total) > 0.4; // 40% cleared triggers reveal
+      return (clear / total) > 0.4;
     } catch (err) {
-      return true; // Fallback
+      return true;
     }
   }
 
-  // --- DRAWING LOGIC ---
+  // --- DRAWING LOGIC (Fixed for Scrolling) ---
   cards.forEach(card => {
     const s = card._scratch;
     if (!s) return;
@@ -139,11 +130,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (s.revealed) return;
       drawing = true;
       last = { x, y };
-      eraseAt(x, y);
+      // NOTE: We do NOT erase here immediately. 
+      // This prevents a dot from appearing if the user just taps to scroll.
     }
 
     function onMove(x, y) {
       if (!drawing || s.revealed) return;
+
       const dist = Math.hypot(x - last.x, y - last.y);
       const steps = Math.ceil(dist / (s.brush * 0.25));
       for (let i = 0; i < steps; i++) {
@@ -152,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       last = { x, y };
       
-      // Check reveal status
       if (isRevealed(card)) {
         s.revealed = true;
         card.classList.add("revealed");
@@ -166,21 +158,36 @@ document.addEventListener("DOMContentLoaded", () => {
       last = null;
     }
 
-    // Pointer Events (Mouse + Touch)
+    // --- POINTER EVENTS ---
+    
     canvas.addEventListener("pointerdown", e => {
-      e.preventDefault(); // Prevent scrolling
+      // 1. Allow Touch scrolling to happen naturally (don't preventDefault).
+      // 2. Only preventDefault for mouse so we don't drag the image.
+      if (e.pointerType === "mouse") {
+        e.preventDefault();
+      }
+      
       const p = localPos(canvas, e.clientX, e.clientY);
       onDown(p.x, p.y);
-      canvas.setPointerCapture(e.pointerId);
     });
 
     canvas.addEventListener("pointermove", e => {
-      if (drawing) e.preventDefault();
-      const p = localPos(canvas, e.clientX, e.clientY);
-      onMove(p.x, p.y);
+      // If we are drawing, check if we need to prevent native behavior.
+      // e.cancelable will be false if the browser has already decided this is a scroll.
+      if (drawing && e.cancelable) {
+        // If it's a mouse, or if we've moved sideways enough for the browser
+        // to agree it's NOT a scroll (due to touch-action: pan-y), we scratch.
+        if (e.pointerType === "mouse" || (e.pointerType === "touch")) {
+           e.preventDefault(); 
+           const p = localPos(canvas, e.clientX, e.clientY);
+           onMove(p.x, p.y);
+        }
+      }
     });
 
     canvas.addEventListener("pointerup", onUp);
+    
+    // pointercancel fires if the browser decides "This is a scroll, cancel the JS logic"
     canvas.addEventListener("pointercancel", onUp);
 
     // Click handler for already revealed cards
