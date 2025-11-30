@@ -16,7 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
       scratchedDays = stored ? JSON.parse(stored) : {};
     } catch (e) {
       console.error("Error loading progress from localStorage", e);
-      scratchedDays = {};
+      // Fallback to empty state
+      scratchedDays = {}; 
     }
   }
 
@@ -124,7 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (contentNode) openModal(contentNode);
       }
     } catch (err) {
-      console.error("Error during checkRevealed:", err);
+      // Catch error (often due to cross-origin canvas reading)
+      console.error("Error during checkRevealed:", err); 
     }
   }
 
@@ -190,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- CARD INTERACTION LOGIC (Applies only to index.html cards with canvas) ---
+  // --- CARD INTERACTION LOGIC ---
   function setupScratchLogic(card, s) {
     if (!s) return;
 
@@ -267,11 +269,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- CARD INTERACTION LOGIC (Applies to all-bottles*.html revealed cards) ---
+  // --- CLICKABLE CARD LOGIC (Applies to all-bottles*.html revealed cards) ---
   function setupClickableCardLogic(card) {
-    // Only set up for cards that are meant to be purely clickable (i.e., not the scratch card page)
     card.addEventListener("click", (e) => {
-      // Prevent modal opening if user clicks the actual 'Buy' link
       if (e.target.closest('a') !== null) return;
 
       const contentNode = card.querySelector(".content");
@@ -310,6 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (card.querySelector('.scratch') && card._scratch && !card._scratch.revealed) {
           const canvas = card.querySelector(".scratch");
           const cardEl = card.closest('.card');
+          const scratchState = card._scratch;
 
           const cssW = Math.max(1, Math.round(cardEl.clientWidth));
           const cssH = Math.max(1, Math.round(cardEl.clientHeight));
@@ -319,18 +320,17 @@ document.addEventListener("DOMContentLoaded", () => {
           canvas.width = Math.floor(cssW * DPR);
           canvas.height = Math.floor(cssH * DPR);
 
-          // Re-apply DPR transform
-          card._scratch.ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-          // Redraw cover if needed (in a production environment, you'd save the scratch path, but here we just reset the context)
-          card._scratch.ctx.globalCompositeOperation = "source-over";
-          card._scratch.ctx.fillStyle = "#d8d8d8";
-          card._scratch.ctx.fillRect(0, 0, cssW, cssH);
-          card._scratch.ctx.globalCompositeOperation = "destination-out";
+          // Redraw the cover after resize
+          scratchState.ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+          scratchState.ctx.globalCompositeOperation = "source-over";
+          scratchState.ctx.fillStyle = "#d8d8d8";
+          scratchState.ctx.fillRect(0, 0, cssW, cssH);
+          scratchState.ctx.globalCompositeOperation = "destination-out";
         }
       });
     }, 120);
   });
-  
+
   // --- SNOW GENERATOR ---
   (function createSnow(num = 30) {
     const container = document.getElementById('snow-container');
@@ -342,16 +342,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const left = Math.random() * 100;
       const size = 10 + Math.random() * 15;
       const dur = 8 + Math.random() * 10;
-      const sway = (Math.random() - 0.5) * 40; // px
-      
+      const sway = (Math.random() - 0.5) * 40;
+
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
       el.style.setProperty('--fall-duration', `${dur}s`);
       el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
       el.style.setProperty('--sway', `${sway}px`);
-      
+
       container.appendChild(el);
-      
+
       // Recycle/Respawn snowflakes
       el.addEventListener('animationend', () => {
         el.style.left = (Math.random() * 100) + 'vw';
