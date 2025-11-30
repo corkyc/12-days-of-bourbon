@@ -22,7 +22,7 @@ body {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 1; /* Ensure snow is behind content but visible */
 }
 
 /* --- HEADER --- */
@@ -344,24 +344,30 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   background: #366c61; /* Darker green hover */
 }
 
-/* Snow */
+/* --- SNOW --- */
 .snowflake {
   position: fixed;
-  top: -10vh;
-  z-index: 2;
+  top: -10vh; /* Start above viewport */
+  z-index: 2; /* Between background and content */
   color: rgba(255,255,255,0.95);
   font-size: 14px;
-  pointer-events: none;
-  will-change: transform;
+  pointer-events: none; /* Allow clicks/interaction with content behind */
+  will-change: transform; /* Optimize animation performance */
   animation-name: fall, sway;
-  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s);
+  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s); /* Custom properties for varied speeds */
   animation-timing-function: linear, ease-in-out;
   animation-iteration-count: infinite, infinite;
   opacity: 0.9;
 }
-@keyframes fall { to { transform: translateY(120vh); } }
+
+@keyframes fall {
+  to {
+    transform: translateY(120vh); /* Fall past the viewport */
+  }
+}
+
 @keyframes sway {
   0% { transform: translateX(0); }
-  50% { transform: translateX(var(--sway, 20px)); }
+  50% { transform: translateX(var(--sway, 20px)); } /* Varying sway amount */
   100% { transform: translateX(0); }
 }
