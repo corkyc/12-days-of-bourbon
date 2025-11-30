@@ -195,6 +195,7 @@ header h1 {
   height: 100%;
   display: block;
   touch-action: none;
+  background: transparent
 }
 
 /* Overlay text */
