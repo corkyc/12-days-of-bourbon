@@ -6,30 +6,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
 
-  // --- FIXED MODAL USING CLONE ---
-function openModal(htmlNodeOrString) {
-  modalBody.innerHTML = "";
+  // --- FIXED MODAL: accepts a DOM node and clones it before inserting ---
+  function openModal(node) {
+    if (!modalBody) return;
+    modalBody.innerHTML = "";
 
-  // If string, convert to a temporary DOM node
-  if (typeof htmlNodeOrString === "string") {
-    const temp = document.createElement("div");
-    temp.innerHTML = htmlNodeOrString.trim();
+    // If the caller passed a string accidentally, convert to node then clone.
+    if (typeof node === "string") {
+      const temp = document.createElement("div");
+      temp.innerHTML = node.trim();
+      modalBody.appendChild(temp.cloneNode(true));
+    } else if (node && node.cloneNode) {
+      // Clone the real node so the original stays in the card.
+      modalBody.appendChild(node.cloneNode(true));
+    } else {
+      // nothing to show
+      modalBody.textContent = "";
+    }
 
-    // Clone to preserve the original and keep card content intact
-    modalBody.appendChild(temp.cloneNode(true));
-  } else {
-    // If they ever pass a real node, clone that too
-    modalBody.appendChild(htmlNodeOrString.cloneNode(true));
+    if (modal) modal.setAttribute("aria-hidden", "false");
   }
 
-  modal.setAttribute("aria-hidden", "false");
-}
-  
   function closeModal() {
-    modal.setAttribute("aria-hidden", "true");
+    if (modal) modal.setAttribute("aria-hidden", "true");
   }
+
   if (modalClose) modalClose.addEventListener("click", closeModal);
-  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  if (modal) modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
   // Initialize each canvas properly (DPR-aware) and apply image backgrounds
   function initCanvas(card) {
@@ -160,8 +163,8 @@ function openModal(htmlNodeOrString) {
         s.revealed = true;
         card.classList.add("revealed");
         // after reveal, open the modal automatically
-        const content = card.querySelector(".content");
-        if (content) openModal(content.innerHTML);
+        const contentNode = card.querySelector(".content");
+        if (contentNode) openModal(contentNode); // PASS NODE, NOT innerHTML
       }
       if (e.pointerType === "touch") e.preventDefault();
     }
@@ -173,8 +176,8 @@ function openModal(htmlNodeOrString) {
       if (!s.revealed && isRevealed(card)) {
         s.revealed = true;
         card.classList.add("revealed");
-        const content = card.querySelector(".content");
-        if (content) openModal(content.innerHTML);
+        const contentNode = card.querySelector(".content");
+        if (contentNode) openModal(contentNode); // PASS NODE, NOT innerHTML
       }
     }
 
@@ -210,8 +213,8 @@ function openModal(htmlNodeOrString) {
     // Clicking revealed card also opens modal
     card.addEventListener("click", () => {
       if (!card.classList.contains("revealed")) return;
-      const content = card.querySelector(".content");
-      if (content) openModal(content.innerHTML);
+      const contentNode = card.querySelector(".content");
+      if (contentNode) openModal(contentNode); // PASS NODE, NOT innerHTML
     });
   });
 
@@ -246,4 +249,4 @@ function openModal(htmlNodeOrString) {
     }
   })();
 
-});
+}); // DOMContentLoaded end
