@@ -10,7 +10,8 @@ html, body {
 body {
   margin: 0;
   font-family: Georgia, serif;
-  background: linear-gradient(180deg,#19100e,#2a1f16);
+  /* CHRISTMAS THEME: Dark Forest Green Background */
+  background: linear-gradient(180deg, #102E28, #1A3D36); 
   color: #f6eedd;
   -webkit-font-smoothing:antialiased;
   overflow-x: hidden;
@@ -27,32 +28,27 @@ body {
 /* --- HEADER --- */
 header {
   padding: 18px;
-  background: linear-gradient(180deg,#7a4e33,#6f432b);
+  /* CHRISTMAS THEME: Deep Red Gradient */
+  background: linear-gradient(180deg, #B83232, #8A2525); 
   position: relative;
   z-index: 100;
-  
-  /* FIX: Use Flexbox to align content and button */
   display: flex;
-  justify-content: space-between; /* Space out the hamburger/content and the button */
-  align-items: flex-start; /* Vertically align top elements */
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-/* New container for H1 and P */
 .header-content {
   text-align: center;
-  flex-grow: 1; /* Allows the content to fill the center space */
-  margin-left: 20px; /* Offset from hamburger */
+  flex-grow: 1;
+  margin-left: 10px; /* Offset from hamburger */
 }
-/* Ensure H1 and Tagline are centered within their new container */
 header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
-.tagline { margin-top:6px; font-size:0.95rem; color:#f0c674; }
+/* CHRISTMAS THEME: Festive Gold Tagline */
+.tagline { margin-top:6px; font-size:0.95rem; color:#FFD700; } 
 
 /* Hamburger Button */
 .hamburger {
-  /* FIX: Now relative to the flex container, not absolute */
   position: static; 
-  left: 20px; /* Keep position info for muscle memory */
-  top: 22px; 
   background: none;
   border: none;
   cursor: pointer;
@@ -63,37 +59,37 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   width: 30px;
   height: 22px;
   z-index: 101;
-  /* Push to the left edge of the header padding */
   margin-right: 18px; 
-  align-self: center; /* Center vertically within the header height */
+  align-self: center;
+  margin-left: 0;
 }
 .hamburger span {
   display: block;
   height: 3px;
   width: 100%;
+  /* CHRISTMAS THEME: White lines */
   background-color: #f6eedd;
   border-radius: 3px;
 }
 
 /* Reset Button Style */
 .reset-btn {
-  /* FIX: No longer absolutely positioned */
   position: static; 
   padding: 6px 10px;
-  background: #4a2e1f;
+  /* CHRISTMAS THEME: Dark Green/Red button with Gold border */
+  background: #1A3D36;
   color: #f6eedd;
-  border: 1px solid rgba(240, 198, 116, 0.5);
+  border: 1px solid #FFD700;
   border-radius: 6px;
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   z-index: 101;
-  /* Push to the right edge of the header padding */
   margin-left: 18px;
-  align-self: center; /* Center vertically within the header height */
+  align-self: center;
 }
 .reset-btn:hover {
-  background: #5a3624;
+  background: #B83232; /* Red on hover */
   transform: translateY(-1px);
 }
 .reset-btn:active {
@@ -108,8 +104,9 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   left: 0;
   height: 100%;
   width: 280px;
-  background: #2a1f16;
-  border-right: 2px solid #7a4e33;
+  /* CHRISTMAS THEME: Dark green menu */
+  background: #1A3D36; 
+  border-right: 2px solid #8A2525; /* Red border */
   z-index: 5000;
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
@@ -127,7 +124,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   align-self: flex-end;
   background: none;
   border: none;
-  color: #f0c674;
+  color: #FFD700;
   font-size: 32px;
   cursor: pointer;
   margin: 10px 15px;
@@ -138,8 +135,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 }
 .mobile-menu h2 {
   margin: 0 0 20px;
-  color: #f0c674;
-  border-bottom: 1px solid #7a4e33;
+  color: #FFD700;
+  border-bottom: 1px solid #8A2525;
   padding-bottom: 10px;
 }
 .mobile-menu ul {
@@ -161,7 +158,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 }
 .mobile-menu a:hover {
   background: rgba(255,255,255,0.05);
-  color: #f0c674;
+  color: #FFD700;
 }
 
 /* --- GRID --- */
@@ -177,13 +174,11 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 }
 @media (min-width: 768px) {
   .grid { grid-template-columns: repeat(4, 1fr); }
-  /* Remove margin on desktop header elements */
   .hamburger, .reset-btn { margin: 0; }
-  /* Re-align header content for desktop */
   header { justify-content: space-around; } 
 }
 
-/* --- CARD --- */
+/* --- CARD (The door look) --- */
 .card {
   position: relative;
   border-radius: 12px;
@@ -192,19 +187,22 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   height: 0;
   padding-bottom: 100%;
   cursor: pointer;
-  background: linear-gradient(180deg,#5a3624 0%, #4a2e1f 40%, #3b2417 100%);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 2px 8px rgba(255,255,255,0.02);
+  /* CHRISTMAS THEME: Red/Green Door Look */
+  background: linear-gradient(180deg,#742a2a 0%, #4a2e1f 40%, #29403b 100%);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 2px 8px rgba(255,255,255,0.05);
   transition: transform .18s ease, box-shadow .18s ease;
+  border: 4px solid #B83232; /* Red frame */
 }
 
 .card::before {
   content: "";
   position: absolute;
   inset: 0;
+  /* Subtle texture remains */
   background-image:
-    linear-gradient(transparent 0 60%, rgba(255,255,255,0.02) 60%),
-    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 30%),
-    linear-gradient(90deg, rgba(0,0,0,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    linear-gradient(transparent 0 60%, rgba(255,255,255,0.05) 60%),
+    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 30%),
+    linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(255,255,255,0.05) 100%);
   mix-blend-mode: overlay;
   z-index: 0;
   pointer-events: none;
@@ -212,7 +210,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 
 .card:hover {
   transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.6), 0 2px 10px rgba(255,200,90,0.04);
+  /* Hover glow is slightly golden/festive */
+  box-shadow: 0 18px 40px rgba(0,0,0,0.6), 0 2px 10px rgba(255, 215, 0, 0.1); 
 }
 
 /* Number Plate */
@@ -221,7 +220,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   right: 12px;
   top: 12px;
   z-index: 6;
-  background: linear-gradient(180deg,#f3d07a,#d29b32);
+  /* CHRISTMAS THEME: Gold/Brass look */
+  background: linear-gradient(180deg,#FFD700,#C0A04C);
   color: #1b1209;
   font-weight: 700;
   font-size: 18px;
@@ -257,7 +257,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 .card.revealed .scratch { display: none; }
 .card.revealed {
   background-image: none !important;
-  background-color: #3b2417; 
+  background-color: #3b2417; /* Dark background behind bottle */
+  border-color: #1A3D36; /* Darker border when revealed */
 }
 .card.revealed .content img {
   width: 100%;
@@ -326,17 +327,21 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 #modal-body .content .btn {
   display: block; 
 }
-#modal-body h3 { margin: 0 0 8px; font-size: 1.5rem; color: #5a3624; }
+#modal-body h3 { margin: 0 0 8px; font-size: 1.5rem; color: #B83232; } /* Red text in modal */
 #modal-body p { margin: 0 0 20px; font-size: 1.1rem; line-height: 1.5; }
 
 .btn {
   display:inline-block;
   padding:10px 20px;
-  background:#8B5D3D;
+  /* CHRISTMAS THEME: Green button */
+  background:#1A3D36;
   color:#fff;
   text-decoration:none;
   border-radius:6px;
   font-weight: bold;
+}
+.btn:hover {
+  background: #366c61; /* Darker green hover */
 }
 
 /* Snow */
