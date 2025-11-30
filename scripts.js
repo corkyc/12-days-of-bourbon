@@ -6,11 +6,25 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
 
-  // Modal handlers (kept from your working code)
-  function openModal(html) {
-    modalBody.innerHTML = html;
-    modal.setAttribute("aria-hidden", "false");
+  // --- FIXED MODAL USING CLONE ---
+function openModal(htmlNodeOrString) {
+  modalBody.innerHTML = "";
+
+  // If string, convert to a temporary DOM node
+  if (typeof htmlNodeOrString === "string") {
+    const temp = document.createElement("div");
+    temp.innerHTML = htmlNodeOrString.trim();
+
+    // Clone to preserve the original and keep card content intact
+    modalBody.appendChild(temp.cloneNode(true));
+  } else {
+    // If they ever pass a real node, clone that too
+    modalBody.appendChild(htmlNodeOrString.cloneNode(true));
   }
+
+  modal.setAttribute("aria-hidden", "false");
+}
+  
   function closeModal() {
     modal.setAttribute("aria-hidden", "true");
   }
