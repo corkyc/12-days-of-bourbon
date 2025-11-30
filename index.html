@@ -1,83 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>12 Days of Christmas Whiskey</title>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12 Days of Bourbon</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <header>
+    <h1>12 Days of Bourbon</h1>
+    <p>Scratch each door to reveal today’s bourbon!</p>
+  </header>
 
-<header>
-  <h1>12 Days of Christmas Whiskey</h1>
-  <p class="tagline">Scratch the number, reveal the whiskey, tap to learn more!</p>
-</header>
+  <main class="grid">
+    <!-- 12 CARDS -->
+    <!-- Duplicate pattern for all 12 days -->
+    <!-- Each card contains: scratch overlay, canvas, hidden bourbon info -->
 
-<div class="hamburger" id="hamburger" aria-label="Toggle menu" role="button" tabindex="0">
-  <div></div><div></div><div></div>
-</div>
+    <!-- Example Google bourbon names - replace with your own -->
+    <!-- DAY 1 -->
+    <div class="door" data-day="1">
+      <div class="scratch-overlay">Day 1</div>
+      <canvas class="scratch-canvas"></canvas>
 
-<nav class="nav-links" aria-label="Main navigation">
-  <ul>
-    <li><a href="#">Home</a></li>
-    <li><a href="#">About</a></li>
-    <li><a href="#">Whiskey List</a></li>
-    <li><a href="#">Contact</a></li>
-  </ul>
-</nav>
-
-<section class="whiskey-grid">
-
-  <!-- CARD #1 -->
-  <div class="whiskey-card" data-id="1">
-    <canvas class="scratch-canvas"></canvas>
-    <div class="scratch-overlay">Tap to Scratch</div>
-
-    <div class="hidden-modal-data">
-      <img src="images/whiskey1.jpg">
-      <h3>Bourbon Name #1</h3>
-      <p>Notes of vanilla, oak, and holiday cheer.</p>
-      <a href="#" class="btn">Buy Now</a>
-      <a href="#" class="btn">Read Review</a>
+      <div class="hidden-content">
+        <h2>Day 1 – Buffalo Trace</h2>
+        <p>A smooth Kentucky straight bourbon with caramel and vanilla notes.</p>
+      </div>
     </div>
-  </div>
 
-  <!-- CARD #2 -->
-  <div class="whiskey-card" data-id="2">
-    <canvas class="scratch-canvas"></canvas>
-    <div class="scratch-overlay">Tap to Scratch</div>
+    <!-- DAY 2 -->
+    <div class="door" data-day="2">
+      <div class="scratch-overlay">Day 2</div>
+      <canvas class="scratch-canvas"></canvas>
 
-    <div class="hidden-modal-data">
-      <img src="images/whiskey2.jpg">
-      <h3>Bourbon Name #2</h3>
-      <p>A spicy rye finish with caramel undertones.</p>
-      <a href="#" class="btn">Buy Now</a>
+      <div class="hidden-content">
+        <h2>Day 2 – Four Roses Small Batch</h2>
+        <p>Rich, spicy, and fruity with a balanced finish.</p>
+      </div>
     </div>
-  </div>
 
-  <!-- CARD #3 -->
-  <div class="whiskey-card" data-id="3">
-    <canvas class="scratch-canvas"></canvas>
-    <div class="scratch-overlay">Tap to Scratch</div>
+    <!-- DAY 3 -->
+    <div class="door" data-day="3">
+      <div class="scratch-overlay">Day 3</div>
+      <canvas class="scratch-canvas"></canvas>
 
-    <div class="hidden-modal-data">
-      <img src="images/4R_SB.jpg">
-      <h3>Four Roses Single Barrel</h3>
-      <p>Enjoy a warm, smoky bourbon.</p>
-    </div>
-  </div>
-
-</section>
-
-<!-- MODAL -->
-<div id="whiskeyModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modal-content">
-    <button class="close-button" aria-label="Close modal">&times;</button>
-    <div id="modal-body"></div>
-  </div>
-</div>
-
-<script src="scripts.js"></script>
-</body>
-</html>
+      <div class="hidden-content">
+        <h2>Day 3 – Woodford Reserve
