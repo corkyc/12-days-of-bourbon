@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>All Bottles | 12 Days of Bourbon</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Snow container -->
+  <div id="snow-container" aria-hidden="true"></div>
 
+  <!-- Mobile Navigation Drawer -->
+  <nav id="mobile-menu" class="mobile-menu" aria-hidden="true">
+    <button id="menuClose" class="menu-close" aria-label="Close Menu">&times;</button>
+    <div class="menu-content">
+      <h2>Menu</h2>
+      <ul>
+        <li><a href="index.html">Home (Scratch-Off)</a></li>
+        <li><a href="all-bottles-numbers.html">All Bottles with Numbers</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header>
+    <!-- Hamburger Button -->
+    <button id="hamburgerBtn" class="hamburger" aria-label="Open Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <h1>All 12 Bourbons</h1>
+    <p class="tagline">A full list of the featured bottles.</p>
+  </header>
+
+  <main class="grid" id="grid">
+    
+    <!-- Placeholder Card 1 (Revealed) -->
+    <article class="card revealed">
+      <div class="content">
+        <!-- Placeholder Image -->
+        <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+1" alt="Placeholder Bourbon 1">
+        <h3>Buffalo Trace</h3>
+        <p>Classic caramel and vanilla notes with an oak finish.</p>
+        <a class="btn" href="#">View Details</a>
+      </div>
+    </article>
+
+    <!-- Placeholder Card 2 (Revealed) -->
+    <article class="card revealed">
+      <div class="content">
+        <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+2" alt="Placeholder Bourbon 2">
+        <h3>Four Roses Large Batch</h3>
+        <p>Spicy, fruity, and smooth on the palate.</p>
+        <a class="btn" href="#">View Details</a>
+      </div>
+    </article>
+
+    <!-- Placeholder Card 3 (Revealed) -->
+    <article class="card revealed">
+      <div class="content">
+        <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+3" alt="Placeholder Bourbon 3">
+        <h3>Woodford Reserve</h3>
+        <p>Full-bodied with prominent dried fruit and spice.</p>
+        <a class="btn" href="#">View Details</a>
+      </div>
+    </article>
+
+    <!-- Placeholder Card 4 (Revealed) -->
+    <article class="card revealed">
+      <div class="content">
+        <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+4" alt="Placeholder Bourbon 4">
+        <h3>Maker's Mark</h3>
+        <p>Wheated, gentle finish, hints of honey and wheat.</p>
+        <a class="btn" href="#">View Details</a>
+      </div>
+    </article>
+
+    <!-- Placeholder Card 5-12 -->
+    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+5" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy, high proof flavor.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+6" alt=""><h3>Elijah Craig</h3><p>Toasted oak and warm spice finish.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+7" alt=""><h3>Knob Creek</h3><p>Aged nine years, oak and strong vanilla.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+8" alt=""><h3>Angel’s Envy</h3><p>Finished in Port wine barrels.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+9" alt=""><h3>Bulleit</h3><p>High rye content, distinct spicy kick.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+10" alt=""><h3>Basil Hayden</h3><p>Light-bodied and gentle, easy sipper.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+11" alt=""><h3>Old Forester</h3><p>Classic high-rye profile, balanced.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+12" alt=""><h3>Blanton's</h3><p>Rich and complex single barrel finish.</p><a class="btn" href="#">View Details</a></div></article>
+
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-inner" role="document">
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
