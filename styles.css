@@ -63,6 +63,29 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   border-radius: 3px;
 }
 
+/* Reset Button Style */
+.reset-btn {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  padding: 6px 10px;
+  background: #4a2e1f;
+  color: #f6eedd;
+  border: 1px solid rgba(240, 198, 116, 0.5);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  z-index: 101;
+}
+.reset-btn:hover {
+  background: #5a3624;
+  transform: translateY(-1px);
+}
+.reset-btn:active {
+  transform: translateY(0);
+}
+
 /* --- MOBILE NAVIGATION DRAWER --- */
 .mobile-menu {
   position: fixed;
