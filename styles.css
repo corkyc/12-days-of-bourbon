@@ -26,7 +26,7 @@ header {
   position: relative;
   z-index: 3;
 }
-header h1 { margin: 0; font-size: 2rem; font-family: 'Georgia', serif; letter-spacing: 0.4px; }
+header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 .tagline { margin-top:6px; font-size:0.95rem; color:#f0c674; }
 
 /* Grid */
@@ -44,7 +44,7 @@ header h1 { margin: 0; font-size: 2rem; font-family: 'Georgia', serif; letter-sp
   .grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* Card (fancy wood look + brass plate) */
+/* Card */
 .card {
   position: relative;
   border-radius: 12px;
@@ -56,9 +56,10 @@ header h1 { margin: 0; font-size: 2rem; font-family: 'Georgia', serif; letter-sp
   background: linear-gradient(180deg,#5a3624 0%, #4a2e1f 40%, #3b2417 100%);
   box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 2px 8px rgba(255,255,255,0.02);
   transition: transform .18s ease, box-shadow .18s ease;
+  /* Background image is set by JS, see scripts.js */
 }
 
-/* subtle wood grain using multiple gradients */
+/* Wood grain overlay */
 .card::before {
   content: "";
   position: absolute;
@@ -72,13 +73,12 @@ header h1 { margin: 0; font-size: 2rem; font-family: 'Georgia', serif; letter-sp
   pointer-events: none;
 }
 
-/* hover */
 .card:hover {
   transform: translateY(-6px) scale(1.01);
   box-shadow: 0 18px 40px rgba(0,0,0,0.6), 0 2px 10px rgba(255,200,90,0.04);
 }
 
-/* Brass number plate */
+/* Number Plate */
 .number-plate {
   position: absolute;
   right: 12px;
@@ -94,45 +94,56 @@ header h1 { margin: 0; font-size: 2rem; font-family: 'Georgia', serif; letter-sp
   border: 1px solid rgba(0,0,0,0.25);
 }
 
-/* Scratch canvas sits above the card background but under number plate */
+/* Scratch Canvas */
 .scratch {
   position: absolute;
   inset: 0;
   z-index: 5;
   touch-action: none;
   display: block;
-  background: transparent; /* canvas is filled by JS */
 }
 
-/* Content that will show after reveal (initially hidden) */
+/* CONTENT LAYOUT 
+   This handles the "revealed" content inside the card.
+*/
 .card .content {
   position: absolute;
   inset: 0;
-  padding: 12px;
-  display: none;
+  padding: 0; /* Remove padding in grid view so image fills */
+  display: none; 
   color: #fff;
   z-index: 2;
-  text-align: left;
-}
-.card .content img { width: 100%; border-radius: 8px; margin-bottom: 8px; }
-.card .content h3 { margin: 6px 0 4px; font-size: 1.05rem; }
-.card .content p { margin: 0 0 8px; font-size: 0.9rem; }
-
-/* Button style */
-.btn {
-  display:inline-block;
-  padding:8px 12px;
-  background:#8B5D3D;
-  color:#fff;
-  text-decoration:none;
-  border-radius:6px;
+  text-align: center;
+  overflow: hidden;
 }
 
-/* When revealed, show content and hide canvas */
-.card.revealed .content { display: block; z-index: 2; }
+/* --- REVEALED STATE FIXES --- */
+
+/* 1. When revealed, show content, hide canvas */
+.card.revealed .content { display: block; }
 .card.revealed .scratch { display: none; }
 
-/* Modal */
+/* 2. IMPORTANT: Remove the cover image background so it doesn't bleed through */
+.card.revealed {
+  background-image: none !important;
+  background-color: #3b2417; /* Fallback solid wood color */
+}
+
+/* 3. In Grid View: Show ONLY the image, hide text/buttons to avoid clutter */
+.card.revealed .content img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0; 
+  margin: 0;
+}
+.card.revealed .content h3,
+.card.revealed .content p,
+.card.revealed .content .btn {
+  display: none; /* Hide details on the grid card */
+}
+
+/* --- MODAL STYLES --- */
 .modal {
   position: fixed;
   inset: 0;
@@ -150,20 +161,65 @@ header h1 { margin: 0; font-size: 2rem; font-family: 'Georgia', serif; letter-sp
   width: 92%;
   max-width: 520px;
   border-radius: 10px;
-  padding: 16px;
+  padding: 24px;
   position: relative;
+  text-align: center;
 }
 .modal-close {
   position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 22px;
+  top: 10px;
+  right: 14px;
+  font-size: 28px;
+  line-height: 1;
   background: none;
   border: none;
   cursor: pointer;
+  color: #333;
 }
 
-/* Snowflake style (each flake element created by JS uses this) */
+/* MODAL CONTENT OVERRIDES 
+   We cloned the .content div into the modal. Now we must un-hide the text 
+   and style the image to look like a modal, not a grid card.
+*/
+#modal-body .content {
+  display: block;
+  position: static;
+  color: #222;
+}
+
+#modal-body .content img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto 16px;
+  border-radius: 8px;
+  display: block;
+}
+
+/* Force text display in modal even if hidden in grid */
+#modal-body .content h3,
+#modal-body .content p,
+#modal-body .content .btn {
+  display: block; 
+}
+
+#modal-body h3 { margin: 0 0 8px; font-size: 1.5rem; color: #5a3624; }
+#modal-body p { margin: 0 0 20px; font-size: 1.1rem; line-height: 1.5; }
+
+/* Button style */
+.btn {
+  display:inline-block;
+  padding:10px 20px;
+  background:#8B5D3D;
+  color:#fff;
+  text-decoration:none;
+  border-radius:6px;
+  font-weight: bold;
+}
+.btn:hover { background: #6f432b; }
+
+/* Snow Animation */
 .snowflake {
   position: fixed;
   top: -10vh;
@@ -178,9 +234,7 @@ header h1 { margin: 0; font-size: 2rem; font-family: 'Georgia', serif; letter-sp
   animation-iteration-count: infinite, infinite;
   opacity: 0.9;
 }
-@keyframes fall {
-  to { transform: translateY(120vh); }
-}
+@keyframes fall { to { transform: translateY(120vh); } }
 @keyframes sway {
   0% { transform: translateX(0); }
   50% { transform: translateX(var(--sway, 20px)); }
