@@ -17,14 +17,8 @@ body {
   overflow-x: hidden;
 }
 
-/* Snow container sits behind content */
-#snow-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  /* Z-Index increased to ensure visibility over all content */
-  z-index: 200; 
-}
+/* Snow container removed */
+/* #snow-container styles removed */
 
 /* --- HEADER --- */
 header {
@@ -32,7 +26,8 @@ header {
   /* CHRISTMAS THEME: Deep Red Gradient */
   background: linear-gradient(180deg, #B83232, #8A2525); 
   position: relative;
-  z-index: 1000; /* Ensure header elements stay above snow */
+  /* Header z-index reverted or reduced as snow is gone */
+  z-index: 100; 
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -59,7 +54,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   justify-content: space-between;
   width: 30px;
   height: 22px;
-  z-index: 1001; 
+  /* Z-index adjusted for general header element */
+  z-index: 101; 
   margin-right: 18px; 
   align-self: center;
   margin-left: 0;
@@ -85,7 +81,8 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
-  z-index: 1001;
+  /* Z-index adjusted for general header element */
+  z-index: 101;
   margin-left: 18px;
   align-self: center;
 }
@@ -345,32 +342,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   background: #366c61; /* Darker green hover */
 }
 
-/* --- SNOW --- */
-.snowflake {
-  position: fixed;
-  top: 0; /* Changed to start at the top edge */
-  /* Z-Index increased to ensure visibility */
-  z-index: 201; 
-  /* Snow size increase for visibility */
-  color: #FFFFFF; 
-  font-size: 20px; 
-  pointer-events: none; /* Allow clicks/interaction with content behind */
-  will-change: transform; 
-  animation-name: fall, sway;
-  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s); 
-  animation-timing-function: linear, ease-in-out;
-  animation-iteration-count: infinite, infinite;
-  opacity: 0.95; /* Maximize opacity */
-}
-
-@keyframes fall {
-  to {
-    transform: translateY(120vh); /* Fall past the viewport */
-  }
-}
-
-@keyframes sway {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(var(--sway, 20px)); } /* Varying sway amount */
-  100% { transform: translateX(0); }
-}
+/* --- SNOW styles removed --- */
+/* .snowflake styles removed */
+/* @keyframes fall removed */
+/* @keyframes sway removed */
