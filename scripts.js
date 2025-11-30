@@ -1,146 +1,172 @@
-// ---------------------------
-// HAMBURGER MENU
-// ---------------------------
-const hamburger = document.getElementById("hamburger");
-const nav = document.querySelector(".nav-links");
-
-hamburger.addEventListener("click", () => {
-  nav.classList.toggle("open");
-});
-
-
-// ---------------------------
-// SCRATCH-OFF FUNCTION
-// ---------------------------
 document.addEventListener("DOMContentLoaded", () => {
+
+  /* ---------------------------------------------------
+     MOBILE HAMBURGER MENU
+  --------------------------------------------------- */
+  const hamburger = document.getElementById("hamburger");
+  const nav = document.querySelector(".nav-links");
+
+  if (hamburger) {
+    hamburger.addEventListener("click", () => {
+      nav.classList.toggle("active");
+    });
+  }
+
+  /* ---------------------------------------------------
+     MODAL SYSTEM
+  --------------------------------------------------- */
+  const modal = document.getElementById("whiskeyModal");
+  const modalBody = document.getElementById("modal-body");
+  const closeBtn = document.querySelector(".close-button");
+
+  function openModal(html) {
+    modalBody.innerHTML = html;
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  closeBtn.addEventListener("click", closeModal);
+
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  /* ---------------------------------------------------
+     SCRATCH LOGIC FOR EACH WHISKEY CARD
+  --------------------------------------------------- */
   const cards = document.querySelectorAll(".whiskey-card");
+  const DPR = window.devicePixelRatio || 1;
 
-  cards.forEach(card => {
+  cards.forEach((card) => {
     const canvas = card.querySelector(".scratch-canvas");
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
     const overlay = card.querySelector(".scratch-overlay");
+    const hiddenData = card.querySelector(".hidden-modal-data");
 
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+    let isDrawing = false;
+    let lastPoint = null;
+    let revealed = false;
+
+    /* ---------------------------
+       SETUP CANVAS
+    --------------------------- */
     function resizeCanvas() {
-      canvas.width = card.clientWidth;
-      canvas.height = card.clientHeight;
-      drawCover();
-    }
+      const w = card.offsetWidth;
+      const h = card.offsetHeight;
 
-    function drawCover() {
-      ctx.fillStyle = "#b19cd9";  
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      canvas.width = w * DPR;
+      canvas.height = h * DPR;
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 28px sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(card.dataset.id, canvas.width / 2, canvas.height / 2);
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+
+      ctx.scale(DPR, DPR);
+
+      ctx.fillStyle = "#C0C0C0";
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.globalCompositeOperation = "destination-out";
     }
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    let scratching = false;
-
-    // Prevent page scroll while scratching on mobile
-    canvas.addEventListener("touchmove", e => {
-      if (scratching) e.preventDefault();
-    }, { passive: false });
-
-    function start(e) {
-      scratching = true;
-      scratch(e);
-    }
-
-    function stop() {
-      scratching = false;
-      checkReveal();
-    }
-
-    function scratch(e) {
-      if (!scratching) return;
-
+    /* ---------------------------
+       SCRATCH UTILS
+    --------------------------- */
+    function getPosition(e) {
       const rect = canvas.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      let x, y;
 
-      ctx.globalCompositeOperation = "destination-out";
+      if (e.touches) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+      } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+      }
+
+      return { x, y };
+    }
+
+    function scratch(point) {
       ctx.beginPath();
-      ctx.arc(x, y, 30, 0, Math.PI * 2);
+      ctx.arc(point.x, point.y, 28, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    canvas.addEventListener("mousedown", start);
-    canvas.addEventListener("mousemove", scratch);
-    canvas.addEventListener("mouseup", stop);
-    canvas.addEventListener("mouseleave", stop);
+    function scratchLine(start, end) {
+      const dist = Math.hypot(end.x - start.x, end.y - start.y);
+      const steps = Math.ceil(dist / 6);
 
-    canvas.addEventListener("touchstart", start, { passive: false });
-    canvas.addEventListener("touchmove", scratch, { passive: false });
-    canvas.addEventListener("touchend", stop);
+      for (let i = 0; i < steps; i++) {
+        const x = start.x + (end.x - start.x) * (i / steps);
+        const y = start.y + (end.y - start.y) * (i / steps);
+        scratch({ x, y });
+      }
+    }
 
     function checkReveal() {
-      const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imgData.data;
       let cleared = 0;
 
-      for (let i = 3; i < pixels.length; i += 4) {
+      // sample every 20px for speed
+      for (let i = 3; i < pixels.length; i += 80) {
         if (pixels[i] === 0) cleared++;
       }
 
-      const percent = cleared / (pixels.length / 4);
+      const percent = cleared / (pixels.length / 80);
 
-      if (percent > 0.55) reveal(card, canvas, overlay);
+      if (percent > 0.45 && !revealed) revealCard();
     }
-  });
+
+    /* ---------------------------
+       REVEAL CARD + OPEN MODAL
+    --------------------------- */
+    function revealCard() {
+      revealed = true;
+
+      overlay.style.opacity = 0;
+      overlay.style.pointerEvents = "none";
+
+      canvas.style.opacity = 0;
+      canvas.style.pointerEvents = "none";
+
+      setTimeout(() => {
+        openModal(hiddenData.innerHTML);
+      }, 350);
+    }
+
+    /* ---------------------------
+       POINTER EVENTS
+    --------------------------- */
+    canvas.addEventListener("pointerdown", (e) => {
+      if (revealed) return;
+      isDrawing = true;
+      lastPoint = getPosition(e);
+      scratch(lastPoint);
+      e.preventDefault();
+    });
+
+    canvas.addEventListener("pointermove", (e) => {
+      if (!isDrawing || revealed) return;
+      const pos = getPosition(e);
+      scratchLine(lastPoint, pos);
+      lastPoint = pos;
+      checkReveal();
+      e.preventDefault();
+    });
+
+    window.addEventListener("pointerup", () => (isDrawing = false));
+    window.addEventListener("pointercancel", () => (isDrawing = false));
+
+  }); // end cards loop
+
 });
-
-
-// ---------------------------
-// OPEN MODAL (POP-UP) ON REVEAL
-// ---------------------------
-function reveal(card, canvas, overlay) {
-  canvas.style.transition = "opacity .4s ease";
-  overlay.style.transition = "opacity .4s ease";
-
-  canvas.style.opacity = 0;
-  overlay.style.opacity = 0;
-  canvas.style.pointerEvents = "none";
-
-  setTimeout(() => openModal(card), 450);
-}
-
-// ---------------------------
-// MODAL LOGIC
-// ---------------------------
-const modal = document.getElementById("whiskeyModal");
-const modalBody = document.getElementById("modal-body");
-const closeBtn = document.querySelector(".close-button");
-
-function openModal(card) {
-  const hidden = card.querySelector(".hidden-modal-data");
-
-  modalBody.innerHTML = `
-    <img src="${hidden.querySelector("img").src}" class="modal-image">
-    <h3>${hidden.querySelector("h3").textContent}</h3>
-    <p>${hidden.querySelector("p").textContent}</p>
-    ${[...hidden.querySelectorAll("a")]
-      .map(a => `<a href="${a.href}" class="btn">${a.textContent}</a>`)
-      .join("")}
-  `;
-
-  modal.style.display = "flex";
-  modal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-}
-
-closeBtn.addEventListener("click", closeModal);
-
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) closeModal();
-});
-
-function closeModal() {
-  modal.style.display = "none";
-  modal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-}
