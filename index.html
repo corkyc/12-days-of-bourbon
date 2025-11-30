@@ -1,57 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>12 Days of Bourbon</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>12 Days of Bourbon — Scratch</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <header>
+    <h1>12 Days of Bourbon</h1>
+    <p class="tagline">Scratch each door to reveal the bourbon — tap revealed card to open details.</p>
+  </header>
 
-<header>
-  <h1>12 Days of Bourbon</h1>
-  <p>Scratch each day to reveal today's bourbon!</p>
-</header>
+  <main class="grid" id="grid">
+    <!-- 12 cards: duplicate/change images/text as needed -->
+    <!-- Day 1 -->
+    <article class="card" data-day="1">
+      <canvas class="scratch"></canvas>
+      <div class="content">
+        <img src="images/bourbon1.jpg" alt="Bourbon 1">
+        <h3>Buffalo Trace</h3>
+        <p>Caramel, vanilla, oak.</p>
+        <a class="btn" href="#">Buy</a>
+      </div>
+    </article>
 
-<section class="grid">
+    <!-- Day 2 -->
+    <article class="card" data-day="2">
+      <canvas class="scratch"></canvas>
+      <div class="content">
+        <img src="images/bourbon2.jpg" alt="Bourbon 2">
+        <h3>Four Roses Small Batch</h3>
+        <p>Spicy, fruity, smooth.</p>
+        <a class="btn" href="#">Buy</a>
+      </div>
+    </article>
 
-  <!-- Template for 12 days -->
-  <!-- Day 1 -->
-  <div class="door" data-day="1">
-    <canvas class="scratch-canvas"></canvas>
-    <div class="hidden-data">
-      <img src="images/bourbon1.jpg">
-      <h2>Bourbon #1</h2>
-      <p>Rich caramel, warm vanilla, and oak spice.</p>
+    <!-- Day 3 -->
+    <article class="card" data-day="3">
+      <canvas class="scratch"></canvas>
+      <div class="content">
+        <img src="images/bourbon3.jpg" alt="Bourbon 3">
+        <h3>Woodford Reserve</h3>
+        <p>Full-bodied, dried fruit notes.</p>
+        <a class="btn" href="#">Buy</a>
+      </div>
+    </article>
+
+    <!-- Days 4-12 (copy the same structure) -->
+    <article class="card" data-day="4"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon4.jpg" alt=""><h3>Maker's Mark</h3><p>Wheated, gentle finish.</p></div></article>
+    <article class="card" data-day="5"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon5.jpg" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy.</p></div></article>
+    <article class="card" data-day="6"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon6.jpg" alt=""><h3>Elijah Craig</h3><p>Warm spice.</p></div></article>
+    <article class="card" data-day="7"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon7.jpg" alt=""><h3>Knob Creek</h3><p>Oak & vanilla.</p></div></article>
+    <article class="card" data-day="8"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon8.jpg" alt=""><h3>Angel’s Envy</h3><p>Port-finished.</p></div></article>
+    <article class="card" data-day="9"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon9.jpg" alt=""><h3>Bulleit</h3><p>High rye spice.</p></div></article>
+    <article class="card" data-day="10"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon10.jpg" alt=""><h3>Basil Hayden</h3><p>Light & gentle.</p></div></article>
+    <article class="card" data-day="11"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon11.jpg" alt=""><h3>Old Forester</h3><p>Classic profile.</p></div></article>
+    <article class="card" data-day="12"><canvas class="scratch"></canvas><div class="content"><img src="images/bourbon12.jpg" alt=""><h3>Blanton's</h3><p>Rich finish.</p></div></article>
+  </main>
+
+  <!-- Modal (use this modal and the script will populate #modal-body) -->
+  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-inner" role="document">
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+      <div id="modal-body"></div>
     </div>
   </div>
 
-  <!-- Day 2 -->
-  <div class="door" data-day="2">
-    <canvas class="scratch-canvas"></canvas>
-    <div class="hidden-data">
-      <img src="images/bourbon2.jpg">
-      <h2>Bourbon #2</h2>
-      <p>A bold rye kick with toasted sugar notes.</p>
-    </div>
-  </div>
-
-  <!-- Duplicate for all 12 days -->
-  <!-- You can add real bourbon names/images later -->
-
-  <div class="door" data-day="3"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b3.jpg"><h2>Bourbon #3</h2><p>A smooth wheated bourbon.</p></div></div>
-  <div class="door" data-day="4"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b4.jpg"><h2>Bourbon #4</h2><p>Classic Kentucky sweetness.</p></div></div>
-  <div class="door" data-day="5"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b5.jpg"><h2>Bourbon #5</h2><p>Dark chocolate + orange peel.</p></div></div>
-  <div class="door" data-day="6"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b6.jpg"><h2>Bourbon #6</h2><p>Spice-forward and warm.</p></div></div>
-  <div class="door" data-day="7"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b7.jpg"><h2>Bourbon #7</h2><p>Balanced and buttery.</p></div></div>
-  <div class="door" data-day="8"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b8.jpg"><h2>Bourbon #8</h2><p>Big oak and cherry sweetness.</p></div></div>
-  <div class="door" data-day="9"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b9.jpg"><h2>Bourbon #9</h2><p>Toffee, spice, and depth.</p></div></div>
-  <div class="door" data-day="10"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b10.jpg"><h2>Bourbon #10</h2><p>A toasted barrel masterpiece.</p></div></div>
-  <div class="door" data-day="11"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b11.jpg"><h2>Bourbon #11</h2><p>Vanilla frosting + maple.</p></div></div>
-  <div class="door" data-day="12"><canvas class="scratch-canvas"></canvas><div class="hidden-data"><img src="images/b12.jpg"><h2>Bourbon #12</h2><p>The grand finale.</p></div></div>
-
-</section>
-
-<!-- Modal -->
-<div id="modal" class="modal">
-  <div class="mo
+  <script src="scripts.js"></script>
+</body>
+</html>
