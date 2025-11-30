@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
       scratchedDays = stored ? JSON.parse(stored) : {};
     } catch (e) {
       console.error("Error loading progress from localStorage", e);
-      // Fallback to empty state
       scratchedDays = {}; 
     }
   }
@@ -125,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (contentNode) openModal(contentNode);
       }
     } catch (err) {
-      // Catch error (often due to cross-origin canvas reading)
       console.error("Error during checkRevealed:", err); 
     }
   }
@@ -330,35 +328,47 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }, 120);
   });
-
-  // --- SNOW GENERATOR ---
-  (function createSnow(num = 30) {
+  
+  // --- SNOW GENERATOR FIX (Increased count and simplified top start) ---
+  (function createSnow(num = 50) { // Increased count to 50
     const container = document.getElementById('snow-container');
     if (!container) return;
     for (let i = 0; i < num; i++) {
       const el = document.createElement('div');
       el.className = 'snowflake';
       el.textContent = '❄';
+      
       const left = Math.random() * 100;
-      const size = 10 + Math.random() * 15;
-      const dur = 8 + Math.random() * 10;
-      const sway = (Math.random() - 0.5) * 40;
-
+      const size = 15 + Math.random() * 10; // Slightly larger sizes
+      const dur = 10 + Math.random() * 10;
+      const sway = (Math.random() - 0.5) * 50; 
+      
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
+      // Set the initial top position randomly within the first viewport to spread them out
+      el.style.top = (Math.random() * 100) + 'vh'; 
+
       el.style.setProperty('--fall-duration', `${dur}s`);
-      el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
+      el.style.setProperty('--sway-duration', `${5 + Math.random() * 5}s`);
       el.style.setProperty('--sway', `${sway}px`);
-
+      
       container.appendChild(el);
-
-      // Recycle/Respawn snowflakes
-      el.addEventListener('animationend', () => {
-        el.style.left = (Math.random() * 100) + 'vw';
-        el.style.fontSize = (10 + Math.random() * 15) + 'px';
-        el.style.setProperty('--fall-duration', `${8 + Math.random() * 12}s`);
-        el.style.setProperty('--sway-duration', `${3 + Math.random() * 4}s`);
-        el.style.setProperty('--sway', `${(Math.random() - 0.5) * 50}px`);
+      
+      // The animation end listener handles recycling and respawning the flake
+      el.addEventListener('animationend', function handler() {
+        this.style.left = (Math.random() * 100) + 'vw';
+        this.style.fontSize = (15 + Math.random() * 10) + 'px';
+        this.style.setProperty('--fall-duration', `${10 + Math.random() * 10}s`);
+        this.style.setProperty('--sway-duration', `${5 + Math.random() * 5}s`);
+        this.style.setProperty('--sway', `${(Math.random() - 0.5) * 50}px`);
+        
+        // IMPORTANT: Restart the fall animation by resetting its style property
+        this.style.animationName = 'none';
+        void this.offsetWidth; // Trigger reflow
+        this.style.animationName = 'fall, sway';
+        
+        // Remove the temporary top setting now that the animation has started
+        this.style.top = '-10vh'; 
       });
     }
   })();
