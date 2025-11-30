@@ -1,172 +1,118 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-  /* ---------------------------------------------------
-     MOBILE HAMBURGER MENU
-  --------------------------------------------------- */
-  const hamburger = document.getElementById("hamburger");
-  const nav = document.querySelector(".nav-links");
-
-  if (hamburger) {
-    hamburger.addEventListener("click", () => {
-      nav.classList.toggle("active");
-    });
-  }
-
-  /* ---------------------------------------------------
-     MODAL SYSTEM
-  --------------------------------------------------- */
-  const modal = document.getElementById("whiskeyModal");
-  const modalBody = document.getElementById("modal-body");
-  const closeBtn = document.querySelector(".close-button");
-
-  function openModal(html) {
-    modalBody.innerHTML = html;
-    modal.style.display = "flex";
-    modal.setAttribute("aria-hidden", "false");
-  }
-
-  function closeModal() {
-    modal.style.display = "none";
-    modal.setAttribute("aria-hidden", "true");
-  }
-
-  closeBtn.addEventListener("click", closeModal);
-
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  /* ---------------------------------------------------
-     SCRATCH LOGIC FOR EACH WHISKEY CARD
-  --------------------------------------------------- */
   const cards = document.querySelectorAll(".whiskey-card");
-  const DPR = window.devicePixelRatio || 1;
 
-  cards.forEach((card) => {
+  cards.forEach(card => {
     const canvas = card.querySelector(".scratch-canvas");
     const overlay = card.querySelector(".scratch-overlay");
     const hiddenData = card.querySelector(".hidden-modal-data");
+    const ctx = canvas.getContext("2d");
 
-    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    // Make canvas match card size
+    const resizeCanvas = () => {
+      canvas.width = card.clientWidth;
+      canvas.height = card.clientHeight;
 
-    let isDrawing = false;
-    let lastPoint = null;
-    let revealed = false;
-
-    /* ---------------------------
-       SETUP CANVAS
-    --------------------------- */
-    function resizeCanvas() {
-      const w = card.offsetWidth;
-      const h = card.offsetHeight;
-
-      canvas.width = w * DPR;
-      canvas.height = h * DPR;
-
-      canvas.style.width = w + "px";
-      canvas.style.height = h + "px";
-
-      ctx.scale(DPR, DPR);
-
-      ctx.fillStyle = "#C0C0C0";
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.globalCompositeOperation = "destination-out";
-    }
+      // Fill with gray scratch coat
+      ctx.fillStyle = "#bfbfbf";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    };
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    /* ---------------------------
-       SCRATCH UTILS
-    --------------------------- */
-    function getPosition(e) {
+    let isScratching = false;
+
+    const startScratch = (e) => {
+      isScratching = true;
+      scratch(e);
+    };
+
+    const endScratch = () => {
+      isScratching = false;
+      checkReveal();
+    };
+
+    const scratch = (e) => {
+      if (!isScratching) return;
+
       const rect = canvas.getBoundingClientRect();
-      let x, y;
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
 
-      if (e.touches) {
-        x = e.touches[0].clientX - rect.left;
-        y = e.touches[0].clientY - rect.top;
-      } else {
-        x = e.clientX - rect.left;
-        y = e.clientY - rect.top;
-      }
-
-      return { x, y };
-    }
-
-    function scratch(point) {
+      ctx.globalCompositeOperation = "destination-out";
       ctx.beginPath();
-      ctx.arc(point.x, point.y, 28, 0, Math.PI * 2);
+      ctx.arc(x, y, 22, 0, Math.PI * 2);
       ctx.fill();
-    }
+    };
 
-    function scratchLine(start, end) {
-      const dist = Math.hypot(end.x - start.x, end.y - start.y);
-      const steps = Math.ceil(dist / 6);
-
-      for (let i = 0; i < steps; i++) {
-        const x = start.x + (end.x - start.x) * (i / steps);
-        const y = start.y + (end.y - start.y) * (i / steps);
-        scratch({ x, y });
-      }
-    }
-
-    function checkReveal() {
+    // Check if scratched area is > 50%
+    const checkReveal = () => {
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const pixels = imgData.data;
+      let total = imgData.data.length / 4;
       let cleared = 0;
 
-      // sample every 20px for speed
-      for (let i = 3; i < pixels.length; i += 80) {
-        if (pixels[i] === 0) cleared++;
+      for (let i = 3; i < imgData.data.length; i += 4) {
+        if (imgData.data[i] === 0) cleared++;
       }
 
-      const percent = cleared / (pixels.length / 80);
+      if (cleared / total > 0.4) {
+        revealCard(card, canvas, overlay, hiddenData);
+      }
+    };
 
-      if (percent > 0.45 && !revealed) revealCard();
-    }
+    // Event listeners
+    canvas.addEventListener("mousedown", startScratch);
+    canvas.addEventListener("mousemove", scratch);
+    document.addEventListener("mouseup", endScratch);
 
-    /* ---------------------------
-       REVEAL CARD + OPEN MODAL
-    --------------------------- */
-    function revealCard() {
-      revealed = true;
-
-      overlay.style.opacity = 0;
-      overlay.style.pointerEvents = "none";
-
-      canvas.style.opacity = 0;
-      canvas.style.pointerEvents = "none";
-
-      setTimeout(() => {
-        openModal(hiddenData.innerHTML);
-      }, 350);
-    }
-
-    /* ---------------------------
-       POINTER EVENTS
-    --------------------------- */
-    canvas.addEventListener("pointerdown", (e) => {
-      if (revealed) return;
-      isDrawing = true;
-      lastPoint = getPosition(e);
-      scratch(lastPoint);
-      e.preventDefault();
-    });
-
-    canvas.addEventListener("pointermove", (e) => {
-      if (!isDrawing || revealed) return;
-      const pos = getPosition(e);
-      scratchLine(lastPoint, pos);
-      lastPoint = pos;
-      checkReveal();
-      e.preventDefault();
-    });
-
-    window.addEventListener("pointerup", () => (isDrawing = false));
-    window.addEventListener("pointercancel", () => (isDrawing = false));
-
-  }); // end cards loop
-
+    canvas.addEventListener("touchstart", startScratch);
+    canvas.addEventListener("touchmove", scratch);
+    document.addEventListener("touchend", endScratch);
+  });
 });
+
+function revealCard(card, canvas, overlay, hiddenData) {
+  overlay.style.display = "none";
+
+  // Remove the gray scratch canvas completely
+  canvas.style.display = "none";
+
+  // Reveal modal
+  openModal(hiddenData);
+}
+
+/* ---------- Modal ---------- */
+
+function openModal(content) {
+  let modal = document.getElementById("scratchModal");
+
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "scratchModal";
+    modal.style.position = "fixed";
+    modal.style.top = "0";
+    modal.style.left = "0";
+    modal.style.width = "100vw";
+    modal.style.height = "100vh";
+    modal.style.background = "rgba(0,0,0,0.7)";
+    modal.style.display = "flex";
+    modal.style.alignItems = "center";
+    modal.style.justifyContent = "center";
+    modal.style.padding = "20px";
+    modal.style.zIndex = "9999";
+    modal.innerHTML = `
+      <div id="scratchModalContent"
+           style="background:white; border-radius:12px; padding:20px; max-width:420px; width:100%;">
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) modal.style.display = "none";
+    });
+  }
+
+  const modalContent = document.getElementById("scratchModalContent");
+  modalContent.innerHTML = content.innerHTML;
+  modal.style.display = "flex";
+}
