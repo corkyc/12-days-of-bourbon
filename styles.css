@@ -22,7 +22,8 @@ body {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 1; /* Ensure snow is behind content but visible */
+  /* Z-Index increased to ensure visibility over all content */
+  z-index: 200; 
 }
 
 /* --- HEADER --- */
@@ -31,7 +32,7 @@ header {
   /* CHRISTMAS THEME: Deep Red Gradient */
   background: linear-gradient(180deg, #B83232, #8A2525); 
   position: relative;
-  z-index: 100;
+  z-index: 1000; /* Ensure header elements stay above snow */
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -58,7 +59,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   justify-content: space-between;
   width: 30px;
   height: 22px;
-  z-index: 101;
+  z-index: 1001; 
   margin-right: 18px; 
   align-self: center;
   margin-left: 0;
@@ -84,7 +85,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
-  z-index: 101;
+  z-index: 1001;
   margin-left: 18px;
   align-self: center;
 }
@@ -348,16 +349,18 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 .snowflake {
   position: fixed;
   top: -10vh; /* Start above viewport */
-  z-index: 2; /* Between background and content */
-  color: rgba(255,255,255,0.95);
-  font-size: 14px;
+  /* Z-Index increased to ensure visibility */
+  z-index: 201; 
+  /* Snow size increase for visibility */
+  color: #FFFFFF; 
+  font-size: 20px; 
   pointer-events: none; /* Allow clicks/interaction with content behind */
-  will-change: transform; /* Optimize animation performance */
+  will-change: transform; 
   animation-name: fall, sway;
-  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s); /* Custom properties for varied speeds */
+  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s); 
   animation-timing-function: linear, ease-in-out;
   animation-iteration-count: infinite, infinite;
-  opacity: 0.9;
+  opacity: 0.95; /* Maximize opacity */
 }
 
 @keyframes fall {
