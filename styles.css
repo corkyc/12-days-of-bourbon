@@ -29,132 +29,114 @@ header h1 {
 .nav-links ul { list-style:none; margin:0; padding:0; display:flex; gap:20px; justify-content:center; }
 .nav-links a { color:#fff; text-decoration:none; font-weight:600; }
 
-/* Hamburger for small screens */
+/* Hamburger */
 .hamburger {
   display:none;
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  width: 34px;
-  height: 26px;
-  z-index: 100;
-  cursor: pointer;
+  position:absolute;
+  top:18px;
+  left:18px;
+  width:34px;
+  height:26px;
+  z-index:100;
+  cursor:pointer;
 }
-.hamburger div { height: 4px; background: #fff; margin:4px 0; border-radius:3px; }
+.hamburger div { height:4px; background:#fff; margin:4px 0; border-radius:3px; }
 
 /* Modal */
 .modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  align-items:center;
+  justify-content:center;
+  z-index:999;
 }
-.modal[aria-hidden="false"], .modal.show { display: flex; }
+.modal[aria-hidden="false"] { display:flex; }
 .modal-content {
-  background: #fff;
-  color: #111;
-  max-width: 720px;
-  width: 92%;
-  padding: 20px;
-  border-radius: 10px;
-  position: relative;
+  background:#fff;
+  color:#111;
+  max-width:720px;
+  width:92%;
+  padding:20px;
+  border-radius:10px;
+  position:relative;
 }
 .close-button {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  background: none;
-  border: 0;
-  font-size: 1.6rem;
-  cursor: pointer;
+  position:absolute;
+  right:8px;
+  top:8px;
+  background:none;
+  border:0;
+  font-size:1.6rem;
+  cursor:pointer;
 }
 
-/* Buttons */
-.btn {
-  background:#8B5D3D;
-  color:#fff;
-  padding:8px 12px;
-  text-decoration:none;
-  border-radius:6px;
-  display:inline-block;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .doors { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 680px) {
-  .doors { grid-template-columns: repeat(2, 1fr); }
-  .hamburger { display:block; }
-  .nav-links { display:none; }
-  .nav-links.active { display:flex; flex-direction:column; gap:8px; }
-}
-@media (max-width: 420px) {
-  .doors { grid-template-columns: repeat(1, 1fr); }
-  header h1 { font-size: 2.2rem; }
-}
-/* --- 2 column whiskey scratch grid --- */
+/* Whiskey grid */
 .whiskey-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  padding: 16px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  padding:16px;
 }
 
-@media (min-width: 768px) {
-  .whiskey-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+@media (min-width:768px) {
+  .whiskey-grid { grid-template-columns:repeat(4,1fr); }
 }
 
 .whiskey-card {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: #ddd;
-  border-radius: 12px;
-  overflow: hidden;
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  background:#ddd;
+  border-radius:12px;
+  overflow:hidden;
+  cursor:pointer;
 }
 
-/* FINAL — Working scratch canvas */
+/* Scratch layer */
 .scratch-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  background: #bfbfbf; /* Optional: helps iOS render it */
-  touch-action: none;
-  z-index: 5; /* Sits above the card, under the overlay */
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:#bfbfbf;
+  touch-action:none;
+  z-index:5;
 }
-
 
 /* Overlay text */
 .scratch-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  color: white;
-  font-size: 1.1rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: auto;
-  user-select: none;
-  z-index: 6;
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  color:white;
+  font-size:1.1rem;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  user-select:none;
+  z-index:6;
 }
 
-/* Hidden content stored inside card */
+/* Hidden content (shown only after scratch) */
 .hidden-modal-data {
-  display: none;
+  display:none;
+  padding:10px;
+}
+.hidden-modal-data img {
+  width:100%;
+  border-radius:10px;
 }
 
-#whiskeyModal img {
-  width: 100%;
-  border-radius: 10px;
+.btn {
+  display:inline-block;
+  margin:6px 4px;
+  padding:8px 12px;
+  background:#8B5D3D;
+  color:white;
+  text-decoration:none;
+  border-radius:6px;
 }
+
