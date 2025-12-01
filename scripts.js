@@ -310,30 +310,33 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- TEMPORARY SNOW GENERATOR (Stop Generation at 5s, Wait for Fall) ---
-  (function createSnow(num = 50, initialDuration = 5) {
+  (function createSnow(num = 50, initialDurationSeconds = 5) {
     const container = document.getElementById('snow-container');
     if (!container) return;
     
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
-    const MAX_FALL_DURATION = 12; // Max time a flake takes to fall (based on dur calculation: 6+6=12)
+    const MAX_FALL_DURATION = 12; 
 
-    // 1. Function to schedule container removal after all flakes have fallen
+    // 1. Calculate Cleanup Time (Last flake generated at t=5s needs 12s to fall)
+    const totalCleanupTime = initialDurationSeconds + MAX_FALL_DURATION;
+
+    // 2. Function to schedule container removal after all flakes have fallen
     function removeContainer() {
         container.innerHTML = '';
         container.remove();
-        console.log(`Snowfall effect complete and container removed.`);
+        console.log(`Snowfall effect complete and container removed after ${totalCleanupTime} seconds.`);
     }
 
-    // 2. Generation Logic
+    // 3. Generation Logic Setup
     let generationInterval;
     let flakesGenerated = 0;
-    const totalFlakesToGenerate = 50; 
-    const intervalTime = (initialDuration * 1000) / totalFlakesToGenerate; 
+    const totalFlakesToGenerate = num; 
+    const intervalTime = (initialDurationSeconds * 1000) / totalFlakesToGenerate; 
 
     function generateFlake() {
       if (flakesGenerated >= totalFlakesToGenerate) {
+          // Stop generation and schedule cleanup after the max fall time
           clearInterval(generationInterval);
-          // Schedule the final cleanup after the slowest flake falls off.
           setTimeout(removeContainer, MAX_FALL_DURATION * 1000); 
           console.log(`Snow generation stopped. Waiting ${MAX_FALL_DURATION}s for flakes to clear.`);
           return;
@@ -352,8 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
       
-      // Set initial top position off-screen
-      el.style.top = `-${Math.random() * 10}vh`; 
+      // Initial top position set off-screen by CSS from: -10vh in the @keyframes fall-fixed
       
       // Apply animation durations
       el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
@@ -364,8 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
       flakesGenerated++;
     }
 
-    // 3. Start the Generation Timer
-    // The generation loop handles stopping itself after totalFlakesToGenerate is reached
+    // 4. Start the Generation Timer
     generationInterval = setInterval(generateFlake, intervalTime);
     generateFlake(); // Call immediately to ensure first flake appears instantly
 
