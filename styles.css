@@ -28,8 +28,6 @@ body {
 }
 .snowflake {
   position: fixed;
-  /* Start position is handled by JS but defaults should be near the top */
-  top: 0;
   z-index: 201; 
   color: #FFFFFF; 
   font-size: 20px; 
@@ -43,11 +41,9 @@ body {
   opacity: 0.95; 
 }
 
-/* KEYFRAMES ARE CRUCIAL FOR FALLING */
+/* KEYFRAMES CRITICAL FIX: Removed the conflicting 'from' keyframe */
 @keyframes fall {
-  /* Start slightly above the top edge */
-  from { transform: translateY(0); }
-  /* End well below the bottom edge */
+  /* The browser starts from the flake's current position (set by JS top: -Xvh) */
   to { transform: translateY(120vh); }
 }
 @keyframes sway {
