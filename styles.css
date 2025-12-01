@@ -23,9 +23,12 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 200; 
+  /* Must be fixed and cover the viewport */
+  overflow: hidden; 
 }
 .snowflake {
   position: fixed;
+  /* Start position is handled by JS but defaults should be near the top */
   top: 0;
   z-index: 201; 
   color: #FFFFFF; 
@@ -33,12 +36,18 @@ body {
   pointer-events: none; 
   will-change: transform; 
   animation-name: fall, sway;
-  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s); 
+  /* Duration is set by JS inline style */
+  animation-duration: 10s, 3s; 
   animation-timing-function: linear, ease-in-out;
-  animation-iteration-count: infinite, infinite;
+  animation-iteration-count: infinite, infinite; /* Runs forever until JS removes it */
   opacity: 0.95; 
 }
+
+/* KEYFRAMES ARE CRUCIAL FOR FALLING */
 @keyframes fall {
+  /* Start slightly above the top edge */
+  from { transform: translateY(0); }
+  /* End well below the bottom edge */
   to { transform: translateY(120vh); }
 }
 @keyframes sway {
@@ -365,28 +374,4 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
 }
 .btn:hover {
   background: #366c61; /* Darker green hover */
-}
-
-/* --- SNOW styles and animations --- */
-.snowflake {
-  position: fixed;
-  top: 0;
-  z-index: 201; 
-  color: #FFFFFF; 
-  font-size: 20px; 
-  pointer-events: none; 
-  will-change: transform; 
-  animation-name: fall, sway;
-  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s); 
-  animation-timing-function: linear, ease-in-out;
-  animation-iteration-count: infinite, infinite;
-  opacity: 0.95; 
-}
-@keyframes fall {
-  to { transform: translateY(120vh); }
-}
-@keyframes sway {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(var(--sway, 20px)); } 
-  100% { transform: translateX(0); }
 }
