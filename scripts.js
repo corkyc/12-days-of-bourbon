@@ -329,7 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 120);
   });
   
-  // --- TEMPORARY SNOW GENERATOR (Start from top) ---
+  // --- TEMPORARY SNOW GENERATOR ---
   (function createSnow(num = 50, durationSeconds = 12) {
     const container = document.getElementById('snow-container');
     if (!container) return;
@@ -357,27 +357,14 @@ document.addEventListener("DOMContentLoaded", () => {
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
       
-      // FIX: Start slightly above the viewport for a natural drop
-      // We use a negative value for top
-      el.style.top = `-${Math.random() * 50}px`; 
+      // FIX: Ensure flakes start off-screen top
+      el.style.top = `-${Math.random() * 10}vh`; 
 
-      el.style.setProperty('--fall-duration', `${dur}s`);
-      el.style.setProperty('--sway-duration', `${5 + Math.random() * 5}s`);
+      // Apply animation durations via inline styles, using the simplified CSS
+      el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
       el.style.setProperty('--sway', `${sway}px`);
       
       container.appendChild(el);
-      
-      el.addEventListener('animationend', function handler() {
-        // Recycle the flake's position to keep the snow coming while the timer runs
-        this.style.left = (Math.random() * 100) + 'vw';
-        
-        // Reset top to off-screen top
-        this.style.top = `-${Math.random() * 50}px`;
-
-        this.style.animationName = 'none';
-        void this.offsetWidth; // Trigger reflow
-        this.style.animationName = 'fall, sway';
-      });
     }
-  })(50, 12); // 50 snowflakes for 12 seconds
+  })(50, 12); 
 });
