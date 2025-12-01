@@ -328,9 +328,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }, 120);
   });
-  
-  // --- TEMPORARY SNOW GENERATOR ---
-  (function createSnow(num = 35, durationSeconds = 6) {
+
+  // --- TEMPORARY SNOW GENERATOR (Duration set to 6 seconds) ---
+  (function createSnow(num = 50, durationSeconds = 6) {
     const container = document.getElementById('snow-container');
     if (!container) return;
     
@@ -351,21 +351,23 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
-      const dur = 10 + Math.random() * 10;
+      const dur = 4 + Math.random() * 4; // Max animation duration should also be around 8s
       const sway = (Math.random() - 0.5) * 50; 
       
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
+
+      // Start position, relying on CSS fall-fixed keyframe for movement
+      el.style.top = `-${Math.random() * 10}vh`; 
       
-      // We rely on the CSS 'from { top: -10vh; }' for the initial position
-      // We set a random offset delay to stagger the start
-      el.style.animationDelay = `${Math.random() * -dur}s`;
-      
-      // Apply animation durations
+      // Apply animation durations (Fall animation needs to complete within 6s max)
       el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
+      
+      // Stagger the start time to ensure flakes appear quickly within the 6s window
+      el.style.animationDelay = `-${Math.random() * dur}s`;
       el.style.setProperty('--sway', `${sway}px`);
       
       container.appendChild(el);
     }
-  })(50, 12); 
+  })(50, 6); 
 });
