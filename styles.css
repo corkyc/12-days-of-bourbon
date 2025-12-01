@@ -33,7 +33,7 @@ body {
   pointer-events: none; 
   will-change: top, left; /* Change will-change to target top/left */
   animation-name: fall-fixed, sway; /* Using the new animation */
-  animation-duration: 6s, 3s; 
+  animation-duration: 10s, 3s; 
   animation-timing-function: linear, ease-in-out;
   animation-iteration-count: infinite, infinite; 
   opacity: 0.95; 
