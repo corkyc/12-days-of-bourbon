@@ -329,14 +329,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 120);
   });
   
-  // --- TEMPORARY SNOW GENERATOR ---
+  // --- TEMPORARY SNOW GENERATOR (Start from top) ---
   (function createSnow(num = 50, durationSeconds = 12) {
     const container = document.getElementById('snow-container');
     if (!container) return;
     
     // Cleanup function to stop the snow
     function removeSnow() {
-        // Clear all flakes and remove container to stop all animations/loops
         container.innerHTML = '';
         container.remove();
         console.log(`Snowfall stopped after ${durationSeconds} seconds.`);
@@ -357,8 +356,10 @@ document.addEventListener("DOMContentLoaded", () => {
       
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
-      // Initial spread across the viewport on load
-      el.style.top = (Math.random() * 100) + 'vh'; 
+      
+      // FIX: Start slightly above the viewport for a natural drop
+      // We use a negative value for top
+      el.style.top = `-${Math.random() * 50}px`; 
 
       el.style.setProperty('--fall-duration', `${dur}s`);
       el.style.setProperty('--sway-duration', `${5 + Math.random() * 5}s`);
@@ -366,12 +367,13 @@ document.addEventListener("DOMContentLoaded", () => {
       
       container.appendChild(el);
       
-      // Since we stop the snow container completely, we only need a basic
-      // handler to reset the position after the animation starts if it loops
       el.addEventListener('animationend', function handler() {
         // Recycle the flake's position to keep the snow coming while the timer runs
         this.style.left = (Math.random() * 100) + 'vw';
-        this.style.top = '-10vh'; // Reset to top for next fall
+        
+        // Reset top to off-screen top
+        this.style.top = `-${Math.random() * 50}px`;
+
         this.style.animationName = 'none';
         void this.offsetWidth; // Trigger reflow
         this.style.animationName = 'fall, sway';
