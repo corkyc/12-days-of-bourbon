@@ -17,8 +17,36 @@ body {
   overflow-x: hidden;
 }
 
-/* Snow container removed */
-/* #snow-container styles removed */
+/* --- SNOW STYLES RE-ADDED --- */
+#snow-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200; 
+}
+.snowflake {
+  position: fixed;
+  top: 0;
+  z-index: 201; 
+  color: #FFFFFF; 
+  font-size: 20px; 
+  pointer-events: none; 
+  will-change: transform; 
+  animation-name: fall, sway;
+  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s); 
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  opacity: 0.95; 
+}
+@keyframes fall {
+  to { transform: translateY(120vh); }
+}
+@keyframes sway {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(var(--sway, 20px)); } 
+  100% { transform: translateX(0); }
+}
+
 
 /* --- HEADER --- */
 header {
@@ -26,7 +54,6 @@ header {
   /* CHRISTMAS THEME: Deep Red Gradient */
   background: linear-gradient(180deg, #B83232, #8A2525); 
   position: relative;
-  /* Header z-index reverted or reduced as snow is gone */
   z-index: 100; 
   display: flex;
   justify-content: space-between;
@@ -54,7 +81,6 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   justify-content: space-between;
   width: 30px;
   height: 22px;
-  /* Z-index adjusted for general header element */
   z-index: 101; 
   margin-right: 18px; 
   align-self: center;
@@ -81,7 +107,6 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
-  /* Z-index adjusted for general header element */
   z-index: 101;
   margin-left: 18px;
   align-self: center;
@@ -342,7 +367,26 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   background: #366c61; /* Darker green hover */
 }
 
-/* --- SNOW styles removed --- */
-/* .snowflake styles removed */
-/* @keyframes fall removed */
-/* @keyframes sway removed */
+/* --- SNOW styles and animations --- */
+.snowflake {
+  position: fixed;
+  top: 0;
+  z-index: 201; 
+  color: #FFFFFF; 
+  font-size: 20px; 
+  pointer-events: none; 
+  will-change: transform; 
+  animation-name: fall, sway;
+  animation-duration: var(--fall-duration, 10s), var(--sway-duration, 3s); 
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  opacity: 0.95; 
+}
+@keyframes fall {
+  to { transform: translateY(120vh); }
+}
+@keyframes sway {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(var(--sway, 20px)); } 
+  100% { transform: translateX(0); }
+}
