@@ -328,6 +328,54 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }, 120);
   });
+  
+  // --- TEMPORARY SNOW GENERATOR ---
+  (function createSnow(num = 50, durationSeconds = 12) {
+    const container = document.getElementById('snow-container');
+    if (!container) return;
+    
+    // Cleanup function to stop the snow
+    function removeSnow() {
+        // Clear all flakes and remove container to stop all animations/loops
+        container.innerHTML = '';
+        container.remove();
+        console.log(`Snowfall stopped after ${durationSeconds} seconds.`);
+    }
 
-  // --- SNOW GENERATOR Removed ---
+    // Set a timer to stop the snow effect
+    setTimeout(removeSnow, durationSeconds * 1000);
+
+    for (let i = 0; i < num; i++) {
+      const el = document.createElement('div');
+      el.className = 'snowflake';
+      el.textContent = '❄';
+      
+      const left = Math.random() * 100;
+      const size = 15 + Math.random() * 10; 
+      const dur = 10 + Math.random() * 10;
+      const sway = (Math.random() - 0.5) * 50; 
+      
+      el.style.left = left + 'vw';
+      el.style.fontSize = size + 'px';
+      // Initial spread across the viewport on load
+      el.style.top = (Math.random() * 100) + 'vh'; 
+
+      el.style.setProperty('--fall-duration', `${dur}s`);
+      el.style.setProperty('--sway-duration', `${5 + Math.random() * 5}s`);
+      el.style.setProperty('--sway', `${sway}px`);
+      
+      container.appendChild(el);
+      
+      // Since we stop the snow container completely, we only need a basic
+      // handler to reset the position after the animation starts if it loops
+      el.addEventListener('animationend', function handler() {
+        // Recycle the flake's position to keep the snow coming while the timer runs
+        this.style.left = (Math.random() * 100) + 'vw';
+        this.style.top = '-10vh'; // Reset to top for next fall
+        this.style.animationName = 'none';
+        void this.offsetWidth; // Trigger reflow
+        this.style.animationName = 'fall, sway';
+      });
+    }
+  })(50, 12); // 50 snowflakes for 12 seconds
 });
