@@ -357,10 +357,11 @@ document.addEventListener("DOMContentLoaded", () => {
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
       
-      // FIX: Ensure flakes start off-screen top
-      el.style.top = `-${Math.random() * 10}vh`; 
-
-      // Apply animation durations via inline styles, using the simplified CSS
+      // We rely on the CSS 'from { top: -10vh; }' for the initial position
+      // We set a random offset delay to stagger the start
+      el.style.animationDelay = `${Math.random() * -dur}s`;
+      
+      // Apply animation durations
       el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
       el.style.setProperty('--sway', `${sway}px`);
       
