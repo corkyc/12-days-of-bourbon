@@ -334,6 +334,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById('snow-container');
     if (!container) return;
     
+    // Define Color Palette
+    const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
+    
     // Cleanup function to stop the snow
     function removeSnow() {
         container.innerHTML = '';
@@ -352,18 +355,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
       
-      // FALL DURATION: Increase the max duration from 8s to 12s for slower fall
-      const dur = 6 + Math.random() * 6; // Range 6s to 12s (slower fall)
+      // FALL DURATION: 6s to 12s (slower fall)
+      const dur = 6 + Math.random() * 6; 
       
       const sway = (Math.random() - 0.5) * 50; 
+      
+      // Set random color
+      el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
       
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
 
-      // Start position, relying on CSS fall-fixed keyframe for movement
+      // Start position (CSS from: -10vh handles the rest)
       el.style.top = `-${Math.random() * 10}vh`; 
       
-      // Apply animation durations (Fall animation needs to complete within 12s max)
+      // Apply animation durations
       el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
       
       // Stagger the start time
