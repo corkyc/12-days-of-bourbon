@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.addEventListener('click', resetProgress);
   }
 
-  // --- MENU LOGIC ---
+  // --- MENU / MODAL / CANVAS LOGIC (Omitted for brevity, unchanged) ---
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
@@ -72,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- MODAL LOGIC ---
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -96,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === modal) closeModal();
   });
 
-  // --- CANVAS UTILITIES ---
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
     return { x: clientX - r.left, y: clientY - r.top };
@@ -128,9 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Initializes the scratch canvas size, drawing context, and state.
-   */
   function initCanvas(card) {
     const canvas = card.querySelector(".scratch");
     if (!canvas) return;
@@ -139,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const ctx = canvas.getContext("2d");
       const day = card.dataset.day;
 
-      // Apply background image style
       const imgSrc = card.dataset.img;
       if (imgSrc) {
         card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
@@ -147,7 +141,6 @@ document.addEventListener("DOMContentLoaded", () => {
         card.style.backgroundPosition = "center";
       }
 
-      // Set size properties
       const cssW = Math.max(1, Math.round(card.clientWidth));
       const cssH = Math.max(1, Math.round(card.clientHeight));
 
@@ -158,15 +151,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-      // Draw initial scratch cover
       ctx.globalCompositeOperation = "source-over";
       ctx.fillStyle = "#d8d8d8";
       ctx.fillRect(0, 0, cssW, cssH);
 
-      // Set composite operation for erasing
       ctx.globalCompositeOperation = "destination-out";
 
-      // Store scratch state
       card._scratch = {
         canvas,
         ctx,
@@ -176,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
         revealed: false
       };
 
-      // Apply saved progress
       if (scratchedDays[day]) {
         card.classList.add("revealed");
         card._scratch.revealed = true;
@@ -190,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- CARD INTERACTION LOGIC ---
   function setupScratchLogic(card, s) {
     if (!s) return;
 
@@ -256,7 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.addEventListener("pointerup", onUp);
     canvas.addEventListener("pointercancel", onUp);
 
-    // Click listener for modal on scratched cards
     card.addEventListener("click", (e) => {
       if (e.target.closest('a') !== null) return;
 
@@ -267,7 +254,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- CLICKABLE CARD LOGIC (Applies to all-bottles*.html revealed cards) ---
   function setupClickableCardLogic(card) {
     card.addEventListener("click", (e) => {
       if (e.target.closest('a') !== null) return;
@@ -276,7 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (contentNode) openModal(contentNode);
     });
 
-    // Stop button click propagation
     const detailLink = card.querySelector('.btn');
     if (detailLink) {
       detailLink.addEventListener('click', (e) => {
@@ -285,21 +270,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- MAIN INITIALIZATION LOOP ---
   cards.forEach(card => {
     const canvas = card.querySelector(".scratch");
 
     if (canvas) {
-      // Index page (Scratchable Cards)
       const scratchState = initCanvas(card);
       setupScratchLogic(card, scratchState);
     } else if (card.classList.contains('revealed')) {
-      // All Bottles pages (Pre-revealed, clickable cards)
       setupClickableCardLogic(card);
     }
   });
 
-  // --- RESIZE HANDLER (Re-initializes canvas properties without drawing) ---
   let rt = null;
   window.addEventListener("resize", () => {
     clearTimeout(rt);
@@ -318,7 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
           canvas.width = Math.floor(cssW * DPR);
           canvas.height = Math.floor(cssH * DPR);
 
-          // Redraw the cover after resize
           scratchState.ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
           scratchState.ctx.globalCompositeOperation = "source-over";
           scratchState.ctx.fillStyle = "#d8d8d8";
@@ -329,54 +309,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 120);
   });
 
-  // --- TEMPORARY SNOW GENERATOR (Duration set to 7 seconds) ---
-  (function createSnow(num = 50, durationSeconds = 7) {
+  // --- TEMPORARY SNOW GENERATOR (Stop Generation at 5s, Wait for Fall) ---
+  (function createSnow(num = 50, initialDuration = 5) {
     const container = document.getElementById('snow-container');
     if (!container) return;
     
-    // Define Color Palette
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
-    
-    // Cleanup function to stop the snow
-    function removeSnow() {
+    const MAX_FALL_DURATION = 12; // Max time a flake takes to fall (based on dur calculation: 6+6=12)
+
+    // 1. Function to schedule container removal after all flakes have fallen
+    function removeContainer() {
         container.innerHTML = '';
         container.remove();
-        console.log(`Snowfall stopped after ${durationSeconds} seconds.`);
+        console.log(`Snowfall effect complete and container removed.`);
     }
 
-    // Set a timer to stop the snow effect
-    setTimeout(removeSnow, durationSeconds * 1000);
+    // 2. Generation Logic
+    let generationInterval;
+    let flakesGenerated = 0;
+    const totalFlakesToGenerate = 50; 
+    const intervalTime = (initialDuration * 1000) / totalFlakesToGenerate; 
 
-    for (let i = 0; i < num; i++) {
+    function generateFlake() {
+      if (flakesGenerated >= totalFlakesToGenerate) {
+          clearInterval(generationInterval);
+          // Schedule the final cleanup after the slowest flake falls off.
+          setTimeout(removeContainer, MAX_FALL_DURATION * 1000); 
+          console.log(`Snow generation stopped. Waiting ${MAX_FALL_DURATION}s for flakes to clear.`);
+          return;
+      }
+      
       const el = document.createElement('div');
       el.className = 'snowflake';
       el.textContent = '❄';
       
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
-      
-      // FALL DURATION: 6s to 12s (slower fall)
-      const dur = 6 + Math.random() * 6; 
-      
+      const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
       const sway = (Math.random() - 0.5) * 50; 
       
-      // Set random color
       el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
-      
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
-
-      // Start position (CSS from: -10vh handles the rest)
+      
+      // Set initial top position off-screen
       el.style.top = `-${Math.random() * 10}vh`; 
       
       // Apply animation durations
       el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
-      
-      // Stagger the start time
-      el.style.animationDelay = `-${Math.random() * dur}s`;
+      el.style.animationDelay = `-${Math.random() * dur}s`; // Stagger start time
       el.style.setProperty('--sway', `${sway}px`);
       
       container.appendChild(el);
+      flakesGenerated++;
     }
-  })(50, 7); 
+
+    // 3. Start the Generation Timer
+    // The generation loop handles stopping itself after totalFlakesToGenerate is reached
+    generationInterval = setInterval(generateFlake, intervalTime);
+    generateFlake(); // Call immediately to ensure first flake appears instantly
+
+  })(50, 5); 
 });
