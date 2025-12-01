@@ -17,13 +17,12 @@ body {
   overflow-x: hidden;
 }
 
-/* --- SNOW STYLES RE-ADDED --- */
+/* --- SNOW STYLES --- */
 #snow-container {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 200; 
-  /* Must be fixed and cover the viewport */
   overflow: hidden; 
 }
 .snowflake {
@@ -32,19 +31,18 @@ body {
   color: #FFFFFF; 
   font-size: 20px; 
   pointer-events: none; 
-  will-change: transform; 
-  animation-name: fall, sway;
-  /* Duration is set by JS inline style */
+  will-change: top, left; /* Change will-change to target top/left */
+  animation-name: fall-fixed, sway; /* Using the new animation */
   animation-duration: 10s, 3s; 
   animation-timing-function: linear, ease-in-out;
-  animation-iteration-count: infinite, infinite; /* Runs forever until JS removes it */
+  animation-iteration-count: infinite, infinite; 
   opacity: 0.95; 
 }
 
-/* KEYFRAMES CRITICAL FIX: Removed the conflicting 'from' keyframe */
-@keyframes fall {
-  /* The browser starts from the flake's current position (set by JS top: -Xvh) */
-  to { transform: translateY(120vh); }
+/* CRITICAL FIX: NEW FALL ANIMATION based on the 'top' property */
+@keyframes fall-fixed {
+  from { top: -10vh; } /* Start off-screen */
+  to { top: 110vh; }  /* End well off-screen */
 }
 @keyframes sway {
   0% { transform: translateX(0); }
