@@ -329,8 +329,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 120);
   });
 
-  // --- TEMPORARY SNOW GENERATOR (Duration set to 6 seconds) ---
-  (function createSnow(num = 50, durationSeconds = 6) {
+  // --- TEMPORARY SNOW GENERATOR (Duration set to 7 seconds) ---
+  (function createSnow(num = 50, durationSeconds = 7) {
     const container = document.getElementById('snow-container');
     if (!container) return;
     
@@ -351,7 +351,10 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
-      const dur = 4 + Math.random() * 4; // Max animation duration should also be around 8s
+      
+      // FALL DURATION: Increase the max duration from 8s to 12s for slower fall
+      const dur = 6 + Math.random() * 6; // Range 6s to 12s (slower fall)
+      
       const sway = (Math.random() - 0.5) * 50; 
       
       el.style.left = left + 'vw';
@@ -360,14 +363,14 @@ document.addEventListener("DOMContentLoaded", () => {
       // Start position, relying on CSS fall-fixed keyframe for movement
       el.style.top = `-${Math.random() * 10}vh`; 
       
-      // Apply animation durations (Fall animation needs to complete within 6s max)
+      // Apply animation durations (Fall animation needs to complete within 12s max)
       el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
       
-      // Stagger the start time to ensure flakes appear quickly within the 6s window
+      // Stagger the start time
       el.style.animationDelay = `-${Math.random() * dur}s`;
       el.style.setProperty('--sway', `${sway}px`);
       
       container.appendChild(el);
     }
-  })(50, 6); 
+  })(50, 7); 
 });
