@@ -330,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
   // --- TEMPORARY SNOW GENERATOR ---
-  (function createSnow(num = 50, durationSeconds = 12) {
+  (function createSnow(num = 35, durationSeconds = 6) {
     const container = document.getElementById('snow-container');
     if (!container) return;
     
