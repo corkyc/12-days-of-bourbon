@@ -18,9 +18,10 @@
       <ul>
         <!-- Home link (no check needed) -->
         <li><a href="index.html">Home (Scratch-Off)</a></li>
-        <!-- Other links (require confirmation) -->
-        <li><a href="all-bottles.html" data-requires-confirm="true">All Bottles</a></li>
-        <li><a href="all-bottles-numbers.html" data-requires-confirm="true">All Bottles with Numbers</a></li>
+        <!-- All Bottles link - Custom confirmation text -->
+        <li><a href="all-bottles.html" data-requires-confirm="true" data-confirm-title="View Bottle Gallery" data-confirm-message="This will take you away from the scratch-off game. Your scratch progress is saved, but are you sure you want to navigate?">All Bottles</a></li>
+        <!-- All Bottles with Numbers link - Custom confirmation text -->
+        <li><a href="all-bottles-numbers.html" data-requires-confirm="true" data-confirm-title="View Full List" data-confirm-message="This list shows all bottles revealed, potentially spoiling the surprise. Continue?">All Bottles with Numbers</a></li>
       </ul>
     </div>
   </nav>
@@ -106,7 +107,7 @@
   <div id="confirmModal" class="modal confirmation" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
       <h3 id="confirmTitle" class="confirm-title">Confirm Navigation</h3>
-      <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page? Your scratch progress is saved!</p>
+      <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page?</p>
       <div class="button-group">
         <button id="confirmYes" class="btn confirm-yes">Yes, Go</button>
         <button id="confirmNo" class="btn confirm-no">No, Stay Here</button>
@@ -117,3 +118,4 @@
   <script src="scripts.js"></script>
 </body>
 </html>
+
