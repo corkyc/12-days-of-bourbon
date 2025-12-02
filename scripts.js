@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- CONFIRMATION MODAL ELEMENTS ---
   const confirmModal = document.getElementById('confirmModal');
+  const confirmTitleEl = document.getElementById('confirmTitle'); 
+  const confirmMessageEl = document.getElementById('confirmMessage'); 
   const confirmYes = document.getElementById('confirmYes');
   const confirmNo = document.getElementById('confirmNo');
   let pendingUrl = null; // Store the URL for navigation after confirmation
@@ -84,11 +86,25 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-  
+
   // --- CONFIRMATION HANDLERS ---
-  function openConfirmModal(url) {
+  function handleMenuLinkClick(e) {
+    e.preventDefault(); 
+    const linkEl = e.currentTarget;
+    const url = linkEl.href;
+    const title = linkEl.dataset.confirmTitle || "Confirm Navigation";
+    const message = linkEl.dataset.confirmMessage || "Are you sure you want to leave this page? Your progress is saved!";
+    
+    openConfirmModal(url, title, message);
+  }
+
+  function openConfirmModal(url, title, message) {
     pendingUrl = url;
     if (confirmModal) {
+      // Set dynamic text
+      confirmTitleEl.textContent = title;
+      confirmMessageEl.textContent = message;
+      
       // Optional: Close the navigation menu before showing the modal
       mobileMenu.classList.remove('open');
       mobileMenu.setAttribute('aria-hidden', 'true');
@@ -102,12 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirmModal) {
       confirmModal.setAttribute("aria-hidden", "true");
     }
-  }
-
-  function handleMenuLinkClick(e) {
-    e.preventDefault(); // Stop default navigation
-    const url = e.currentTarget.href;
-    openConfirmModal(url);
   }
 
   confirmYes.addEventListener('click', () => {
@@ -125,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target === confirmModal) closeConfirmModal(); 
     });
   }
+
 
   // --- MODAL LOGIC (Existing) ---
   function openModal(node) {
@@ -150,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === modal) closeModal();
   });
 
-  // --- CANVAS / SCRATCH / RESIZE LOGIC (Omitted for brevity, unchanged) ---
+  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (Omitted for brevity, unchanged) ---
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
     return { x: clientX - r.left, y: clientY - r.top };
