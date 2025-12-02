@@ -31,18 +31,18 @@ body {
   color: #FFFFFF; 
   font-size: 20px; 
   pointer-events: none; 
-  will-change: top, left; /* Change will-change to target top/left */
-  animation-name: fall-fixed, sway; /* Using the new animation */
+  will-change: top, left; 
+  animation-name: fall-fixed, sway;
+  /* Duration is set by JS inline style */
   animation-duration: 10s, 3s; 
   animation-timing-function: linear, ease-in-out;
-  animation-iteration-count: infinite, infinite; 
+  /* Iteration count is handled by JS inline styles */
   opacity: 0.95; 
 }
 
-/* CRITICAL FIX: NEW FALL ANIMATION based on the 'top' property */
 @keyframes fall-fixed {
-  from { top: -10vh; } /* Start off-screen */
-  to { top: 110vh; }  /* End well off-screen */
+  from { top: -10vh; }
+  to { top: 110vh; }
 }
 @keyframes sway {
   0% { transform: translateX(0); }
