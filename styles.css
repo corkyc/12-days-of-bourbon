@@ -58,16 +58,16 @@ header {
   position: relative;
   z-index: 100; 
   
-  /* Layout: Hamburger | Content Stack | Empty/Future */
+  /* Layout: Hamburger | Content Stack */
   display: grid;
-  grid-template-columns: auto 1fr; /* Hamburger | Content Stack */
+  grid-template-columns: auto 1fr; 
   gap: 10px;
   align-items: center;
 }
 
 /* Hamburger Button */
 .hamburger {
-  grid-column: 1 / 2; /* Position 1 */
+  grid-column: 1 / 2; 
   background: none;
   border: none;
   cursor: pointer;
@@ -78,7 +78,7 @@ header {
   flex-direction: column;
   justify-content: space-around;
   width: 34px; 
-  height: 28px; /* Increased height for spacing */
+  height: 28px; 
   z-index: 101; 
 }
 .hamburger span {
@@ -89,18 +89,17 @@ header {
   border-radius: 3px;
 }
 
-/* Header Content (H1, Tagline, and Reset Button) */
+/* Header Content (H1 and Tagline) */
 .header-content {
-  grid-column: 2 / 3; /* Position 2 */
+  grid-column: 2 / 3; 
   text-align: center;
   
-  /* Stack H1, Tagline, and Button */
+  /* Stack H1 and Tagline */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   
-  /* Add padding for overall height consistency */
   padding: 8px 0; 
 }
 
@@ -112,27 +111,35 @@ header h1 {
 }
 .tagline { 
   margin-top: 4px; 
-  margin-bottom: 8px; /* Space above button */
+  margin-bottom: 0; /* Removed margin here */
   font-size: 0.9rem; 
   color:#FFD700; 
   line-height: 1.2;
 }
 
+/* --- BOTTOM CONTROLS (New Reset Button Placement) --- */
+.bottom-controls {
+  text-align: center;
+  padding: 20px 18px 30px;
+}
+
 /* Reset Button Style */
 .reset-btn {
-  /* No longer fixed position, flows naturally below tagline */
-  padding: 6px 10px;
-  background: #1A3D36;
-  color: #f6eedd;
+  /* Flows naturally inside bottom-controls */
+  padding: 10px 25px;
+  background: #B83232; /* Red button at the bottom */
+  color: #fff;
   border: 1px solid #FFD700;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
-  z-index: 101;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  display: inline-block;
 }
 .reset-btn:hover {
-  background: #B83232; 
+  background: #8A2525; 
   transform: translateY(-1px);
 }
 .reset-btn:active {
