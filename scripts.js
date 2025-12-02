@@ -6,6 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalClose = document.getElementById("modalClose");
   const resetBtn = document.getElementById('resetProgressBtn');
 
+  // --- CONFIRMATION MODAL ELEMENTS ---
+  const confirmModal = document.getElementById('confirmModal');
+  const confirmYes = document.getElementById('confirmYes');
+  const confirmNo = document.getElementById('confirmNo');
+  let pendingUrl = null; // Store the URL for navigation after confirmation
+
   // --- LOCAL STORAGE STATE & MANAGEMENT (Omitted for brevity, unchanged) ---
   const STORAGE_KEY = 'scratchedDays';
   let scratchedDays = {};
@@ -45,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.addEventListener('click', resetProgress);
   }
 
-  // --- MENU / MODAL / CANVAS LOGIC (Omitted for brevity, unchanged) ---
+  // --- MENU LOGIC ---
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
@@ -70,8 +76,57 @@ document.addEventListener("DOMContentLoaded", () => {
         mobileMenu.setAttribute('aria-hidden', 'true');
       }
     });
+
+    // --- NEW: Intercept Menu Clicks ---
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      if (link.dataset.requiresConfirm === 'true') {
+        link.addEventListener('click', handleMenuLinkClick);
+      }
+    });
+  }
+  
+  // --- CONFIRMATION HANDLERS ---
+  function openConfirmModal(url) {
+    pendingUrl = url;
+    if (confirmModal) {
+      // Optional: Close the navigation menu before showing the modal
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      
+      confirmModal.setAttribute("aria-hidden", "false");
+    }
   }
 
+  function closeConfirmModal() {
+    pendingUrl = null;
+    if (confirmModal) {
+      confirmModal.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  function handleMenuLinkClick(e) {
+    e.preventDefault(); // Stop default navigation
+    const url = e.currentTarget.href;
+    openConfirmModal(url);
+  }
+
+  confirmYes.addEventListener('click', () => {
+    if (pendingUrl) {
+      window.location.href = pendingUrl; // Perform navigation
+    }
+    closeConfirmModal();
+  });
+
+  confirmNo.addEventListener('click', closeConfirmModal);
+  
+  // Close confirmation modal if background is clicked
+  if (confirmModal) {
+    confirmModal.addEventListener("click", (e) => { 
+      if (e.target === confirmModal) closeConfirmModal(); 
+    });
+  }
+
+  // --- MODAL LOGIC (Existing) ---
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -95,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === modal) closeModal();
   });
 
+  // --- CANVAS / SCRATCH / RESIZE LOGIC (Omitted for brevity, unchanged) ---
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
     return { x: clientX - r.left, y: clientY - r.top };
@@ -318,13 +374,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
 
     function handleFlakeEnd(event) {
-        // Only trigger cleanup on the main falling animation
         if (event.animationName === 'fall-fixed') {
             event.target.removeEventListener('animationend', handleFlakeEnd);
             event.target.remove();
             activeFlakes--;
             
-            // Check if generation has stopped AND all active flakes are gone
             if (flakesGenerated >= totalFlakesToGenerate && activeFlakes <= 0) {
                 removeContainer();
             }
@@ -337,7 +391,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(`Snowfall effect complete and container removed.`);
     }
 
-    // 1. Generation Logic Setup
     let generationInterval;
     let flakesGenerated = 0;
     const totalFlakesToGenerate = num; 
@@ -345,7 +398,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function generateFlake() {
       if (flakesGenerated >= totalFlakesToGenerate) {
-          // Stop generation interval once the count is reached
           clearInterval(generationInterval);
           console.log(`Snow generation stopped. Waiting for ${activeFlakes} flakes to clear.`);
           if (activeFlakes <= 0) removeContainer();
@@ -358,15 +410,13 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
-      const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
+      const dur = 6 + Math.random() * 6; 
       const sway = (Math.random() - 0.5) * 50; 
       
       el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
       
-      // CRITICAL FIX: Set iteration count to 1 for the fall animation to guarantee 'animationend' fires
-      // Note: We use the single 'animation' property to control both name and iteration count cleanly
       el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
 
       el.style.setProperty('--sway', `${sway}px`);
@@ -378,7 +428,6 @@ document.addEventListener("DOMContentLoaded", () => {
       flakesGenerated++;
     }
 
-    // 2. Start the Generation Timer
     generationInterval = setInterval(generateFlake, intervalTime);
     generateFlake(); 
 
