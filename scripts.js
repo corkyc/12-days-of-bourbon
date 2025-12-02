@@ -317,8 +317,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let activeFlakes = 0;
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
 
-    // Function to handle cleanup when a flake finishes its cycle
     function handleFlakeEnd(event) {
+        // Only trigger cleanup on the main falling animation
         if (event.animationName === 'fall-fixed') {
             event.target.removeEventListener('animationend', handleFlakeEnd);
             event.target.remove();
@@ -337,7 +337,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(`Snowfall effect complete and container removed.`);
     }
 
-
     // 1. Generation Logic Setup
     let generationInterval;
     let flakesGenerated = 0;
@@ -349,7 +348,6 @@ document.addEventListener("DOMContentLoaded", () => {
           // Stop generation interval once the count is reached
           clearInterval(generationInterval);
           console.log(`Snow generation stopped. Waiting for ${activeFlakes} flakes to clear.`);
-          // If all flakes somehow cleared early (unlikely), remove the container now.
           if (activeFlakes <= 0) removeContainer();
           return;
       }
@@ -360,18 +358,19 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
-      const dur = 6 + Math.random() * 6; 
+      const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
       const sway = (Math.random() - 0.5) * 50; 
       
       el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
       
-      el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
-      el.style.animationDelay = `-${Math.random() * dur}s`; 
+      // CRITICAL FIX: Set iteration count to 1 for the fall animation to guarantee 'animationend' fires
+      // Note: We use the single 'animation' property to control both name and iteration count cleanly
+      el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
+
       el.style.setProperty('--sway', `${sway}px`);
       
-      // Add event listener for dynamic cleanup
       el.addEventListener('animationend', handleFlakeEnd);
 
       container.appendChild(el);
@@ -381,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. Start the Generation Timer
     generationInterval = setInterval(generateFlake, intervalTime);
-    generateFlake(); // Call immediately to ensure first flake appears instantly
+    generateFlake(); 
 
   })(50, 5); 
 });
