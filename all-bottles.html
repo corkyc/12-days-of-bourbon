@@ -16,8 +16,10 @@
     <div class="menu-content">
       <h2>Menu</h2>
       <ul>
+        <!-- Home link (no check) -->
         <li><a href="index.html">Home (Scratch-Off)</a></li>
-        <li><a href="all-bottles-numbers.html">All Bottles with Numbers</a></li>
+        <!-- Link requiring confirmation -->
+        <li><a href="all-bottles-numbers.html" data-requires-confirm="true">All Bottles with Numbers</a></li>
       </ul>
     </div>
   </nav>
@@ -29,18 +31,21 @@
       <span></span>
       <span></span>
     </button>
-
-    <h1>All 12 Bourbons</h1>
-    <p class="tagline">A full list of the featured bottles.</p>
+    
+    <div class="header-content">
+      <h1>All 12 Bourbons</h1>
+      <p class="tagline">A full list of the featured bottles.</p>
+    </div>
+    
+    <button id="resetProgressBtn" class="reset-btn">Reset Progress</button>
   </header>
 
   <main class="grid" id="grid">
     
     <!-- Placeholder Card 1 (Revealed) -->
-    <article class="card revealed">
+    <article class="card revealed" data-clickable="true">
       <div class="content">
-        <!-- Placeholder Image -->
-        <img src="images/whiskey1.jpg" alt="Placeholder Bourbon 1">
+        <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+1" alt="Placeholder Bourbon 1">
         <h3>Buffalo Trace</h3>
         <p>Classic caramel and vanilla notes with an oak finish.</p>
         <a class="btn" href="#">View Details</a>
@@ -48,17 +53,17 @@
     </article>
 
     <!-- Placeholder Card 2 (Revealed) -->
-    <article class="card revealed">
+    <article class="card revealed" data-clickable="true">
       <div class="content">
-        <img src="images/whiskey2.jpg" alt="Placeholder Bourbon 2">
+        <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+2" alt="Placeholder Bourbon 2">
         <h3>Four Roses Large Batch</h3>
-        <p>Spicy, fruity, and smooth on the palate.</p>
+        <p>Spicy, fruity, smooth.</p>
         <a class="btn" href="#">View Details</a>
       </div>
     </article>
 
     <!-- Placeholder Card 3 (Revealed) -->
-    <article class="card revealed">
+    <article class="card revealed" data-clickable="true">
       <div class="content">
         <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+3" alt="Placeholder Bourbon 3">
         <h3>Woodford Reserve</h3>
@@ -68,7 +73,7 @@
     </article>
 
     <!-- Placeholder Card 4 (Revealed) -->
-    <article class="card revealed">
+    <article class="card revealed" data-clickable="true">
       <div class="content">
         <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+4" alt="Placeholder Bourbon 4">
         <h3>Maker's Mark</h3>
@@ -78,22 +83,34 @@
     </article>
 
     <!-- Placeholder Card 5-12 -->
-    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+5" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy, high proof flavor.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+6" alt=""><h3>Elijah Craig</h3><p>Toasted oak and warm spice finish.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+7" alt=""><h3>Knob Creek</h3><p>Aged nine years, oak and strong vanilla.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+8" alt=""><h3>Angel’s Envy</h3><p>Finished in Port wine barrels.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+9" alt=""><h3>Bulleit</h3><p>High rye content, distinct spicy kick.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+10" alt=""><h3>Basil Hayden</h3><p>Light-bodied and gentle, easy sipper.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+11" alt=""><h3>Old Forester</h3><p>Classic high-rye profile, balanced.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+12" alt=""><h3>Blanton's</h3><p>Rich and complex single barrel finish.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+5" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy, high proof flavor.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+6" alt=""><h3>Elijah Craig</h3><p>Toasted oak and warm spice finish.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+7" alt=""><h3>Knob Creek</h3><p>Aged nine years, oak and strong vanilla.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+8" alt=""><h3>Angel’s Envy</h3><p>Port-finished.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+9" alt=""><h3>Bulleit</h3><p>High rye content, distinct spicy kick.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+10" alt=""><h3>Basil Hayden</h3><p>Light-bodied and gentle, easy sipper.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+11" alt=""><h3>Old Forester</h3><p>Classic high-rye profile, balanced.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+12" alt=""><h3>Blanton's</h3><p>Rich and complex single barrel finish.</p><a class="btn" href="#">View Details</a></div></article>
 
   </main>
 
-  <!-- Modal -->
+  <!-- Main Modal (for bottle details) -->
   <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
       <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
       <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION MODAL (Required for menu links) -->
+  <div id="confirmModal" class="modal confirmation" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-inner" role="document">
+      <h3 id="confirmTitle" class="confirm-title">Confirm Navigation</h3>
+      <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page? Your scratch progress is saved!</p>
+      <div class="button-group">
+        <button id="confirmYes" class="btn confirm-yes">Yes, Go</button>
+        <button id="confirmNo" class="btn confirm-no">No, Stay Here</button>
+      </div>
     </div>
   </div>
 
