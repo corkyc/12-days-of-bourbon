@@ -6,15 +6,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalClose = document.getElementById("modalClose");
   const resetBtn = document.getElementById('resetProgressBtn');
 
-  // --- CONFIRMATION MODAL ELEMENTS ---
+  // Confirmation Modal Elements
   const confirmModal = document.getElementById('confirmModal');
-  const confirmTitleEl = document.getElementById('confirmTitle'); 
-  const confirmMessageEl = document.getElementById('confirmMessage'); 
+  const confirmTitle = document.getElementById('confirmTitle');
+  const confirmMessage = document.getElementById('confirmMessage');
   const confirmYes = document.getElementById('confirmYes');
   const confirmNo = document.getElementById('confirmNo');
-  let pendingUrl = null; // Store the URL for navigation after confirmation
 
-  // --- LOCAL STORAGE STATE & MANAGEMENT (Omitted for brevity, unchanged) ---
+  // --- LOCAL STORAGE STATE & MANAGEMENT (PERSISTENCE) ---
   const STORAGE_KEY = 'scratchedDays';
   let scratchedDays = {};
 
@@ -53,10 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.addEventListener('click', resetProgress);
   }
 
-  // --- MENU LOGIC ---
+  // --- NAVIGATION / MENU LOGIC ---
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
+  const menuLinks = document.querySelectorAll('.mobile-menu a');
 
   if (hamburgerBtn && mobileMenu && menuClose) {
     hamburgerBtn.addEventListener('click', () => {
@@ -78,66 +78,56 @@ document.addEventListener("DOMContentLoaded", () => {
         mobileMenu.setAttribute('aria-hidden', 'true');
       }
     });
-
-    // --- NEW: Intercept Menu Clicks ---
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      if (link.dataset.requiresConfirm === 'true') {
-        link.addEventListener('click', handleMenuLinkClick);
-      }
-    });
   }
+  
+  // --- CONFIRMATION MODAL LOGIC ---
+  let confirmedLinkHref = null;
 
-  // --- CONFIRMATION HANDLERS ---
-  function handleMenuLinkClick(e) {
-    e.preventDefault(); 
-    const linkEl = e.currentTarget;
-    const url = linkEl.href;
-    const title = linkEl.dataset.confirmTitle || "Confirm Navigation";
-    const message = linkEl.dataset.confirmMessage || "Are you sure you want to leave this page? Your progress is saved!";
-    
-    openConfirmModal(url, title, message);
-  }
-
-  function openConfirmModal(url, title, message) {
-    pendingUrl = url;
-    if (confirmModal) {
-      // Set dynamic text
-      confirmTitleEl.textContent = title;
-      confirmMessageEl.textContent = message;
-      
-      // Optional: Close the navigation menu before showing the modal
-      mobileMenu.classList.remove('open');
-      mobileMenu.setAttribute('aria-hidden', 'true');
-      
-      confirmModal.setAttribute("aria-hidden", "false");
+  function openConfirmModal(title, message) {
+    if (!confirmModal) return;
+    confirmTitle.textContent = title;
+    confirmMessage.textContent = message;
+    confirmModal.setAttribute("aria-hidden", "false");
+    // Close mobile menu when confirmation modal opens
+    if (mobileMenu) {
+        mobileMenu.classList.remove('open');
+        mobileMenu.setAttribute('aria-hidden', 'true');
     }
   }
 
   function closeConfirmModal() {
-    pendingUrl = null;
     if (confirmModal) {
-      confirmModal.setAttribute("aria-hidden", "true");
+        confirmModal.setAttribute("aria-hidden", "true");
+        confirmedLinkHref = null; // Clear the stored link
     }
   }
-
-  confirmYes.addEventListener('click', () => {
-    if (pendingUrl) {
-      window.location.href = pendingUrl; // Perform navigation
-    }
-    closeConfirmModal();
+  
+  // Set up listeners for the confirmation buttons
+  if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
+  if (confirmYes) confirmYes.addEventListener('click', () => {
+      if (confirmedLinkHref) {
+          window.location.href = confirmedLinkHref;
+      }
+      closeConfirmModal();
+  });
+  
+  // Intercept menu clicks
+  menuLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+          const requiresConfirm = link.dataset.requiresConfirm === 'true';
+          const title = link.dataset.confirmTitle || "Confirm Navigation";
+          const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
+          
+          if (requiresConfirm) {
+              e.preventDefault();
+              confirmedLinkHref = link.href;
+              openConfirmModal(title, message);
+          }
+          // If requiresConfirm is false (like for Home), navigation proceeds naturally.
+      });
   });
 
-  confirmNo.addEventListener('click', closeConfirmModal);
-  
-  // Close confirmation modal if background is clicked
-  if (confirmModal) {
-    confirmModal.addEventListener("click", (e) => { 
-      if (e.target === confirmModal) closeConfirmModal(); 
-    });
-  }
-
-
-  // --- MODAL LOGIC (Existing) ---
+  // --- MAIN MODAL LOGIC (BOTTLE DETAILS) ---
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -161,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === modal) closeModal();
   });
 
-  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (Omitted for brevity, unchanged) ---
+  // --- CANVAS UTILITIES ---
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
     return { x: clientX - r.left, y: clientY - r.top };
@@ -193,6 +183,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  /**
+   * Initializes the scratch canvas size, drawing context, and state.
+   */
   function initCanvas(card) {
     const canvas = card.querySelector(".scratch");
     if (!canvas) return;
@@ -246,6 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // --- CARD INTERACTION LOGIC ---
   function setupScratchLogic(card, s) {
     if (!s) return;
 
@@ -421,13 +415,14 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
-      const dur = 6 + Math.random() * 6; 
+      const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
       const sway = (Math.random() - 0.5) * 50; 
       
       el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
-      
+
+      // CRITICAL FIX: Set iteration count to 1 for the fall animation to guarantee 'animationend' fires
       el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
 
       el.style.setProperty('--sway', `${sway}px`);
