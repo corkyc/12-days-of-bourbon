@@ -13,8 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmYes = document.getElementById('confirmYes');
   const confirmNo = document.getElementById('confirmNo');
 
-  // --- LOCAL STORAGE STATE & MANAGEMENT (PERSISTENCE) ---
+  // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
+  const LS_KEY_SEMI_SPOILER = 'spoilerSemi';
+  const LS_KEY_MAJOR_SPOILER = 'spoilerMajor';
+  
   let scratchedDays = {};
 
   function loadProgress() {
@@ -36,11 +39,29 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error saving progress to localStorage", e);
     }
   }
+  
+  function saveSpoilerConfirmation(key) {
+      try {
+          localStorage.setItem(key, 'true');
+      } catch (e) {
+          console.error("Error saving spoiler confirmation:", e);
+      }
+  }
+  
+  function checkSpoilerConfirmation(key) {
+      try {
+          return localStorage.getItem(key) === 'true';
+      } catch (e) {
+          return false;
+      }
+  }
 
   function resetProgress() {
     try {
       localStorage.removeItem(STORAGE_KEY);
-      console.log("Local storage progress cleared. Reloading page.");
+      localStorage.removeItem(LS_KEY_SEMI_SPOILER);
+      localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
+      console.log("All local storage cleared. Reloading page.");
       window.location.reload();
     } catch (e) {
       console.error("Error clearing progress from localStorage", e);
@@ -82,13 +103,18 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // --- CONFIRMATION MODAL LOGIC ---
   let confirmedLinkHref = null;
+  let confirmedLinkSpoilerKey = null;
 
-  function openConfirmModal(title, message) {
+  function openConfirmModal(title, message, href, spoilerKey) {
     if (!confirmModal) return;
+    
+    confirmedLinkHref = href;
+    confirmedLinkSpoilerKey = spoilerKey;
+    
     confirmTitle.textContent = title;
     confirmMessage.textContent = message;
     confirmModal.setAttribute("aria-hidden", "false");
-    // Close mobile menu when confirmation modal opens
+    
     if (mobileMenu) {
         mobileMenu.classList.remove('open');
         mobileMenu.setAttribute('aria-hidden', 'true');
@@ -98,7 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function closeConfirmModal() {
     if (confirmModal) {
         confirmModal.setAttribute("aria-hidden", "true");
-        confirmedLinkHref = null; // Clear the stored link
+        confirmedLinkHref = null; 
+        confirmedLinkSpoilerKey = null;
     }
   }
   
@@ -106,6 +133,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
       if (confirmedLinkHref) {
+          // 1. Save confirmation status to local storage
+          if (confirmedLinkSpoilerKey) {
+              saveSpoilerConfirmation(confirmedLinkSpoilerKey);
+          }
+          // 2. Navigate
           window.location.href = confirmedLinkHref;
       }
       closeConfirmModal();
@@ -115,19 +147,29 @@ document.addEventListener("DOMContentLoaded", () => {
   menuLinks.forEach(link => {
       link.addEventListener('click', (e) => {
           const requiresConfirm = link.dataset.requiresConfirm === 'true';
-          const title = link.dataset.confirmTitle || "Confirm Navigation";
-          const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
+          const spoilerKey = link.dataset.spoilerKey;
           
           if (requiresConfirm) {
               e.preventDefault();
-              confirmedLinkHref = link.href;
-              openConfirmModal(title, message);
+              
+              // Check local storage for existing confirmation
+              if (spoilerKey && checkSpoilerConfirmation(spoilerKey)) {
+                  // User already confirmed this spoiler type, navigate immediately
+                  window.location.href = link.href;
+                  return; 
+              }
+              
+              // If not confirmed, show modal
+              const title = link.dataset.confirmTitle || "Confirm Navigation";
+              const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
+              openConfirmModal(title, message, link.href, spoilerKey);
           }
           // If requiresConfirm is false (like for Home), navigation proceeds naturally.
       });
   });
 
-  // --- MAIN MODAL LOGIC (BOTTLE DETAILS) ---
+  // --- MODAL / CANVAS / SNOW LOGIC (Omitted for brevity, unchanged) ---
+  
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -151,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === modal) closeModal();
   });
 
-  // --- CANVAS UTILITIES ---
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
     return { x: clientX - r.left, y: clientY - r.top };
@@ -183,9 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /**
-   * Initializes the scratch canvas size, drawing context, and state.
-   */
   function initCanvas(card) {
     const canvas = card.querySelector(".scratch");
     if (!canvas) return;
@@ -239,7 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- CARD INTERACTION LOGIC ---
   function setupScratchLogic(card, s) {
     if (!s) return;
 
@@ -285,7 +322,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Pointer Events
     canvas.addEventListener("pointerdown", e => {
       if (e.pointerType === "mouse") e.preventDefault();
       const p = localPos(canvas, e.clientX, e.clientY);
@@ -370,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 120);
   });
 
-  // --- TEMPORARY SNOW GENERATOR (Dynamic Cleanup on Animation End) ---
+  // --- TEMPORARY SNOW GENERATOR ---
   (function createSnow(num = 50, initialDurationSeconds = 5) {
     const container = document.getElementById('snow-container');
     if (!container) return;
@@ -422,9 +458,7 @@ document.addEventListener("DOMContentLoaded", () => {
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
 
-      // CRITICAL FIX: Set iteration count to 1 for the fall animation to guarantee 'animationend' fires
       el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
-
       el.style.setProperty('--sway', `${sway}px`);
       
       el.addEventListener('animationend', handleFlakeEnd);
