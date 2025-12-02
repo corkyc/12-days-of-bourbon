@@ -18,9 +18,9 @@
       <ul>
         <li><a href="index.html">Home (Scratch-Off)</a></li>
         <!-- All Bottles link - Custom confirmation text -->
-        <li><a href="all-bottles.html" data-requires-confirm="true" data-confirm-title="View Bottle Gallery" data-confirm-message="Semi spoiler - This list shows all 12 bottles revealed, allowing for a semi-blind taste test. Continue?">All Bottles</a></li>
+        <li><a href="all-bottles.html" data-requires-confirm="true" data-spoiler-key="semiSpoiler" data-confirm-title="View Bottle Gallery" data-confirm-message="Semi spoiler - This list shows all 12 bottles revealed, allowing for a semi-blind taste test. Continue?">All Bottles</a></li>
         <!-- All Bottles with Numbers link - Custom confirmation text -->
-        <li><a href="all-bottles-numbers.html" data-requires-confirm="true" data-confirm-title="View Full List" data-confirm-message="Major spoiler - This list shows all 12 bottles revealed AND their associated numbers. If you want to know what's in each bottle and their associated numbers click here. Continue?">All Bottles with Numbers</a></li>
+        <li><a href="all-bottles-numbers.html" data-requires-confirm="true" data-spoiler-key="majorSpoiler" data-confirm-title="View Full List" data-confirm-message="Major spoiler - This list shows all 12 bottles revealed AND their associated numbers. If you want to know what's in each bottle and their associated numbers click here. Continue?">All Bottles with Numbers</a></li>
       </ul>
     </div>
   </nav>
@@ -36,7 +36,6 @@
       <h1>12 Days of Bourbon</h1>
       <p class="tagline">Scratch each door to reveal the bourbon associated with the number on the bottle. Cheers!</p>
     </div>
-
   </header>
 
   <main class="grid" id="grid">
@@ -79,12 +78,12 @@
     <article class="card" data-day="10" data-img="images/bourbon10.jpg"><canvas class="scratch"></canvas><div class="number-plate">10</div><div class="content"><img src="images/bourbon10.jpg" alt=""><h3>Basil Hayden</h3><p>Light & gentle.</p><a class="btn" href="https://www.bourbonreviews.com/basil-hayden" target="_blank">Review Site</a></div></article>
     <article class="card" data-day="11" data-img="images/bourbon11.jpg"><canvas class="scratch"></canvas><div class="number-plate">11</div><div class="content"><img src="images/bourbon11.jpg" alt=""><h3>Old Forester</h3><p>Classic profile.</p><a class="btn" href="https://www.bourbonreviews.com/old-forester" target="_blank">Review Site</a></div></article>
     <article class="card" data-day="12" data-img="images/bourbon12.jpg"><canvas class="scratch"></canvas><div class="number-plate">12</div><div class="content"><img src="images/bourbon12.jpg" alt=""><h3>Blanton's</h3><p>Rich finish.</p><a class="btn" href="https://www.bourbonreviews.com/blantons" target="_blank">Review Site</a></div></article>
+  </main>
 
-</main>
-
-<div class="bottom-controls">
+  <!-- Reset Button Placement -->
+  <div class="bottom-controls">
     <button id="resetProgressBtn" class="reset-btn">Reset Doors</button>
-</div>
+  </div>
 
   <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
