@@ -28,21 +28,20 @@ body {
 .snowflake {
   position: fixed;
   z-index: 201; 
-  color: #FFFFFF; 
+  color: #FFFFFF; /* Color is set by JS for shades of blue/white */
   font-size: 20px; 
   pointer-events: none; 
   will-change: top, left; 
-  animation-name: fall-fixed, sway;
-  /* Duration is set by JS inline style */
-  animation-duration: 10s, 3s; 
+  /* animation-name is set by JS */
+  /* animation-duration is set by JS */
   animation-timing-function: linear, ease-in-out;
-  /* Iteration count is handled by JS inline styles */
   opacity: 0.95; 
 }
 
+/* CRITICAL FIX: Fall animation based on the 'top' property */
 @keyframes fall-fixed {
-  from { top: -10vh; }
-  to { top: 110vh; }
+  from { top: -10vh; } /* Start off-screen */
+  to { top: 110vh; }  /* End well off-screen */
 }
 @keyframes sway {
   0% { transform: translateX(0); }
@@ -362,11 +361,49 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   /* CHRISTMAS THEME: Green button */
   background:#1A3D36;
   color:#fff;
-  content: "↗"; /* external link arrow */
   text-decoration:none;
   border-radius:6px;
   font-weight: bold;
 }
 .btn:hover {
   background: #366c61; /* Darker green hover */
+}
+
+/* --- CONFIRMATION MODAL STYLE --- */
+.modal.confirmation .modal-inner {
+    padding: 30px 20px;
+    background: #FFFAF0; /* Off-white for contrast */
+}
+.modal.confirmation .confirm-title {
+    color: #8A2525; /* Dark Red */
+    margin-top: 0;
+    font-size: 1.8rem;
+}
+.modal.confirmation .confirm-message {
+    color: #1A3D36; /* Dark Green */
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+}
+.modal.confirmation .button-group {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+}
+.modal.confirmation .btn {
+    flex: 1;
+    padding: 12px 10px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+.modal.confirmation .confirm-yes {
+    background: #B83232; /* Red for Yes */
+}
+.modal.confirmation .confirm-yes:hover {
+    background: #8A2525;
+}
+.modal.confirmation .confirm-no {
+    background: #1A3D36; /* Green for No/Stay */
+}
+.modal.confirmation .confirm-no:hover {
+    background: #366c61;
 }
