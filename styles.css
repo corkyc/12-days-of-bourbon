@@ -362,6 +362,7 @@ header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
   /* CHRISTMAS THEME: Green button */
   background:#1A3D36;
   color:#fff;
+  content: "↗"; /* external link arrow */
   text-decoration:none;
   border-radius:6px;
   font-weight: bold;
