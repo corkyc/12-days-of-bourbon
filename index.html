@@ -16,8 +16,11 @@
     <div class="menu-content">
       <h2>Menu</h2>
       <ul>
-        <li><a href="all-bottles.html">All Bottles</a></li>
-        <li><a href="all-bottles-numbers.html">All Bottles with Numbers</a></li>
+        <!-- Home link (no check needed) -->
+        <li><a href="index.html">Home (Scratch-Off)</a></li>
+        <!-- Other links (require confirmation) -->
+        <li><a href="all-bottles.html" data-requires-confirm="true">All Bottles</a></li>
+        <li><a href="all-bottles-numbers.html" data-requires-confirm="true">All Bottles with Numbers</a></li>
       </ul>
     </div>
   </nav>
@@ -96,6 +99,18 @@
     <div class="modal-inner" role="document">
       <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
       <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION MODAL -->
+  <div id="confirmModal" class="modal confirmation" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-inner" role="document">
+      <h3 id="confirmTitle" class="confirm-title">Confirm Navigation</h3>
+      <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page? Your scratch progress is saved!</p>
+      <div class="button-group">
+        <button id="confirmYes" class="btn confirm-yes">Yes, Go</button>
+        <button id="confirmNo" class="btn confirm-no">No, Stay Here</button>
+      </div>
     </div>
   </div>
 
