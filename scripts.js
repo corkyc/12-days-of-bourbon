@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalClose = document.getElementById("modalClose");
   const resetBtn = document.getElementById('resetProgressBtn');
 
-  // --- LOCAL STORAGE STATE & MANAGEMENT ---
+  // --- LOCAL STORAGE STATE & MANAGEMENT (Omitted for brevity, unchanged) ---
   const STORAGE_KEY = 'scratchedDays';
   let scratchedDays = {};
 
@@ -309,25 +309,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 120);
   });
 
-  // --- TEMPORARY SNOW GENERATOR (Stop Generation at 5s, Wait for Fall) ---
+  // --- TEMPORARY SNOW GENERATOR (Dynamic Cleanup on Animation End) ---
   (function createSnow(num = 50, initialDurationSeconds = 5) {
     const container = document.getElementById('snow-container');
     if (!container) return;
     
+    let activeFlakes = 0;
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
-    const MAX_FALL_DURATION = 12; 
 
-    // 1. Calculate Cleanup Time (Last flake generated at t=5s needs 12s to fall)
-    const totalCleanupTime = initialDurationSeconds + MAX_FALL_DURATION;
+    // Function to handle cleanup when a flake finishes its cycle
+    function handleFlakeEnd(event) {
+        if (event.animationName === 'fall-fixed') {
+            event.target.removeEventListener('animationend', handleFlakeEnd);
+            event.target.remove();
+            activeFlakes--;
+            
+            // Check if generation has stopped AND all active flakes are gone
+            if (flakesGenerated >= totalFlakesToGenerate && activeFlakes <= 0) {
+                removeContainer();
+            }
+        }
+    }
 
-    // 2. Function to schedule container removal after all flakes have fallen
     function removeContainer() {
         container.innerHTML = '';
         container.remove();
-        console.log(`Snowfall effect complete and container removed after ${totalCleanupTime} seconds.`);
+        console.log(`Snowfall effect complete and container removed.`);
     }
 
-    // 3. Generation Logic Setup
+
+    // 1. Generation Logic Setup
     let generationInterval;
     let flakesGenerated = 0;
     const totalFlakesToGenerate = num; 
@@ -335,10 +346,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function generateFlake() {
       if (flakesGenerated >= totalFlakesToGenerate) {
-          // Stop generation and schedule cleanup after the max fall time
+          // Stop generation interval once the count is reached
           clearInterval(generationInterval);
-          setTimeout(removeContainer, MAX_FALL_DURATION * 1000); 
-          console.log(`Snow generation stopped. Waiting ${MAX_FALL_DURATION}s for flakes to clear.`);
+          console.log(`Snow generation stopped. Waiting for ${activeFlakes} flakes to clear.`);
+          // If all flakes somehow cleared early (unlikely), remove the container now.
+          if (activeFlakes <= 0) removeContainer();
           return;
       }
       
@@ -348,25 +360,26 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
-      const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
+      const dur = 6 + Math.random() * 6; 
       const sway = (Math.random() - 0.5) * 50; 
       
       el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
       
-      // Initial top position set off-screen by CSS from: -10vh in the @keyframes fall-fixed
-      
-      // Apply animation durations
       el.style.animationDuration = `${dur}s, ${5 + Math.random() * 5}s`;
-      el.style.animationDelay = `-${Math.random() * dur}s`; // Stagger start time
+      el.style.animationDelay = `-${Math.random() * dur}s`; 
       el.style.setProperty('--sway', `${sway}px`);
       
+      // Add event listener for dynamic cleanup
+      el.addEventListener('animationend', handleFlakeEnd);
+
       container.appendChild(el);
+      activeFlakes++;
       flakesGenerated++;
     }
 
-    // 4. Start the Generation Timer
+    // 2. Start the Generation Timer
     generationInterval = setInterval(generateFlake, intervalTime);
     generateFlake(); // Call immediately to ensure first flake appears instantly
 
