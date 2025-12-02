@@ -1,371 +1,104 @@
-/* Reset & basics */
-* { box-sizing: border-box; }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>12 Days of Bourbon — Scratch</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  
+  <!-- Snow Container (for brief falling snow effect) -->
+  <div id="snow-container" aria-hidden="true"></div>
 
-/* FIX: Stop pull-to-refresh on mobile Chrome/Safari */
-html, body { 
-  height: 100%; 
-  overscroll-behavior-y: none; 
-}
+  <nav id="mobile-menu" class="mobile-menu" aria-hidden="true">
+    <button id="menuClose" class="menu-close" aria-label="Close Menu">&times;</button>
+    <div class="menu-content">
+      <h2>Menu</h2>
+      <ul>
+        <li><a href="all-bottles.html">All Bottles</a></li>
+        <li><a href="all-bottles-numbers.html">All Bottles with Numbers</a></li>
+      </ul>
+    </div>
+  </nav>
 
-body {
-  margin: 0;
-  font-family: Georgia, serif;
-  /* CHRISTMAS THEME: Dark Forest Green Background */
-  background: linear-gradient(180deg, #102E28, #1A3D36); 
-  color: #f6eedd;
-  -webkit-font-smoothing:antialiased;
-  overflow-x: hidden;
-}
+  <header>
+    
+<button id="hamburgerBtn" class="hamburger" aria-label="Open Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    
+    
+<div class="header-content">
+      <h1>12 Days of Bourbon</h1>
+      <p class="tagline">Scratch each door to reveal the bourbon.</p>
+    </div>
+    
+    
+<button id="resetProgressBtn" class="reset-btn">Reset Progress</button>
+  </header>
 
-/* --- SNOW STYLES --- */
-#snow-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 200; 
-  overflow: hidden; 
-}
-.snowflake {
-  position: fixed;
-  z-index: 201; 
-  color: #FFFFFF; 
-  font-size: 20px; 
-  pointer-events: none; 
-  will-change: top, left; 
-  animation-name: fall-fixed, sway;
-  /* Duration is set by JS inline style */
-  animation-duration: 10s, 3s; 
-  animation-timing-function: linear, ease-in-out;
-  /* Iteration count is handled by JS inline styles */
-  opacity: 0.95; 
-}
+  <main class="grid" id="grid">
+    
+    
+<article class="card" data-day="1" data-img="images/whiskey1.jpg">
+      <canvas class="scratch"></canvas>
+      <div class="number-plate">1</div>
+      <div class="content">
+        <img src="images/whiskey2.jpg" alt="Bourbon 1">
+        <h3>Buffalo Trace</h3>
+        <p>Caramel, vanilla, oak.</p>
+        <a class="btn" href="https://www.bourbonreviews.com/buffalo-trace" target="_blank">Review Site</a>
+      </div>
+    </article>
 
-@keyframes fall-fixed {
-  from { top: -10vh; }
-  to { top: 110vh; }
-}
-@keyframes sway {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(var(--sway, 20px)); } 
-  100% { transform: translateX(0); }
-}
+    
+<article class="card" data-day="2" data-img="images/whiskey1.jpg">
+      <canvas class="scratch"></canvas>
+      <div class="number-plate">2</div>
+      <div class="content">
+        <img src="images/whiskey1.jpg" alt="Bourbon 2">
+        <h3>Four Roses Large Batch</h3>
+        <p>Spicy, fruity, smooth.</p>
+        <a class="btn" href="https://www.bourbonreviews.com/four-roses" target="_blank">Review Site</a>
+      </div>
+    </article>
 
+    
+<article class="card" data-day="3" data-img="images/bourbon3.jpg">
+      <canvas class="scratch"></canvas>
+      <div class="number-plate">3</div>
+      <div class="content">
+        <img src="images/bourbon3.jpg" alt="Bourbon 3">
+        <h3>Woodford Reserve</h3>
+        <p>Full-bodied, dried fruit notes.</p>
+        <a class="btn" href="https://www.bourbonreviews.com/woodford-reserve" target="_blank">Review Site</a>
+      </div>
+    </article>
 
-/* --- HEADER --- */
-header {
-  padding: 18px;
-  /* CHRISTMAS THEME: Deep Red Gradient */
-  background: linear-gradient(180deg, #B83232, #8A2525); 
-  position: relative;
-  z-index: 100; 
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
+    
+<article class="card" data-day="4" data-img="images/bourbon4.jpg"><canvas class="scratch"></canvas><div class="number-plate">4</div><div class="content"><img src="images/bourbon4.jpg" alt=""><h3>Maker's Mark</h3><p>Wheated, gentle finish.</p><a class="btn" href="https://www.bourbonreviews.com/makers-mark" target="_blank">Review Site</a></div></article>
+    <article class="card" data-day="5" data-img="images/bourbon5.jpg"><canvas class="scratch"></canvas><div class="number-plate">5</div><div class="content"><img src="images/bourbon5.jpg" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy.</p><a class="btn" href="https://www.bourbonreviews.com/wild-turkey" target="_blank">Review Site</a></div></article>
+    <article class="card" data-day="6" data-img="images/bourbon6.jpg"><canvas class="scratch"></canvas><div class="number-plate">6</div><div class="content"><img src="images/bourbon6.jpg" alt=""><h3>Elijah Craig</h3><p>Warm spice.</p><a class="btn" href="https://www.bourbonreviews.com/elijah-craig" target="_blank">Review Site</a></div></article>
+    <article class="card" data-day="7" data-img="images/bourbon7.jpg"><canvas class="scratch"></canvas><div class="number-plate">7</div><div class="content"><img src="images/bourbon7.jpg" alt=""><h3>Knob Creek</h3><p>Oak & vanilla.</p><a class="btn" href="https://www.bourbonreviews.com/knob-creek" target="_blank">Review Site</a></div></article>
+    <article class="card" data-day="8" data-img="images/bourbon8.jpg"><canvas class="scratch"></canvas><div class="number-plate">8</div><div class="content"><img src="images/bourbon8.jpg" alt=""><h3>Angel’s Envy</h3><p>Port-finished.</p><a class="btn" href="https://www.bourbonreviews.com/angels-envy" target="_blank">Review Site</a></div></article>
+    <article class="card" data-day="9" data-img="images/bourbon9.jpg"><canvas class="scratch"></canvas><div class="number-plate">9</div><div class="content"><img src="images/bourbon9.jpg" alt=""><h3>Bulleit</h3><p>High rye spice.</p><a class="btn" href="https://www.bourbonreviews.com/bulleit" target="_blank">Review Site</a></div></article>
+    <article class="card" data-day="10" data-img="images/bourbon10.jpg"><canvas class="scratch"></canvas><div class="number-plate">10</div><div class="content"><img src="images/bourbon10.jpg" alt=""><h3>Basil Hayden</h3><p>Light & gentle.</p><a class="btn" href="https://www.bourbonreviews.com/basil-hayden" target="_blank">Review Site</a></div></article>
+    <article class="card" data-day="11" data-img="images/bourbon11.jpg"><canvas class="scratch"></canvas><div class="number-plate">11</div><div class="content"><img src="images/bourbon11.jpg" alt=""><h3>Old Forester</h3><p>Classic profile.</p><a class="btn" href="https://www.bourbonreviews.com/old-forester" target="_blank">Review Site</a></div></article>
+    <article class="card" data-day="12" data-img="images/bourbon12.jpg"><canvas class="scratch"></canvas><div class="number-plate">12</div><div class="content"><img src="images/bourbon12.jpg" alt=""><h3>Blanton's</h3><p>Rich finish.</p><a class="btn" href="https://www.bourbonreviews.com/blantons" target="_blank">Review Site</a></div></article>
 
-.header-content {
-  text-align: center;
-  flex-grow: 1;
-  margin-left: 10px; /* Offset from hamburger */
-}
-header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.4px; }
-/* CHRISTMAS THEME: Festive Gold Tagline */
-.tagline { margin-top:6px; font-size:0.95rem; color:#FFD700; } 
+  </main>
 
-/* Hamburger Button */
-.hamburger {
-  position: static; 
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 30px;
-  height: 22px;
-  z-index: 101; 
-  margin-right: 18px; 
-  align-self: center;
-  margin-left: 0;
-}
-.hamburger span {
-  display: block;
-  height: 3px;
-  width: 100%;
-  /* CHRISTMAS THEME: White lines */
-  background-color: #f6eedd;
-  border-radius: 3px;
-}
+  
+<div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-inner" role="document">
+      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
 
-/* Reset Button Style */
-.reset-btn {
-  position: static; 
-  padding: 6px 10px;
-  /* CHRISTMAS THEME: Dark Green/Red button with Gold border */
-  background: #1A3D36;
-  color: #f6eedd;
-  border: 1px solid #FFD700;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  z-index: 101;
-  margin-left: 18px;
-  align-self: center;
-}
-.reset-btn:hover {
-  background: #B83232; /* Red on hover */
-  transform: translateY(-1px);
-}
-.reset-btn:active {
-  transform: translateY(0);
-}
-
-
-/* --- MOBILE NAVIGATION DRAWER --- */
-.mobile-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 280px;
-  /* CHRISTMAS THEME: Dark green menu */
-  background: #1A3D36; 
-  border-right: 2px solid #8A2525; /* Red border */
-  z-index: 5000;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.5);
-  display: flex;
-  flex-direction: column;
-}
-
-/* Open State */
-.mobile-menu.open {
-  transform: translateX(0);
-}
-
-.mobile-menu .menu-close {
-  align-self: flex-end;
-  background: none;
-  border: none;
-  color: #FFD700;
-  font-size: 32px;
-  cursor: pointer;
-  margin: 10px 15px;
-}
-
-.mobile-menu .menu-content {
-  padding: 20px;
-}
-.mobile-menu h2 {
-  margin: 0 0 20px;
-  color: #FFD700;
-  border-bottom: 1px solid #8A2525;
-  padding-bottom: 10px;
-}
-.mobile-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.mobile-menu li {
-  margin-bottom: 15px;
-}
-.mobile-menu a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 1.1rem;
-  display: block;
-  padding: 10px;
-  border-radius: 6px;
-  transition: background 0.2s;
-}
-.mobile-menu a:hover {
-  background: rgba(255,255,255,0.05);
-  color: #FFD700;
-}
-
-/* --- GRID --- */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  padding: 18px;
-  max-width: 1100px;
-  margin: 12px auto;
-  position: relative;
-  z-index: 3;
-}
-@media (min-width: 768px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
-  .hamburger, .reset-btn { margin: 0; }
-  header { justify-content: space-around; } 
-}
-
-/* --- CARD (The door look) --- */
-.card {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-  min-height: 0;
-  height: 0;
-  padding-bottom: 100%;
-  cursor: pointer;
-  /* CHRISTMAS THEME: Red/Green Door Look */
-  background: linear-gradient(180deg,#742a2a 0%, #4a2e1f 40%, #29403b 100%);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 2px 8px rgba(255,255,255,0.05);
-  transition: transform .18s ease, box-shadow .18s ease;
-  border: 4px solid #B83232; /* Red frame */
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* Subtle texture remains */
-  background-image:
-    linear-gradient(transparent 0 60%, rgba(255,255,255,0.05) 60%),
-    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 30%),
-    linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(255,255,255,0.05) 100%);
-  mix-blend-mode: overlay;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.card:hover {
-  transform: translateY(-6px) scale(1.01);
-  /* Hover glow is slightly golden/festive */
-  box-shadow: 0 18px 40px rgba(0,0,0,0.6), 0 2px 10px rgba(255, 215, 0, 0.1); 
-}
-
-/* Number Plate */
-.number-plate {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  z-index: 6;
-  /* CHRISTMAS THEME: Gold/Brass look */
-  background: linear-gradient(180deg,#FFD700,#C0A04C);
-  color: #1b1209;
-  font-weight: 700;
-  font-size: 18px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5);
-  border: 1px solid rgba(0,0,0,0.25);
-}
-
-/* Scratch Canvas */
-.scratch {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: block;
-  touch-action: pan-y; 
-}
-
-/* Content */
-.card .content {
-  position: absolute;
-  inset: 0;
-  padding: 0;
-  display: none; 
-  color: #fff;
-  z-index: 2;
-  text-align: center;
-  overflow: hidden;
-}
-
-/* REVEALED STATE (for grid cards) */
-.card.revealed .content { display: block; }
-.card.revealed .scratch { display: none; }
-.card.revealed {
-  background-image: none !important;
-  background-color: #3b2417; /* Dark background behind bottle */
-  border-color: #1A3D36; /* Darker border when revealed */
-}
-.card.revealed .content img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0; 
-  margin: 0;
-}
-.card.revealed .content h3,
-.card.revealed .content p,
-.card.revealed .content .btn {
-  display: none; 
-}
-
-/* --- MODAL --- */
-.modal {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.6);
-  z-index: 9999;
-}
-.modal[aria-hidden="false"] { display: flex; }
-
-.modal-inner {
-  background: #fff;
-  color: #111;
-  width: 92%;
-  max-width: 520px;
-  border-radius: 10px;
-  padding: 24px;
-  position: relative;
-  text-align: center;
-}
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  font-size: 28px;
-  line-height: 1;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #333;
-}
-
-/* Modal Content Overrides */
-#modal-body .content {
-  display: block;
-  position: static;
-  color: #222;
-}
-#modal-body .content img {
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  object-fit: contain;
-  margin: 0 auto 16px;
-  border-radius: 8px;
-  display: block;
-}
-#modal-body .content h3,
-#modal-body .content p,
-#modal-body .content .btn {
-  display: block; 
-}
-#modal-body h3 { margin: 0 0 8px; font-size: 1.5rem; color: #B83232; } /* Red text in modal */
-#modal-body p { margin: 0 0 20px; font-size: 1.1rem; line-height: 1.5; }
-
-.btn {
-  display:inline-block;
-  padding:10px 20px;
-  /* CHRISTMAS THEME: Green button */
-  background:#1A3D36;
-  color:#fff;
-  text-decoration:none;
-  border-radius:6px;
-  font-weight: bold;
-}
-.btn:hover {
-  background: #366c61; /* Darker green hover */
-}
+  <script src="scripts.js"></script>
+</body>
+</html>
