@@ -16,8 +16,10 @@
     <div class="menu-content">
       <h2>Menu</h2>
       <ul>
+        <!-- Home link (no check) -->
         <li><a href="index.html">Home (Scratch-Off)</a></li>
-        <li><a href="all-bottles.html">All Bottles</a></li>
+        <!-- Link requiring confirmation: This is the target link -->
+        <li><a href="all-bottles.html" data-requires-confirm="true">All Bottles</a></li>
       </ul>
     </div>
   </nav>
@@ -30,13 +32,17 @@
       <span></span>
     </button>
 
-    <h1>The 12 Days List</h1>
-    <p class="tagline">All bottles revealed, numbered by day.</p>
+    <div class="header-content">
+      <h1>The 12 Days List</h1>
+      <p class="tagline">All bottles revealed, numbered by day.</p>
+    </div>
+    
+    <button id="resetProgressBtn" class="reset-btn">Reset Progress</button>
   </header>
 
   <main class="grid" id="grid">
     
-    <!-- Cards are set to revealed and data-clickable="true" -->
+    <!-- Placeholder Card 1 (Clickable for Modal) -->
     <article class="card revealed" data-clickable="true">
       <div class="number-plate">1</div>
       <div class="content">
@@ -47,6 +53,7 @@
       </div>
     </article>
 
+    <!-- Placeholder Card 2 (Clickable for Modal) -->
     <article class="card revealed" data-clickable="true">
       <div class="number-plate">2</div>
       <div class="content">
@@ -57,6 +64,7 @@
       </div>
     </article>
 
+    <!-- Placeholder Card 3 (Clickable for Modal) -->
     <article class="card revealed" data-clickable="true">
       <div class="number-plate">3</div>
       <div class="content">
@@ -67,6 +75,7 @@
       </div>
     </article>
 
+    <!-- Placeholder Card 4 (Clickable for Modal) -->
     <article class="card revealed" data-clickable="true">
       <div class="number-plate">4</div>
       <div class="content">
@@ -81,7 +90,7 @@
     <article class="card revealed" data-clickable="true"><div class="number-plate">5</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+5+BOTTLE" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy, high proof flavor.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">6</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+6+BOTTLE" alt=""><h3>Elijah Craig</h3><p>Toasted oak and warm spice finish.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">7</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+7+BOTTLE" alt=""><h3>Knob Creek</h3><p>Aged nine years, oak and strong vanilla.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">8</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+8+BOTTLE" alt=""><h3>Angel’s Envy</h3><p>Finished in Port wine barrels.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true"><div class="number-plate">8</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+8+BOTTLE" alt=""><h3>Angel’s Envy</h3><p>Port-finished.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">9</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+9+BOTTLE" alt=""><h3>Bulleit</h3><p>High rye content, distinct spicy kick.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">10</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+10+BOTTLE" alt=""><h3>Basil Hayden</h3><p>Light-bodied and gentle, easy sipper.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">11</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+11+BOTTLE" alt=""><h3>Old Forester</h3><p>Classic high-rye profile, balanced.</p><a class="btn" href="#">View Details</a></div></article>
@@ -89,11 +98,23 @@
 
   </main>
 
-  <!-- Modal -->
+  <!-- Main Modal (for bottle details) -->
   <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
       <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
       <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION MODAL (Required for menu links) -->
+  <div id="confirmModal" class="modal confirmation" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-inner" role="document">
+      <h3 id="confirmTitle" class="confirm-title">Confirm Navigation</h3>
+      <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page? Your scratch progress is saved!</p>
+      <div class="button-group">
+        <button id="confirmYes" class="btn confirm-yes">Yes, Go</button>
+        <button id="confirmNo" class="btn confirm-no">No, Stay Here</button>
+      </div>
     </div>
   </div>
 
