@@ -18,7 +18,7 @@
         <!-- Home link (no check) -->
         <li><a href="index.html">Home (Scratch-Off)</a></li>
         <!-- All Bottles link - Custom confirmation text -->
-        <li><a href="all-bottles.html" data-requires-confirm="true" data-confirm-title="View Bottle Gallery" data-confirm-message="Semi spoiler - This list shows all 12 bottles revealed, allowing for a semi-blind taste test. Continue?">All Bottles</a></li>
+        <li><a href="all-bottles.html" data-requires-confirm="true" data-spoiler-key="semiSpoiler" data-confirm-title="View Bottle Gallery" data-confirm-message="Semi spoiler - This list shows all 12 bottles revealed, allowing for a semi-blind taste test. Continue?">All Bottles</a></li>
         <li><a href="all-bottles-numbers.html">All Bottles with Numbers</a></li>
       </ul>
     </div>
@@ -82,10 +82,8 @@
     <article class="card revealed" data-clickable="true"><div class="number-plate">10</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+10+BOTTLE" alt=""><h3>Basil Hayden</h3><p>Light-bodied and gentle, easy sipper.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">11</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+11+BOTTLE" alt=""><h3>Old Forester</h3><p>Classic high-rye profile, balanced.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">12</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+12+BOTTLE" alt=""><h3>Blanton's</h3><p>Rich and complex single barrel finish.</p><a class="btn" href="#">View Details</a></div></article>
-
   </main>
 
-  <!-- Main Modal (for bottle details) -->
   <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
       <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
