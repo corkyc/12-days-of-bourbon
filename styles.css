@@ -119,6 +119,10 @@ header h1 {
 
 /* --- BOTTOM CONTROLS (New Reset Button Placement) --- */
 .bottom-controls {
+  /* FIX: Use Flexbox to reliably center content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   padding: 20px 18px 30px;
 }
@@ -228,7 +232,6 @@ header h1 {
   header { grid-template-columns: 1fr auto 1fr; }
   .header-content { grid-column: 2 / 3; }
   .hamburger { grid-column: 1 / 2; justify-self: start; }
-  .reset-btn { grid-column: 3 / 4; justify-self: end; }
 }
 
 /* --- CARD (Door Look) --- */
