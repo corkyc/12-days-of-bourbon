@@ -111,7 +111,7 @@ header h1 {
 }
 .tagline { 
   margin-top: 4px; 
-  margin-bottom: 0; /* Removed margin here */
+  margin-bottom: 0; 
   font-size: 0.9rem; 
   color:#FFD700; 
   line-height: 1.2;
@@ -121,7 +121,7 @@ header h1 {
 .bottom-controls {
   /* FIX: Use Flexbox to reliably center content */
   display: flex;
-  justify-content: center;
+  justify-content: center; /* CENTERS THE BUTTON HORIZONTALLY */
   align-items: center;
   text-align: center;
   padding: 20px 18px 30px;
