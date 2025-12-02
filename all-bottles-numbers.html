@@ -7,27 +7,24 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Snow container -->
+  <!-- Snow Container (for brief falling snow effect) -->
   <div id="snow-container" aria-hidden="true"></div>
 
-  <!-- Mobile Navigation Drawer -->
   <nav id="mobile-menu" class="mobile-menu" aria-hidden="true">
     <button id="menuClose" class="menu-close" aria-label="Close Menu">&times;</button>
     <div class="menu-content">
       <h2>Menu</h2>
       <ul>
-        <!-- Home link (required for consistent sizing, no check) -->
-        <li><a href="index.html" data-requires-confirm="true" data-confirm-title="Return to Game" data-confirm-message="Ready to go back to the scratch-off game? All your progress is saved.">Home (Scratch-Off)</a></li>
+        <!-- Home link (no check) -->
+        <li><a href="index.html">Home (Scratch-Off)</a></li>
         <!-- All Bottles link - Custom confirmation text -->
         <li><a href="all-bottles.html" data-requires-confirm="true" data-confirm-title="View Bottle Gallery" data-confirm-message="Semi spoiler - This list shows all 12 bottles revealed, allowing for a semi-blind taste test. Continue?">All Bottles</a></li>
-        <!-- All Bottles with Numbers link - No check needed since we are on this page -->
         <li><a href="all-bottles-numbers.html">All Bottles with Numbers</a></li>
       </ul>
     </div>
   </nav>
 
   <header>
-    <!-- Hamburger Button -->
     <button id="hamburgerBtn" class="hamburger" aria-label="Open Menu">
       <span></span>
       <span></span>
@@ -43,8 +40,6 @@
   </header>
 
   <main class="grid" id="grid">
-
-    <!-- Placeholder Card 1 (Clickable for Modal) -->
     <article class="card revealed" data-clickable="true">
       <div class="number-plate">1</div>
       <div class="content">
@@ -54,8 +49,6 @@
         <a class="btn" href="#">View Details</a>
       </div>
     </article>
-
-    <!-- Placeholder Card 2 (Clickable for Modal) -->
     <article class="card revealed" data-clickable="true">
       <div class="number-plate">2</div>
       <div class="content">
@@ -65,8 +58,6 @@
         <a class="btn" href="#">View Details</a>
       </div>
     </article>
-
-    <!-- Placeholder Card 3 (Clickable for Modal) -->
     <article class="card revealed" data-clickable="true">
       <div class="number-plate">3</div>
       <div class="content">
@@ -76,8 +67,6 @@
         <a class="btn" href="#">View Details</a>
       </div>
     </article>
-
-    <!-- Placeholder Card 4 (Clickable for Modal) -->
     <article class="card revealed" data-clickable="true">
       <div class="number-plate">4</div>
       <div class="content">
@@ -87,8 +76,6 @@
         <a class="btn" href="#">View Details</a>
       </div>
     </article>
-
-    <!-- Placeholder Card 5-12 -->
     <article class="card revealed" data-clickable="true"><div class="number-plate">5</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+5+BOTTLE" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy, high proof flavor.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">6</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+6+BOTTLE" alt=""><h3>Elijah Craig</h3><p>Toasted oak and warm spice finish.</p><a class="btn" href="#">View Details</a></div></article>
     <article class="card revealed" data-clickable="true"><div class="number-plate">7</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+7+BOTTLE" alt=""><h3>Knob Creek</h3><p>Aged nine years, oak and strong vanilla.</p><a class="btn" href="#">View Details</a></div></article>
@@ -108,11 +95,11 @@
     </div>
   </div>
 
-  <!-- CONFIRMATION MODAL (Required for menu links) -->
+  <!-- CONFIRMATION MODAL -->
   <div id="confirmModal" class="modal confirmation" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
       <h3 id="confirmTitle" class="confirm-title">Confirm Navigation</h3>
-      <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page? Your scratch progress is saved!</p>
+      <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page?</p>
       <div class="button-group">
         <button id="confirmYes" class="btn confirm-yes">Yes, Go</button>
         <button id="confirmNo" class="btn confirm-no">No, Stay Here</button>
