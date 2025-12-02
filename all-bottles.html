@@ -16,8 +16,10 @@
     <div class="menu-content">
       <h2>Menu</h2>
       <ul>
-        <!-- Home link (no check) -->
-        <li><a href="index.html">Home (Scratch-Off)</a></li>
+        <!-- Home link (required for consistent sizing, no check) -->
+        <li><a href="index.html" data-requires-confirm="true" data-confirm-title="Return to Game" data-confirm-message="Ready to go back to the scratch-off game? All your progress is saved.">Home (Scratch-Off)</a></li>
+        <!-- All Bottles link - No check needed since we are on this page -->
+        <li><a href="all-bottles.html">All Bottles</a></li>
         <!-- All Bottles with Numbers link - Custom confirmation text -->
         <li><a href="all-bottles-numbers.html" data-requires-confirm="true" data-confirm-title="View Full List" data-confirm-message="Major spoiler - This list shows all 12 bottles revealed AND their associated numbers. If you want to know what's in each bottle and their associated numbers click here. Continue?">All Bottles with Numbers</a></li>
       </ul>
@@ -31,17 +33,17 @@
       <span></span>
       <span></span>
     </button>
-    
+
     <div class="header-content">
       <h1>12 Days of Bourbon</h1>
       <p class="tagline">A full view of the 12 bottles WITHOUT numbers. Semi-blind Taste Test.</p>
     </div>
-    
+
     <button id="resetProgressBtn" class="reset-btn">Reset Progress</button>
   </header>
 
   <main class="grid" id="grid">
-    
+
     <!-- Placeholder Card 1 (Revealed) -->
     <article class="card revealed" data-clickable="true">
       <div class="content">
@@ -57,7 +59,7 @@
       <div class="content">
         <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+2" alt="Placeholder Bourbon 2">
         <h3>Four Roses Large Batch</h3>
-        <p>Spicy, fruity, smooth.</p>
+        <p>Spicy, fruity, and smooth on the palate.</p>
         <a class="btn" href="#">View Details</a>
       </div>
     </article>
