@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- MODAL / CANVAS / RESIZE LOGIC (Omitted for brevity, unchanged) ---
+  // --- MODAL / CANVAS / SCRATCH / RESIZE LOGIC (Omitted for brevity, unchanged) ---
 
   function openModal(node) {
     if (!modalBody) return;
@@ -406,13 +406,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- TEMPORARY SNOW GENERATOR ---
-  (function createSnow(num = 50, initialDurationSeconds = 5) {
+  (function createSnow(num = 75, initialDurationSeconds = 5) { // Updated count to 75
     const container = document.getElementById('snow-container');
     if (!container) return;
     
     let activeFlakes = 0;
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
-    // Added additional snowflake characters
     const SNOW_CHARS = ['❄', '❅', '❆', '✶', '✷', '✵']; 
 
     function handleFlakeEnd(event) {
@@ -448,7 +447,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const el = document.createElement('div');
       el.className = 'snowflake';
-      // Pick random character
       el.textContent = SNOW_CHARS[Math.floor(Math.random() * SNOW_CHARS.length)]; 
       
       const left = Math.random() * 100;
@@ -473,5 +471,5 @@ document.addEventListener("DOMContentLoaded", () => {
     generationInterval = setInterval(generateFlake, intervalTime);
     generateFlake(); 
 
-  })(50, 5); 
+  })(75, 5); // Updated call count to 75
 });
