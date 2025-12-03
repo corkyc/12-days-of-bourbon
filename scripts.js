@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const DPR = window.devicePixelRatio || 1;
   const cards = Array.from(document.querySelectorAll(".card"));
-  const modal = document.getElementById("modal"); // Bottle detail modal
+  const modal = document.getElementById("modal");
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
   const resetBtn = document.getElementById('resetProgressBtn');
@@ -58,9 +58,20 @@ document.addEventListener("DOMContentLoaded", () => {
   function resetProgress() {
     try {
       // CLEARS BOTH DOORS AND WARNINGS
+      
+      // Use delete operator to ensure immediate removal, 
+      // although removeItem should suffice, this covers edge cases.
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
+      
+      // Safety check: ensure keys are removed before reloading (useful for debugging cache issues)
+      const keys = [STORAGE_KEY, LS_KEY_SEMI_SPOILER, LS_KEY_MAJOR_SPOILER];
+      keys.forEach(key => {
+          if (localStorage.getItem(key)) {
+              localStorage.removeItem(key);
+          }
+      });
       
       console.log("All local storage cleared. Reloading page.");
       window.location.reload();
@@ -71,11 +82,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadProgress();
   if (resetBtn) {
-    // RESET BUTTON ATTACHMENT CONFIRMED
     resetBtn.addEventListener('click', resetProgress);
   }
 
-  // --- NAVIGATION / MENU LOGIC (unchanged) ---
+  // --- NAVIGATION / MENU LOGIC ---
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
@@ -180,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- MODAL (BOTTLE DETAIL) LOGIC ---
+  // --- MODAL (BOTTLE DETAIL) LOGIC (Click outside fix included) ---
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -209,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (unchanged) ---
+  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (Omitted for brevity, unchanged) ---
 
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
