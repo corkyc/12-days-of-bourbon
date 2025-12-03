@@ -15,8 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
-  const LS_KEY_SEMI_SPOILER = 'spoilerSemi'; // Key for All Bottles link
-  const LS_KEY_MAJOR_SPOILER = 'spoilerMajor'; // Key for All Bottles with Numbers link
+  // FIX: These constants MUST match the strings used in data-spoiler-key exactly
+  const LS_KEY_SEMI_SPOILER = 'semiSpoiler'; 
+  const LS_KEY_MAJOR_SPOILER = 'majorSpoiler'; 
 
   let scratchedDays = {};
 
@@ -39,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error saving progress to localStorage", e);
     }
   }
-  
+
   function saveSpoilerConfirmation(key) {
       try {
           localStorage.setItem(key, 'true');
@@ -47,9 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("Error saving spoiler confirmation:", e);
       }
   }
-  
+
   function checkSpoilerConfirmation(key) {
       try {
+          // This check is now robust because the key variable matches the stored key
           return localStorage.getItem(key) === 'true';
       } catch (e) {
           return false;
@@ -58,8 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
-      // Clears door progress and both spoiler confirmations
       localStorage.removeItem(STORAGE_KEY);
+      // FIX: These now correctly target the saved key names ('semiSpoiler', 'majorSpoiler')
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
       console.log("All local storage cleared. Reloading page.");
@@ -78,8 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
-  // Need to query all links again after DOM load
-  const menuLinks = document.querySelectorAll('.mobile-menu a'); 
+  const menuLinks = document.querySelectorAll('.mobile-menu a');
 
   if (hamburgerBtn && mobileMenu && menuClose) {
     hamburgerBtn.addEventListener('click', () => {
@@ -149,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
   menuLinks.forEach(link => {
       link.addEventListener('click', (e) => {
           const requiresConfirm = link.dataset.requiresConfirm === 'true';
-          const spoilerKey = link.dataset.spoilerKey;
+          const spoilerKey = link.dataset.spoilerKey; // Reads 'semiSpoiler' or 'majorSpoiler'
 
           if (requiresConfirm) {
               e.preventDefault();
