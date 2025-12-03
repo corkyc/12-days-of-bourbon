@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
+  // FIX: These constants MUST match the strings used in data-spoiler-key attributes exactly
   const LS_KEY_SEMI_SPOILER = 'semiSpoiler'; 
   const LS_KEY_MAJOR_SPOILER = 'majorSpoiler'; 
 
@@ -50,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function checkSpoilerConfirmation(key) {
       try {
+          // This check is now robust because the key variable matches the stored key
           return localStorage.getItem(key) === 'true';
       } catch (e) {
           return false;
@@ -58,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
+      // FIX: This now correctly clears door progress AND spoiler warnings
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
@@ -128,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmedLinkSpoilerKey = null;
     }
   }
-  
+
   // Set up listeners for the confirmation buttons
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
@@ -142,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       closeConfirmModal();
   });
-  
+
   // Intercept menu clicks
   menuLinks.forEach(link => {
       link.addEventListener('click', (e) => {
@@ -167,10 +170,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
   
-  // --- FIX: Allow clicking outside confirmation modal to close ---
+  // FIX: Allow clicking outside confirmation modal to close
   if (confirmModal) {
     confirmModal.addEventListener("click", (e) => {
-      // Check if the click occurred directly on the modal backdrop (the container)
       if (e.target === confirmModal) {
         closeConfirmModal();
       }
@@ -199,10 +201,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (modalClose) modalClose.addEventListener("click", closeModal);
   
-  // --- FIX: Allow clicking outside bottle detail modal to close ---
+  // FIX: Allow clicking outside bottle detail modal to close
   if (modal) {
     modal.addEventListener("click", (e) => {
-      // Check if the click occurred directly on the modal backdrop (the container)
       if (e.target === modal) {
         closeModal();
       }
