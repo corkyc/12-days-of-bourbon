@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
-  // Keys for spoiler confirmation flags
   const LS_KEY_SEMI_SPOILER = 'spoilerSemi';
   const LS_KEY_MAJOR_SPOILER = 'spoilerMajor';
   let scratchedDays = {};
@@ -58,9 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
-      // Clear doors progress
+      // CLEAR ALL LOCAL STORAGE KEYS FOR DOORS AND WARNINGS
       localStorage.removeItem(STORAGE_KEY);
-      // Clear spoiler warnings confirmation status
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
       
@@ -171,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- MODAL / CANVAS / SCRATCH / RESIZE LOGIC ---
+  // --- MODAL / CANVAS / SCRATCH / RESIZE / SNOW LOGIC ---
 
   function openModal(node) {
     if (!modalBody) return;
@@ -413,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
   (function createSnow(num = 75, initialDurationSeconds = 5) { 
     const container = document.getElementById('snow-container');
     if (!container) return;
-    
+
     let activeFlakes = 0;
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
     const SNOW_CHARS = ['❄', '❅', '❆', '✶', '✷', '✵']; 
@@ -452,19 +450,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const el = document.createElement('div');
       el.className = 'snowflake';
       el.textContent = SNOW_CHARS[Math.floor(Math.random() * SNOW_CHARS.length)]; 
-      
+
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
       const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
       const sway = (Math.random() - 0.5) * 50; 
-      
+
       el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
 
       el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
       el.style.setProperty('--sway', `${sway}px`);
-      
+
       el.addEventListener('animationend', handleFlakeEnd);
 
       container.appendChild(el);
