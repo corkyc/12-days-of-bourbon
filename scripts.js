@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
-      // CLEAR ALL LOCAL STORAGE KEYS FOR DOORS AND WARNINGS
+      // RESET LOGIC CONFIRMED: Clears both doors and warnings
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadProgress();
   if (resetBtn) {
+    // RESET BUTTON ATTACHMENT CONFIRMED
     resetBtn.addEventListener('click', resetProgress);
   }
 
@@ -129,6 +130,16 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmedLinkSpoilerKey = null;
     }
   }
+  
+  // ATTACHMENT FIX 1: Click outside CONFIRMATION modal
+  if (confirmModal) {
+    confirmModal.addEventListener("click", (e) => {
+        if (e.target === confirmModal) {
+            closeConfirmModal();
+        }
+    });
+  }
+
 
   // Set up listeners for the confirmation buttons
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
@@ -169,8 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- MODAL / CANVAS / SCRATCH / RESIZE / SNOW LOGIC ---
-
+  // --- MODAL (BOTTLE DETAIL) LOGIC ---
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -190,9 +200,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (modalClose) modalClose.addEventListener("click", closeModal);
-  if (modal) modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
+  // ATTACHMENT FIX 2: Click outside BOTTLE DETAIL modal
+  if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+      });
+  }
+
+  // --- CANVAS / SCRATCH / RESIZE LOGIC (Omitted for brevity, unchanged) ---
 
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
