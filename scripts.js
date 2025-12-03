@@ -15,9 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
-  const LS_KEY_SEMI_SPOILER = 'spoilerSemi';
-  const LS_KEY_MAJOR_SPOILER = 'spoilerMajor';
-  
+  const LS_KEY_SEMI_SPOILER = 'spoilerSemi'; // Key for All Bottles link
+  const LS_KEY_MAJOR_SPOILER = 'spoilerMajor'; // Key for All Bottles with Numbers link
+
   let scratchedDays = {};
 
   function loadProgress() {
@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
+      // Clears door progress and both spoiler confirmations
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
@@ -77,7 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
-  const menuLinks = document.querySelectorAll('.mobile-menu a');
+  // Need to query all links again after DOM load
+  const menuLinks = document.querySelectorAll('.mobile-menu a'); 
 
   if (hamburgerBtn && mobileMenu && menuClose) {
     hamburgerBtn.addEventListener('click', () => {
@@ -100,21 +102,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-  
+
   // --- CONFIRMATION MODAL LOGIC ---
   let confirmedLinkHref = null;
   let confirmedLinkSpoilerKey = null;
 
   function openConfirmModal(title, message, href, spoilerKey) {
     if (!confirmModal) return;
-    
+
     confirmedLinkHref = href;
     confirmedLinkSpoilerKey = spoilerKey;
-    
+
     confirmTitle.textContent = title;
     confirmMessage.textContent = message;
     confirmModal.setAttribute("aria-hidden", "false");
-    
+
     if (mobileMenu) {
         mobileMenu.classList.remove('open');
         mobileMenu.setAttribute('aria-hidden', 'true');
@@ -128,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmedLinkSpoilerKey = null;
     }
   }
-  
+
   // Set up listeners for the confirmation buttons
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
@@ -142,23 +144,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       closeConfirmModal();
   });
-  
+
   // Intercept menu clicks
   menuLinks.forEach(link => {
       link.addEventListener('click', (e) => {
           const requiresConfirm = link.dataset.requiresConfirm === 'true';
           const spoilerKey = link.dataset.spoilerKey;
-          
+
           if (requiresConfirm) {
               e.preventDefault();
-              
+
               // Check local storage for existing confirmation
               if (spoilerKey && checkSpoilerConfirmation(spoilerKey)) {
                   // User already confirmed this spoiler type, navigate immediately
                   window.location.href = link.href;
                   return; 
               }
-              
+
               // If not confirmed, show modal
               const title = link.dataset.confirmTitle || "Confirm Navigation";
               const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
@@ -168,8 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- MODAL / CANVAS / SNOW LOGIC (Omitted for brevity, unchanged) ---
-  
+  // --- MODAL / CANVAS / SNOW LOGIC (Continued for completeness) ---
+
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -444,23 +446,23 @@ document.addEventListener("DOMContentLoaded", () => {
           if (activeFlakes <= 0) removeContainer();
           return;
       }
-      
+
       const el = document.createElement('div');
       el.className = 'snowflake';
       el.textContent = '❄';
-      
+
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
       const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
       const sway = (Math.random() - 0.5) * 50; 
-      
+
       el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
 
       el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
       el.style.setProperty('--sway', `${sway}px`);
-      
+
       el.addEventListener('animationend', handleFlakeEnd);
 
       container.appendChild(el);

@@ -35,8 +35,8 @@ body {
   will-change: top, left, font-size; 
   animation-name: fall-fixed, sway;
   animation-duration: 10s, 3s; 
-  animation-timing-function: linear, ease-in-out;
   animation-iteration-count: 1, infinite; 
+  animation-timing-function: linear, ease-in-out;
   opacity: 0.95; 
 }
 @keyframes fall-fixed {
