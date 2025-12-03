@@ -1,3 +1,7 @@
+/*
+  Note: This script includes Back-to-Top logic,
+  Persistent Confirmation logic, and the main Scratch-Off game functionality.
+*/
 document.addEventListener("DOMContentLoaded", () => {
   const DPR = window.devicePixelRatio || 1;
   const cards = Array.from(document.querySelectorAll(".card"));
@@ -5,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
   const resetBtn = document.getElementById('resetProgressBtn');
+  const backToTopBtn = document.getElementById('backToTopBtn'); // NEW
 
   // Confirmation Modal Elements
   const confirmModal = document.getElementById('confirmModal');
@@ -13,11 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmYes = document.getElementById('confirmYes');
   const confirmNo = document.getElementById('confirmNo');
 
-  // --- LOCAL STORAGE STATE & MANAGEMENT ---
+  // --- LOCAL STORAGE STATE & MANAGEMENT (PERSISTENCE) ---
   const STORAGE_KEY = 'scratchedDays';
-  // WARNING KEYS ARE KEPT FOR REFERENCE BUT NOT CLEARED OR CHECKED
-  const LS_KEY_SEMI_SPOILER = 'spoilerSemi';
-  const LS_KEY_MAJOR_SPOILER = 'spoilerMajor';
+  const LS_KEY_SEMI_SPOILER = 'semiSpoiler'; 
+  const LS_KEY_MAJOR_SPOILER = 'majorSpoiler'; 
+
   let scratchedDays = {};
 
   function loadProgress() {
@@ -40,15 +45,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- REMOVED: saveSpoilerConfirmation(key)
-  // --- REMOVED: checkSpoilerConfirmation(key)
+  function saveSpoilerConfirmation(key) {
+      try {
+          localStorage.setItem(key, 'true');
+      } catch (e) {
+          console.error("Error saving spoiler confirmation:", e);
+      }
+  }
+
+  function checkSpoilerConfirmation(key) {
+      try {
+          return localStorage.getItem(key) === 'true';
+      } catch (e) {
+          return false;
+      }
+  }
 
   function resetProgress() {
     try {
-      // FIX: Only clears the scratched doors data. Confirmation warnings are left untouched.
+      // Clears door progress AND spoiler warnings
       localStorage.removeItem(STORAGE_KEY);
-      
-      console.log("Door progress cleared. Reloading page.");
+      localStorage.removeItem(LS_KEY_SEMI_SPOILER);
+      localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
+      console.log("All local storage cleared. Reloading page.");
       window.location.reload();
     } catch (e) {
       console.error("Error clearing progress from localStorage", e);
@@ -60,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.addEventListener('click', resetProgress);
   }
 
-  // --- NAVIGATION / MENU LOGIC (unchanged) ---
+  // --- NAVIGATION / MENU LOGIC ---
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
@@ -120,24 +139,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
       if (confirmedLinkHref) {
-          // FIX: Removed call to saveSpoilerConfirmation(key). 
-          // The confirmation is NOT saved.
-          
-          // 2. Navigate immediately
+          // 1. Save confirmation status to local storage
+          if (confirmedLinkSpoilerKey) {
+              saveSpoilerConfirmation(confirmedLinkSpoilerKey);
+          }
+          // 2. Navigate
           window.location.href = confirmedLinkHref;
       }
       closeConfirmModal();
   });
-
-  // ATTACHMENT FIX 1: Click outside CONFIRMATION modal
-  if (confirmModal) {
-    confirmModal.addEventListener("click", (e) => {
-        if (e.target === confirmModal) {
-            closeConfirmModal();
-        }
-    });
-  }
-
 
   // Intercept menu clicks
   menuLinks.forEach(link => {
@@ -148,18 +158,32 @@ document.addEventListener("DOMContentLoaded", () => {
           if (requiresConfirm) {
               e.preventDefault();
 
-              // FIX: Removed check for checkSpoilerConfirmation(spoilerKey).
-              // Modal will appear every time the link is clicked.
+              // Check local storage for existing confirmation
+              if (spoilerKey && checkSpoilerConfirmation(spoilerKey)) {
+                  // User already confirmed this spoiler type, navigate immediately
+                  window.location.href = link.href;
+                  return; 
+              }
 
+              // If not confirmed, show modal
               const title = link.dataset.confirmTitle || "Confirm Navigation";
               const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
               openConfirmModal(title, message, link.href, spoilerKey);
           }
-          // If requiresConfirm is false (like for Home), navigation proceeds naturally.
       });
   });
+  
+  // FIX: Allow clicking outside confirmation modal to close
+  if (confirmModal) {
+    confirmModal.addEventListener("click", (e) => {
+      if (e.target === confirmModal) {
+        closeConfirmModal();
+      }
+    });
+  }
 
-  // --- MODAL (BOTTLE DETAIL) LOGIC ---
+  // --- MAIN MODAL LOGIC (Bottle Details) ---
+
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -179,16 +203,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (modalClose) modalClose.addEventListener("click", closeModal);
-  // Click outside BOTTLE DETAIL modal
+  
+  // FIX: Allow clicking outside bottle detail modal to close
   if (modal) {
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-      });
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
   }
 
-  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (unchanged) ---
+  // --- CANVAS / SCRATCH LOGIC ---
 
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
@@ -397,11 +422,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 120);
   });
 
+  // --- BACK TO TOP LOGIC ---
+  if (backToTopBtn) {
+      backToTopBtn.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      window.addEventListener('scroll', () => {
+          if (window.scrollY > 300) { // Show button after scrolling 300px
+              backToTopBtn.classList.add('visible');
+          } else {
+              backToTopBtn.classList.remove('visible');
+          }
+      });
+  }
+  
   // --- TEMPORARY SNOW GENERATOR ---
-  (function createSnow(num = 75, initialDurationSeconds = 5) { 
+  (function createSnow(num = 75, initialDurationSeconds = 5) {
     const container = document.getElementById('snow-container');
     if (!container) return;
-
+    
     let activeFlakes = 0;
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
     const SNOW_CHARS = ['❄', '❅', '❆', '✶', '✷', '✵']; 

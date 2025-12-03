@@ -117,9 +117,8 @@ header h1 {
   line-height: 1.2;
 }
 
-/* --- BOTTOM CONTROLS (New Reset Button Placement) --- */
+/* --- BOTTOM CONTROLS (Reset Button Placement) --- */
 .bottom-controls {
-  /* FIX: Use Flexbox to reliably center content */
   display: flex;
   justify-content: center; 
   align-items: center;
@@ -129,9 +128,8 @@ header h1 {
 
 /* Reset Button Style */
 .reset-btn {
-  /* Flows naturally inside bottom-controls */
   padding: 10px 25px;
-  background: #B83232; /* Red button at the bottom */
+  background: #B83232; 
   color: #fff;
   border: 1px solid #FFD700;
   border-radius: 8px;
@@ -148,6 +146,32 @@ header h1 {
 }
 .reset-btn:active {
   transform: translateY(0);
+}
+
+
+/* --- BACK TO TOP BUTTON --- */
+.back-to-top-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(26, 61, 54, 0.9); /* Dark Green, semi-transparent */
+    color: #FFD700; /* Gold arrow */
+    border: 2px solid #FFD700;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    opacity: 0; /* Hidden by default */
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000; 
+}
+.back-to-top-btn.visible {
+    opacity: 1;
+    visibility: visible;
 }
 
 
