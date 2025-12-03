@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const DPR = window.devicePixelRatio || 1;
   const cards = Array.from(document.querySelectorAll(".card"));
-  const modal = document.getElementById("modal");
+  const modal = document.getElementById("modal"); // Bottle detail modal
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modalClose");
   const resetBtn = document.getElementById('resetProgressBtn');
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
-      // RESET LOGIC CONFIRMED: Clears both doors and warnings
+      // CLEARS BOTH DOORS AND WARNINGS
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.addEventListener('click', resetProgress);
   }
 
-  // --- NAVIGATION / MENU LOGIC ---
+  // --- NAVIGATION / MENU LOGIC (unchanged) ---
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
@@ -130,16 +130,6 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmedLinkSpoilerKey = null;
     }
   }
-  
-  // ATTACHMENT FIX 1: Click outside CONFIRMATION modal
-  if (confirmModal) {
-    confirmModal.addEventListener("click", (e) => {
-        if (e.target === confirmModal) {
-            closeConfirmModal();
-        }
-    });
-  }
-
 
   // Set up listeners for the confirmation buttons
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
@@ -154,6 +144,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       closeConfirmModal();
   });
+
+  // ATTACHMENT FIX 1: Click outside CONFIRMATION modal
+  if (confirmModal) {
+    confirmModal.addEventListener("click", (e) => {
+        if (e.target === confirmModal) {
+            closeConfirmModal();
+        }
+    });
+  }
+
 
   // Intercept menu clicks
   menuLinks.forEach(link => {
@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // --- CANVAS / SCRATCH / RESIZE LOGIC (Omitted for brevity, unchanged) ---
+  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (unchanged) ---
 
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
@@ -358,25 +358,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     canvas.addEventListener("pointerup", onUp);
     canvas.addEventListener("pointercancel", onUp);
-
-    card.addEventListener("click", (e) => {
-      if (e.target.closest('a') !== null) return;
-
-      if (card.classList.contains("revealed")) {
-        const contentNode = card.querySelector(".content");
-        if (contentNode) openModal(contentNode);
-      }
-    });
   }
 
   function setupClickableCardLogic(card) {
-    card.addEventListener("click", (e) => {
-      if (e.target.closest('a') !== null) return;
-
-      const contentNode = card.querySelector(".content");
-      if (contentNode) openModal(contentNode);
-    });
-
     const detailLink = card.querySelector('.btn');
     if (detailLink) {
       detailLink.addEventListener('click', (e) => {
@@ -394,6 +378,16 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (card.classList.contains('revealed')) {
       setupClickableCardLogic(card);
     }
+    
+    // Attach the modal click handler ONCE to the card element itself, 
+    card.addEventListener("click", (e) => {
+        if (e.target.closest('a') !== null) return; 
+
+        if (card.classList.contains("revealed")) {
+            const contentNode = card.querySelector(".content");
+            if (contentNode) openModal(contentNode);
+        }
+    });
   });
 
   let rt = null;
