@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
+  // Keys for spoiler confirmation flags
   const LS_KEY_SEMI_SPOILER = 'spoilerSemi';
   const LS_KEY_MAJOR_SPOILER = 'spoilerMajor';
   let scratchedDays = {};
@@ -57,9 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
+      // Clear doors progress
       localStorage.removeItem(STORAGE_KEY);
+      // Clear spoiler warnings confirmation status
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
+      
       console.log("All local storage cleared. Reloading page.");
       window.location.reload();
     } catch (e) {
@@ -167,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- MODAL / CANVAS / SCRATCH / RESIZE LOGIC (Omitted for brevity, unchanged) ---
+  // --- MODAL / CANVAS / SCRATCH / RESIZE LOGIC ---
 
   function openModal(node) {
     if (!modalBody) return;
@@ -406,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // --- TEMPORARY SNOW GENERATOR ---
-  (function createSnow(num = 75, initialDurationSeconds = 5) { // Updated count to 75
+  (function createSnow(num = 75, initialDurationSeconds = 5) { 
     const container = document.getElementById('snow-container');
     if (!container) return;
     
@@ -471,5 +475,5 @@ document.addEventListener("DOMContentLoaded", () => {
     generationInterval = setInterval(generateFlake, intervalTime);
     generateFlake(); 
 
-  })(75, 5); // Updated call count to 75
+  })(75, 5); 
 });
