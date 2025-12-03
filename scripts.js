@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
+  // WARNING KEYS ARE KEPT FOR REFERENCE BUT NOT CLEARED OR CHECKED
   const LS_KEY_SEMI_SPOILER = 'spoilerSemi';
   const LS_KEY_MAJOR_SPOILER = 'spoilerMajor';
   let scratchedDays = {};
@@ -39,28 +40,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function saveSpoilerConfirmation(key) {
-      try {
-          localStorage.setItem(key, 'true');
-      } catch (e) {
-          console.error("Error saving spoiler confirmation:", e);
-      }
-  }
-
-  function checkSpoilerConfirmation(key) {
-      try {
-          return localStorage.getItem(key) === 'true';
-      } catch (e) {
-          return false;
-      }
-  }
+  // --- REMOVED: saveSpoilerConfirmation(key)
+  // --- REMOVED: checkSpoilerConfirmation(key)
 
   function resetProgress() {
     try {
-      // FIX: Use clear() to guarantee all local storage items (doors + warnings) are removed immediately.
-      localStorage.clear();
+      // FIX: Only clears the scratched doors data. Confirmation warnings are left untouched.
+      localStorage.removeItem(STORAGE_KEY);
       
-      console.log("All local storage cleared. Reloading page.");
+      console.log("Door progress cleared. Reloading page.");
       window.location.reload();
     } catch (e) {
       console.error("Error clearing progress from localStorage", e);
@@ -72,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.addEventListener('click', resetProgress);
   }
 
-  // --- NAVIGATION / MENU LOGIC ---
+  // --- NAVIGATION / MENU LOGIC (unchanged) ---
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
   const menuClose = document.getElementById('menuClose');
@@ -132,11 +120,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
       if (confirmedLinkHref) {
-          // 1. Save confirmation status to local storage
-          if (confirmedLinkSpoilerKey) {
-              saveSpoilerConfirmation(confirmedLinkSpoilerKey);
-          }
-          // 2. Navigate
+          // FIX: Removed call to saveSpoilerConfirmation(key). 
+          // The confirmation is NOT saved.
+          
+          // 2. Navigate immediately
           window.location.href = confirmedLinkHref;
       }
       closeConfirmModal();
@@ -161,14 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
           if (requiresConfirm) {
               e.preventDefault();
 
-              // Check local storage for existing confirmation
-              if (spoilerKey && checkSpoilerConfirmation(spoilerKey)) {
-                  // User already confirmed this spoiler type, navigate immediately
-                  window.location.href = link.href;
-                  return; 
-              }
+              // FIX: Removed check for checkSpoilerConfirmation(spoilerKey).
+              // Modal will appear every time the link is clicked.
 
-              // If not confirmed, show modal
               const title = link.dataset.confirmTitle || "Confirm Navigation";
               const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
               openConfirmModal(title, message, link.href, spoilerKey);
