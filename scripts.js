@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
-  // FIX: These constants MUST match the strings used in data-spoiler-key exactly
   const LS_KEY_SEMI_SPOILER = 'semiSpoiler'; 
   const LS_KEY_MAJOR_SPOILER = 'majorSpoiler'; 
 
@@ -51,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function checkSpoilerConfirmation(key) {
       try {
-          // This check is now robust because the key variable matches the stored key
           return localStorage.getItem(key) === 'true';
       } catch (e) {
           return false;
@@ -61,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function resetProgress() {
     try {
       localStorage.removeItem(STORAGE_KEY);
-      // FIX: These now correctly target the saved key names ('semiSpoiler', 'majorSpoiler')
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
       console.log("All local storage cleared. Reloading page.");
@@ -131,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmedLinkSpoilerKey = null;
     }
   }
-
+  
   // Set up listeners for the confirmation buttons
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
@@ -145,12 +142,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       closeConfirmModal();
   });
-
+  
   // Intercept menu clicks
   menuLinks.forEach(link => {
       link.addEventListener('click', (e) => {
           const requiresConfirm = link.dataset.requiresConfirm === 'true';
-          const spoilerKey = link.dataset.spoilerKey; // Reads 'semiSpoiler' or 'majorSpoiler'
+          const spoilerKey = link.dataset.spoilerKey;
 
           if (requiresConfirm) {
               e.preventDefault();
@@ -167,11 +164,20 @@ document.addEventListener("DOMContentLoaded", () => {
               const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
               openConfirmModal(title, message, link.href, spoilerKey);
           }
-          // If requiresConfirm is false (like for Home), navigation proceeds naturally.
       });
   });
+  
+  // --- FIX: Allow clicking outside confirmation modal to close ---
+  if (confirmModal) {
+    confirmModal.addEventListener("click", (e) => {
+      // Check if the click occurred directly on the modal backdrop (the container)
+      if (e.target === confirmModal) {
+        closeConfirmModal();
+      }
+    });
+  }
 
-  // --- MODAL / CANVAS / SNOW LOGIC (Continued for completeness) ---
+  // --- MAIN MODAL LOGIC (Bottle Details) ---
 
   function openModal(node) {
     if (!modalBody) return;
@@ -192,9 +198,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (modalClose) modalClose.addEventListener("click", closeModal);
-  if (modal) modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
+  
+  // --- FIX: Allow clicking outside bottle detail modal to close ---
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      // Check if the click occurred directly on the modal backdrop (the container)
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+  }
+
+  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (Continued for completeness) ---
 
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
