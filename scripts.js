@@ -15,10 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOCAL STORAGE STATE & MANAGEMENT ---
   const STORAGE_KEY = 'scratchedDays';
-  // FIX: These constants MUST match the strings used in data-spoiler-key attributes exactly
-  const LS_KEY_SEMI_SPOILER = 'semiSpoiler'; 
-  const LS_KEY_MAJOR_SPOILER = 'majorSpoiler'; 
-
+  const LS_KEY_SEMI_SPOILER = 'spoilerSemi';
+  const LS_KEY_MAJOR_SPOILER = 'spoilerMajor';
   let scratchedDays = {};
 
   function loadProgress() {
@@ -51,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function checkSpoilerConfirmation(key) {
       try {
-          // This check is now robust because the key variable matches the stored key
           return localStorage.getItem(key) === 'true';
       } catch (e) {
           return false;
@@ -60,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
-      // FIX: This now correctly clears door progress AND spoiler warnings
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
@@ -167,19 +163,11 @@ document.addEventListener("DOMContentLoaded", () => {
               const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
               openConfirmModal(title, message, link.href, spoilerKey);
           }
+          // If requiresConfirm is false (like for Home), navigation proceeds naturally.
       });
   });
-  
-  // FIX: Allow clicking outside confirmation modal to close
-  if (confirmModal) {
-    confirmModal.addEventListener("click", (e) => {
-      if (e.target === confirmModal) {
-        closeConfirmModal();
-      }
-    });
-  }
 
-  // --- MAIN MODAL LOGIC (Bottle Details) ---
+  // --- MODAL / CANVAS / RESIZE LOGIC (Omitted for brevity, unchanged) ---
 
   function openModal(node) {
     if (!modalBody) return;
@@ -200,17 +188,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (modalClose) modalClose.addEventListener("click", closeModal);
-  
-  // FIX: Allow clicking outside bottle detail modal to close
-  if (modal) {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        closeModal();
-      }
-    });
-  }
-
-  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (Continued for completeness) ---
+  if (modal) modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
 
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
@@ -432,6 +412,8 @@ document.addEventListener("DOMContentLoaded", () => {
     
     let activeFlakes = 0;
     const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
+    // Added additional snowflake characters
+    const SNOW_CHARS = ['❄', '❅', '❆', '✶', '✷', '✵']; 
 
     function handleFlakeEnd(event) {
         if (event.animationName === 'fall-fixed') {
@@ -466,20 +448,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const el = document.createElement('div');
       el.className = 'snowflake';
-      el.textContent = '❄';
-
+      // Pick random character
+      el.textContent = SNOW_CHARS[Math.floor(Math.random() * SNOW_CHARS.length)]; 
+      
       const left = Math.random() * 100;
       const size = 15 + Math.random() * 10; 
       const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
       const sway = (Math.random() - 0.5) * 50; 
-
+      
       el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
       el.style.left = left + 'vw';
       el.style.fontSize = size + 'px';
 
       el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
       el.style.setProperty('--sway', `${sway}px`);
-
+      
       el.addEventListener('animationend', handleFlakeEnd);
 
       container.appendChild(el);
