@@ -57,21 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function resetProgress() {
     try {
-      // CLEARS BOTH DOORS AND WARNINGS
-      
-      // Use delete operator to ensure immediate removal, 
-      // although removeItem should suffice, this covers edge cases.
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(LS_KEY_SEMI_SPOILER);
-      localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
-      
-      // Safety check: ensure keys are removed before reloading (useful for debugging cache issues)
-      const keys = [STORAGE_KEY, LS_KEY_SEMI_SPOILER, LS_KEY_MAJOR_SPOILER];
-      keys.forEach(key => {
-          if (localStorage.getItem(key)) {
-              localStorage.removeItem(key);
-          }
-      });
+      // FIX: Use clear() to guarantee all local storage items (doors + warnings) are removed immediately.
+      localStorage.clear();
       
       console.log("All local storage cleared. Reloading page.");
       window.location.reload();
@@ -190,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   });
 
-  // --- MODAL (BOTTLE DETAIL) LOGIC (Click outside fix included) ---
+  // --- MODAL (BOTTLE DETAIL) LOGIC ---
   function openModal(node) {
     if (!modalBody) return;
     modalBody.innerHTML = "";
@@ -210,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (modalClose) modalClose.addEventListener("click", closeModal);
-  // ATTACHMENT FIX 2: Click outside BOTTLE DETAIL modal
+  // Click outside BOTTLE DETAIL modal
   if (modal) {
       modal.addEventListener("click", (e) => {
         if (e.target === modal) {
@@ -219,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (Omitted for brevity, unchanged) ---
+  // --- CANVAS / SCRATCH / RESIZE / SNOW LOGIC (unchanged) ---
 
   function localPos(canvas, clientX, clientY) {
     const r = canvas.getBoundingClientRect();
