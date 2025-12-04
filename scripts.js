@@ -61,13 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   }
 
-  // MODIFIED resetProgress function:
   function resetProgress() {
     try {
-      // Clears door scratch progress only.
-      // Spoiler confirmations (LS_KEY_SEMI_SPOILER and LS_KEY_MAJOR_SPOILER) are preserved.
+      // Clears door progress AND spoiler warnings
       localStorage.removeItem(STORAGE_KEY);
-      console.log("Door scratch progress cleared. Spoiler warnings remain. Reloading page.");
+      localStorage.removeItem(LS_KEY_SEMI_SPOILER);
+      localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
+      console.log("All local storage cleared. Reloading page.");
       window.location.reload();
     } catch (e) {
       console.error("Error clearing progress from localStorage", e);
@@ -139,7 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
       if (confirmedLinkHref) {
-          // 1. Save confirmation status to local storage
+          // 1. Save confirmation status to local storage (THIS IS KEPT FOR CONSISTENCY, 
+          //    BUT IS NOW INEFFECTIVE due to the change below)
           if (confirmedLinkSpoilerKey) {
               saveSpoilerConfirmation(confirmedLinkSpoilerKey);
           }
@@ -158,14 +159,14 @@ document.addEventListener("DOMContentLoaded", () => {
           if (requiresConfirm) {
               e.preventDefault();
 
-              // Check local storage for existing confirmation
-              if (spoilerKey && checkSpoilerConfirmation(spoilerKey)) {
-                  // User already confirmed this spoiler type, navigate immediately
-                  window.location.href = link.href;
-                  return; 
-              }
+              // COMMENTED OUT: This block prevents the modal from showing after the first time.
+              // if (spoilerKey && checkSpoilerConfirmation(spoilerKey)) {
+              //     // User already confirmed this spoiler type, navigate immediately
+              //     window.location.href = link.href;
+              //     return; 
+              // }
 
-              // If not confirmed, show modal
+              // Force modal to show every time if requiresConfirm is true
               const title = link.dataset.confirmTitle || "Confirm Navigation";
               const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
               openConfirmModal(title, message, link.href, spoilerKey);
