@@ -45,13 +45,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Removed saveSpoilerConfirmation function
+  function saveSpoilerConfirmation(key) {
+      try {
+          // MODIFIED: This function now does nothing to prevent saving the confirmation.
+          // localStorage.setItem(key, 'true'); 
+      } catch (e) {
+          console.error("Error saving spoiler confirmation:", e);
+      }
+  }
 
-  // Removed checkSpoilerConfirmation function
+  function checkSpoilerConfirmation(key) {
+      try {
+          // MODIFIED: This function now always returns false to force the modal.
+          return false;
+          // return localStorage.getItem(key) === 'true'; 
+      } catch (e) {
+          return false;
+      }
+  }
 
   function resetProgress() {
     try {
-      // Clears door progress AND spoiler warnings
+      // Clears door progress AND spoiler warnings (needed for door logic to work)
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(LS_KEY_SEMI_SPOILER);
       localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
@@ -127,7 +142,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
       if (confirmedLinkHref) {
-          // Removed: saveSpoilerConfirmation logic
+          // 1. Save confirmation status to local storage
+          if (confirmedLinkSpoilerKey) {
+              // Now saveSpoilerConfirmation is essentially disabled (see above function)
+              saveSpoilerConfirmation(confirmedLinkSpoilerKey);
+          }
           // 2. Navigate
           window.location.href = confirmedLinkHref;
       }
@@ -143,9 +162,15 @@ document.addEventListener("DOMContentLoaded", () => {
           if (requiresConfirm) {
               e.preventDefault();
 
-              // Removed: checkSpoilerConfirmation logic
+              // MODIFIED: checkSpoilerConfirmation now always returns false, 
+              // so the 'if' condition below is effectively ignored.
+              if (spoilerKey && checkSpoilerConfirmation(spoilerKey)) {
+                  // User already confirmed this spoiler type, navigate immediately
+                  window.location.href = link.href;
+                  return; 
+              }
 
-              // Force modal to show every time if requiresConfirm is true
+              // If not confirmed (or if checkSpoilerConfirmation returns false), show modal
               const title = link.dataset.confirmTitle || "Confirm Navigation";
               const message = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
               openConfirmModal(title, message, link.href, spoilerKey);
@@ -452,4 +477,36 @@ document.addEventListener("DOMContentLoaded", () => {
     function generateFlake() {
       if (flakesGenerated >= totalFlakesToGenerate) {
           clearInterval(generationInterval);
-          console.
+          console.log(`Snow generation stopped. Waiting for ${activeFlakes} flakes to clear.`);
+          if (activeFlakes <= 0) removeContainer();
+          return;
+      }
+
+      const el = document.createElement('div');
+      el.className = 'snowflake';
+      el.textContent = SNOW_CHARS[Math.floor(Math.random() * SNOW_CHARS.length)]; 
+
+      const left = Math.random() * 100;
+      const size = 15 + Math.random() * 10; 
+      const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
+      const sway = (Math.random() - 0.5) * 50; 
+
+      el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
+      el.style.left = left + 'vw';
+      el.style.fontSize = size + 'px';
+
+      el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
+      el.style.setProperty('--sway', `${sway}px`);
+
+      el.addEventListener('animationend', handleFlakeEnd);
+
+      container.appendChild(el);
+      activeFlakes++;
+      flakesGenerated++;
+    }
+
+    generationInterval = setInterval(generateFlake, intervalTime);
+    generateFlake(); 
+
+  })(75, 5); 
+});
