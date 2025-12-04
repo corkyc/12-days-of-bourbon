@@ -45,21 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function saveSpoilerConfirmation(key) {
-      try {
-          localStorage.setItem(key, 'true');
-      } catch (e) {
-          console.error("Error saving spoiler confirmation:", e);
-      }
-  }
+  // Removed saveSpoilerConfirmation function
 
-  function checkSpoilerConfirmation(key) {
-      try {
-          return localStorage.getItem(key) === 'true';
-      } catch (e) {
-          return false;
-      }
-  }
+  // Removed checkSpoilerConfirmation function
 
   function resetProgress() {
     try {
@@ -139,11 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
   if (confirmYes) confirmYes.addEventListener('click', () => {
       if (confirmedLinkHref) {
-          // 1. Save confirmation status to local storage (THIS IS KEPT FOR CONSISTENCY, 
-          //    BUT IS NOW INEFFECTIVE due to the change below)
-          if (confirmedLinkSpoilerKey) {
-              saveSpoilerConfirmation(confirmedLinkSpoilerKey);
-          }
+          // Removed: saveSpoilerConfirmation logic
           // 2. Navigate
           window.location.href = confirmedLinkHref;
       }
@@ -159,12 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (requiresConfirm) {
               e.preventDefault();
 
-              // COMMENTED OUT: This block prevents the modal from showing after the first time.
-              // if (spoilerKey && checkSpoilerConfirmation(spoilerKey)) {
-              //     // User already confirmed this spoiler type, navigate immediately
-              //     window.location.href = link.href;
-              //     return; 
-              // }
+              // Removed: checkSpoilerConfirmation logic
 
               // Force modal to show every time if requiresConfirm is true
               const title = link.dataset.confirmTitle || "Confirm Navigation";
@@ -473,36 +452,4 @@ document.addEventListener("DOMContentLoaded", () => {
     function generateFlake() {
       if (flakesGenerated >= totalFlakesToGenerate) {
           clearInterval(generationInterval);
-          console.log(`Snow generation stopped. Waiting for ${activeFlakes} flakes to clear.`);
-          if (activeFlakes <= 0) removeContainer();
-          return;
-      }
-
-      const el = document.createElement('div');
-      el.className = 'snowflake';
-      el.textContent = SNOW_CHARS[Math.floor(Math.random() * SNOW_CHARS.length)]; 
-
-      const left = Math.random() * 100;
-      const size = 15 + Math.random() * 10; 
-      const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
-      const sway = (Math.random() - 0.5) * 50; 
-
-      el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
-      el.style.left = left + 'vw';
-      el.style.fontSize = size + 'px';
-
-      el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
-      el.style.setProperty('--sway', `${sway}px`);
-
-      el.addEventListener('animationend', handleFlakeEnd);
-
-      container.appendChild(el);
-      activeFlakes++;
-      flakesGenerated++;
-    }
-
-    generationInterval = setInterval(generateFlake, intervalTime);
-    generateFlake(); 
-
-  })(75, 5); 
-});
+          console.
