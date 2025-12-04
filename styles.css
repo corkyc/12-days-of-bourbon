@@ -359,7 +359,7 @@ header h1 {
   background: rgba(0,0,0,0.8); 
   z-index: 9999;
 }
-/* .modal[aria-hidden="false"] { display: flex; } */
+.modal[aria-hidden="false"] { display: flex; }
 
 .modal-inner {
   background: #fff;
@@ -374,7 +374,7 @@ header h1 {
   /* TRANSITION POLISH: INITIAL STATE */
   opacity: 0;
   transform: scale(0.9);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
 /* TRANSITION POLISH: FINAL STATE (when modal is visible) */
