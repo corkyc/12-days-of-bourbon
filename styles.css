@@ -353,18 +353,20 @@ header h1 {
 .modal {
   position: fixed;
   inset: 0;
-  display: none;
+  /* Hides modal but allows transition properties to initialize */
+  display: none; 
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0.8); 
   z-index: 9999;
-  /* Transition for the entire modal (makes the backdrop appear smoothly) */
+  
+  /* NEW: Transition for the entire modal (makes the backdrop appear smoothly) */
   opacity: 0;
   transition: opacity 0.3s ease-out;
 }
 .modal[aria-hidden="false"] { 
-  display: flex; 
-  opacity: 1; /* Fade in backdrop */
+  display: flex; /* This triggers the transition from opacity: 0 to 1 */
+  opacity: 1; 
 }
 
 
@@ -379,13 +381,13 @@ header h1 {
   position: relative;
   text-align: center;
   
-  /* TRANSITION POLISH: INITIAL STATE */
+  /* NEW: TRANSITION POLISH: INITIAL STATE */
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 0.3s ease-out 0.1s, transform 0.3s ease-out 0.1s; /* Added 0.1s delay */
 }
 
-/* TRANSITION POLISH: FINAL STATE (when modal is visible) */
+/* NEW: TRANSITION POLISH: FINAL STATE (when modal is visible) */
 .modal[aria-hidden="false"] .modal-inner {
   opacity: 1;
   transform: scale(1);
