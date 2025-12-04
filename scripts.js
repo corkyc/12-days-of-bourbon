@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmedLinkSpoilerKey = spoilerKey;
 
     confirmTitle.textContent = title;
-    confirmMessage.textContent = message;
+    confirmMessage.innerHTML = message;
     confirmModal.setAttribute("aria-hidden", "false");
 
     if (mobileMenu) {
