@@ -358,19 +358,9 @@ header h1 {
   justify-content: center;
   background: rgba(0,0,0,0.8); 
   z-index: 9999;
-  
-  /* NEW: Transition for the entire modal (makes the backdrop appear smoothly) */
-  opacity: 0;
-  transition: opacity 0.3s ease-out;
 }
-.modal[aria-hidden="false"] { 
-  /* This triggers the transition from opacity: 0 to 1 */
-  display: flex; 
-  opacity: 1; 
-}
+.modal[aria-hidden="false"] { display: flex; }
 
-
-/* --- MODAL INNER (The Content Box with Transition) --- */
 .modal-inner {
   background: #fff;
   color: #111;
@@ -380,18 +370,6 @@ header h1 {
   padding: 24px;
   position: relative;
   text-align: center;
-  
-  /* NEW: TRANSITION POLISH: INITIAL STATE */
-  opacity: 0;
-  transform: scale(0.9);
-  /* The transition runs when the parent modal's opacity hits 1 */
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out; 
-}
-
-/* NEW: TRANSITION POLISH: FINAL STATE (when modal is visible) */
-.modal[aria-hidden="false"] .modal-inner {
-  opacity: 1;
-  transform: scale(1);
 }
 
 .modal-close {
