@@ -77,11 +77,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // --- CARD RANDOMIZATION LOGIC ---
+
+  /**
+   * Shuffles the order of the card elements within their parent container.
+   * Uses the Fisher-Yates (Knuth) shuffle algorithm.
+   */
+  function shuffleCards() {
+    // 1. Identify the parent container of all the cards.
+    // Assuming the cards array (defined globally) uses a selector that captures all cards,
+    // we take the parent of the *first* card as the container for all of them.
+    if (cards.length === 0) return;
+    const container = cards[0].parentNode;
+
+    if (container) {
+        let cardElements = Array.from(container.children); // Get a live collection of children
+
+        // 2. Perform Fisher-Yates Shuffle on the array of elements
+        for (let i = cardElements.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            // ES6 swap
+            [cardElements[i], cardElements[j]] = [cardElements[j], cardElements[i]];
+        }
+
+        // 3. Append the shuffled elements back to the container.
+        // Appending an existing element automatically removes it from its previous position.
+        cardElements.forEach(card => container.appendChild(card));
+
+        console.log("Card order shuffled successfully.");
+    }
+  }
+
+  // --- END CARD RANDOMIZATION LOGIC --- 
+  
   loadProgress();
+  // *** INSERT THE SHUFFLE CALL HERE ***
+  shuffleCards();
   if (resetBtn) {
     resetBtn.addEventListener('click', resetProgress);
   }
 
+ 
+  
+  
+  
   // --- NAVIGATION / MENU LOGIC ---
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobile-menu');
@@ -510,3 +549,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   })(75, 5); 
 });
+
