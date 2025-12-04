@@ -61,13 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   }
 
+  // MODIFIED resetProgress function:
   function resetProgress() {
     try {
-      // Clears door progress AND spoiler warnings
+      // Clears door scratch progress only.
+      // Spoiler confirmations (LS_KEY_SEMI_SPOILER and LS_KEY_MAJOR_SPOILER) are preserved.
       localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(LS_KEY_SEMI_SPOILER);
-      localStorage.removeItem(LS_KEY_MAJOR_SPOILER);
-      console.log("All local storage cleared. Reloading page.");
+      console.log("Door scratch progress cleared. Spoiler warnings remain. Reloading page.");
       window.location.reload();
     } catch (e) {
       console.error("Error clearing progress from localStorage", e);
