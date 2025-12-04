@@ -18,8 +18,9 @@
         <!-- Home link (no check) -->
         <li><a href="index.html">Home (Scratch-Off)</a></li>
         <!-- All Bottles link - Custom confirmation text -->
-        <li><a href="all-bottles.html" data-requires-confirm="false" data-spoiler-key="semiSpoiler" data-confirm-title="All Bottles, No Numbers" data-confirm-message="Semi spoiler - This list shows all 12 bottles and there are no numbers assoicated with each bottle.  Allowing for a semi-blind taste test. Continue?">Semi-Blind Taste Test</a></li>
-        <li><a href="all-bottles-numbers.html">All Bottles with Numbers</a></li>
+        <li><a href="all-bottles.html" data-requires-confirm="true" data-spoiler-key="semiSpoiler" data-confirm-title="Semi-blind Taste Test" 
+               data-confirm-message="Semi spoiler - This list shows all 12 bottles and there are no numbers assoicated with each bottle.  Allowing for a semi-blind taste test. Continue?">All Bottles</a></li>
+        <li><a href="all-bottles-numbers.html">Complete Reveal</a></li>
       </ul>
     </div>
   </nav>
@@ -33,7 +34,7 @@
 
     <div class="header-content">
       <h1>12 Days of Bourbon</h1>
-      <p class="tagline">A full view of all 12 bottles and their associated numbers.<br>Cheers!</p>
+      <p class="tagline">All 12 bottles names and their associated numbers. Cheers!</p>
     </div>
   </header>
 
@@ -85,7 +86,7 @@
   </main>
 
   <div class="bottom-controls">
-    <!-- Button is absent on this page -->
+    <!-- Button is intentionally absent on this page, as reset only applies to scratch state -->
   </div>
 
   <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
