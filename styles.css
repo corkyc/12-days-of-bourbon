@@ -353,8 +353,7 @@ header h1 {
 .modal {
   position: fixed;
   inset: 0;
-  /* Hides modal but allows transition properties to initialize */
-  display: none; 
+  display: none;
   align-items: center;
   justify-content: center;
   background: rgba(0,0,0,0.8); 
@@ -365,7 +364,8 @@ header h1 {
   transition: opacity 0.3s ease-out;
 }
 .modal[aria-hidden="false"] { 
-  display: flex; /* This triggers the transition from opacity: 0 to 1 */
+  /* This triggers the transition from opacity: 0 to 1 */
+  display: flex; 
   opacity: 1; 
 }
 
@@ -384,7 +384,8 @@ header h1 {
   /* NEW: TRANSITION POLISH: INITIAL STATE */
   opacity: 0;
   transform: scale(0.9);
-  transition: opacity 0.3s ease-out 0.1s, transform 0.3s ease-out 0.1s; /* Added 0.1s delay */
+  /* The transition runs when the parent modal's opacity hits 1 */
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out; 
 }
 
 /* NEW: TRANSITION POLISH: FINAL STATE (when modal is visible) */
