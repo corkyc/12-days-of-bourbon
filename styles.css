@@ -592,22 +592,23 @@ header h1 {
     /* FIX: Set display to none by default. JS will set to flex when a door is clicked. */
     display: none; 
     
-    position: fixed; /* Stays locked to the viewport */
+    position: fixed; 
     z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
-    height: 100%;
-    /* REMOVED overflow: auto; as the inner content handles scrolling */
-    background-color: rgba(0,0,0,0.7); /* Dark overlay */
+    /* AGGRESSIVE FIX: Use 100% of the viewport height */
+    height: 100vh; 
+    /* AGGRESSIVE FIX: Ensure nothing inside can push the parent out of bounds */
+    overflow: hidden; 
+    background-color: rgba(0,0,0,0.7); 
     
-    /* Re-add flexbox only for the vertical centering fallback */
+    /* Re-enable flexbox for simple centering within the fixed 100vh space */
     align-items: center; 
     justify-content: center;
 }
 
 #guessModal .modal-content {
-    /* Use the same styling as the generic modal-inner/confirmation modal for look */
     background: #f6eedd;
     color: #111;
     width: 92%;
@@ -616,15 +617,15 @@ header h1 {
     padding: 30px;
     position: relative; 
     text-align: center;
-    border: 4px solid #B83232; /* Deep Red Border */
+    border: 4px solid #B83232; 
     
-    /* FIX: Combine auto margin with max-height for perfect mobile behavior */
+    /* FIX: Use auto margins to center content within the fixed flex container */
     margin: auto; 
     
 	box-sizing: border-box;
-	/* Allow content to shrink and scroll if necessary */
+	/* Ensures the content cannot exceed the visible area when the keyboard is open */
 	max-height: 90vh; 
-    overflow-y: auto;	
+    overflow-y: auto;	/* Allows scrolling if content is too tall */
 }
 
 #guessModal h2 {
