@@ -479,7 +479,7 @@ header h1 {
     font-size: 2em;
     font-weight: bold;
     text-align: center;
-    border: 5px solid #FFD700; /* Use Gold border */
+    border: none;
 }
 
 .door.revealed {
