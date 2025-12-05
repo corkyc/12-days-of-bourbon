@@ -600,7 +600,7 @@ header h1 {
     background-color: rgba(0,0,0,0.7); /* Dark overlay */
 
     /* These properties will take effect when JS sets style.display = 'flex' */
-    align-items: center; /* Vertically centers the content */
+    align-items: flex-start; 
     justify-content: center; /* Horizontally centers the content */
 }
 
@@ -615,7 +615,9 @@ header h1 {
     position: relative;
     text-align: center;
     border: 4px solid #B83232; /* Deep Red Border */
-    margin: 0;
+	margin: 50px auto; 
+		box-sizing: border-box;
+		max-height: 90vh;
 	box-sizing: border-box;
 	max-height: 90vh; 
     overflow-y: auto;	
