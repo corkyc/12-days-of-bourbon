@@ -590,7 +590,7 @@ header h1 {
 #guessModal {
     /* Ensure the base modal is visible when JS sets display: block */
 	background-color: transparent; 
-    display: flex; 
+    display: none; 
     position: fixed; /* Crucial for keeping it in viewport regardless of scroll */
     z-index: 9999;
     left: 0;
