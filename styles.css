@@ -499,7 +499,8 @@ header h1 {
     align-items: center;
     cursor: pointer;
     z-index: 10;
-    transition: opacity 0.5s ease-in-out;
+	transform: scale(1);
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
     font-size: 2em;
     font-weight: bold;
     text-align: center;
@@ -507,7 +508,7 @@ header h1 {
 }
 
 .door.revealed {
-    opacity: 0;
+	transform: scale(0); 
     pointer-events: none;
 }
 

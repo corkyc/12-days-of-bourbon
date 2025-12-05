@@ -162,7 +162,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 resultMessage.textContent = ''; // Clear previous messages
                 dayGuessInput.value = ''; // Clear previous input
                 guessModal.style.display = 'block'; // Show the modal
-                dayGuessInput.focus();
+                window.requestAnimationFrame(() => {
+                    guessModal.style.display = 'block'; 
+                    dayGuessInput.focus();
+                });
             });
         });
 
@@ -192,8 +195,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     resultMessage.textContent = `🎉 Correct! This is bottle ${correctAnswer}. The bottle is revealed!`;
                     // Disable the click handler for this door after revealing
-                    currentDoor.style.pointerEvents = 'none';
-					launchConfetti();
+					window.requestAnimationFrame(() => {
+                        currentDoor.style.pointerEvents = 'none';
+                        launchConfetti();
+                    });
                 } else {
                     // Incorrect Guess: Show message, do not reveal
                     resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
