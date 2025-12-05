@@ -167,10 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			// 2. Event Listener for Doors
             doors.forEach(door => {
                 door.addEventListener('click', function(e) {
-                    // Prevent the click event from triggering the parent card's click handler
                     e.stopPropagation();
-                    
-                    // If the door is already revealed, do nothing
                     if (this.classList.contains('revealed')) return;
                     
                     // --- START NEW BOURBON NAME PASSING LOGIC ---
@@ -195,17 +192,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (modalBourbonName) {
                         modalBourbonName.textContent = bourbonName || 'this bottle';
                     }
-                    // --- END NEW BOURBON NAME PASSING LOGIC ---
-                    
-                    currentDoor = this; // Set the currently clicked door
-                    resultMessage.textContent = ''; // Clear previous messages
-                    dayGuessInput.value = ''; // Clear previous input
-	
-						unlockGuessModal(); 
-						
-						currentDoor = this; // Set the currently clicked door
-						resultMessage.textContent = ''; // Clear previous messages
-						dayGuessInput.value = ''; // Clear previous input                    
+                    // --- END NEW BOURBON NAME PASSING LOGIC ---	
+					unlockGuessModal(); 
+					currentDoor = this; // Set the currently clicked door
+					resultMessage.textContent = ''; // Clear previous messages
+					dayGuessInput.value = ''; // Clear previous input                    
                     window.requestAnimationFrame(() => {
                         guessModal.style.display = 'flex'; 
                         // document.body.style.overflowY = 'hidden';
@@ -228,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         resultMessage.textContent = 'Please enter a valid number between 1 and 12.';
                         return;
                     }
+					lockGuessModal();
 
                     if (guess === correctAnswer) {
                         // Correct Guess: Reveal the bourbon
