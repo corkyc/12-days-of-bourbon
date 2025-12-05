@@ -166,7 +166,7 @@ if (window.location.pathname.endsWith('all-bottles.html')) {
                 
                 window.requestAnimationFrame(() => {
                     guessModal.style.display = 'flex'; 
-                    dayGuessInput.focus();
+                    document.body.style.overflowY = 'hidden';
                 });
             });
         });
