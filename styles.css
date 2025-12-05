@@ -599,8 +599,8 @@ header h1 {
     height: 100%;
     background-color: rgba(0,0,0,0.7); /* Dark overlay */
 
-    /* These properties will take effect when JS sets style.display = 'flex' */
-    align-items: flex-start; 
+    /* The modal content will center itself using auto margins */
+    align-items: center; /* Re-added for initial visual centering before keyboard */
     justify-content: center; /* Horizontally centers the content */
 }
 
@@ -615,10 +615,14 @@ header h1 {
     position: relative;
     text-align: center;
     border: 4px solid #B83232; /* Deep Red Border */
-	margin: 50px auto; 
-		box-sizing: border-box;
-		max-height: 90vh;
+    
+    /* FIX: Use auto margins to force centering in the fixed container. 
+       This helps the browser adjust position when the viewport shrinks 
+       (e.g., due to the virtual keyboard). */
+    margin: auto; 
+    
 	box-sizing: border-box;
+	/* Allow content to shrink and scroll if necessary */
 	max-height: 90vh; 
     overflow-y: auto;	
 }
