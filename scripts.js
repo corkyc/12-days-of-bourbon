@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     window.requestAnimationFrame(() => {
                         guessModal.style.display = 'flex'; 
-                        document.body.style.overflowY = 'hidden';
+                        // document.body.style.overflowY = 'hidden';
                     });
                 });
             });
