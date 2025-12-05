@@ -142,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // 1. Get DOM elements for the new guessing modal (MOVED INSIDE HERE)
         const guessModal = document.getElementById('guessModal');
         const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
-		const dayGuessInput = document.getElementById('dayGuessInput');
 		const submitButton = document.getElementById('submitGuessButton');
         const dayGuessInput = document.getElementById('dayGuessInput');
         const resultMessage = document.getElementById('resultMessage');
@@ -154,16 +153,25 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentDoor = null;
 
         if (guessModal && doors.length > 0) {
-            function lockGuessModal() {
-                dayGuessInput.disabled = true;
-                submitButton.disabled = true;
-                submitButton.textContent = 'Answer Submitted';
-            }
-            function unlockGuessModal() {
-                dayGuessInput.disabled = false;
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit Guess';
-            }
+			function lockGuessModal() {
+				dayGuessInput.disabled = true;
+				submitButton.disabled = true;
+				submitButton.textContent = 'Answer Submitted';
+			}
+			
+			function unlockGuessModal() {
+				dayGuessInput.disabled = false;
+				submitButton.disabled = false;
+				submitButton.textContent = 'Submit Guess';
+			}
+            // 4. Modal Close Handlers
+            const closeModalAndRestoreScroll = () => {
+                guessModal.style.display = 'none';
+                // FIX: Restore background scrolling when modal is closed
+                unlockGuessModal();
+				document.body.style.overflowY = ''; 
+            };
+			
 			// 2. Event Listener for Doors
             doors.forEach(door => {
                 door.addEventListener('click', function(e) {
@@ -249,12 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
             }
-            // 4. Modal Close Handlers
-            const closeModalAndRestoreScroll = () => {
-                guessModal.style.display = 'none';
-                // FIX: Restore background scrolling when modal is closed
-                document.body.style.overflowY = ''; 
-            };
+
 
             if (guessCloseButton) {
                 guessCloseButton.addEventListener('click', closeModalAndRestoreScroll);
