@@ -161,7 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentDoor = this; // Set the currently clicked door
                 resultMessage.textContent = ''; // Clear previous messages
                 dayGuessInput.value = ''; // Clear previous input
-                guessModal.style.display = 'block'; // Show the modal
                 window.requestAnimationFrame(() => {
                     guessModal.style.display = 'block'; 
                     dayGuessInput.focus();
