@@ -455,3 +455,82 @@ header h1 {
 .btn:hover {
   background: #366c61; 
 }
+.bottle-container {
+    position: relative; /* Essential for positioning the door cover */
+    overflow: hidden;
+    /* Ensure the container has defined dimensions if needed */
+}
+
+.door {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #5a3624; /* Bourbon Brown - adjust to match your site */
+    color: #f0c674; /* Gold text - adjust to match your site */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: opacity 0.5s ease-in-out;
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    border: 5px solid #f0c674;
+}
+
+.door.revealed {
+    opacity: 0; /* Makes the door invisible */
+    pointer-events: none; /* Allows clicks to pass through to content beneath */
+}
+
+/* --- Modal Styles --- */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7); /* Dark semi-transparent background */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#dayGuessInput {
+    padding: 10px;
+    margin: 10px 0;
+    width: calc(100% - 20px);
+    font-size: 1.2em;
+}
+
+#submitGuessButton {
+    background-color: #5a3624;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+}
