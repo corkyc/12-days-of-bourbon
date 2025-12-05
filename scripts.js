@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const confirmMessage = document.getElementById('confirmMessage');
   const confirmYes = document.getElementById('confirmYes');
   const confirmNo = document.getElementById('confirmNo');
-
+  const resetPageBtn = document.getElementById('resetPageBtn');
   // --- LOCAL STORAGE STATE & MANAGEMENT (PERSISTENCE) ---
   const STORAGE_KEY = 'scratchedDays';
   const LS_KEY_SEMI_SPOILER = 'semiSpoiler'; 
