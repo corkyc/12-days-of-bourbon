@@ -564,6 +564,7 @@ header h1 {
 }
 #guessModal {
     /* Ensure the base modal is visible when JS sets display: block */
+	background-color: transparent;
     z-index: 9999;
 }
 
