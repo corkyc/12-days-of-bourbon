@@ -118,10 +118,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		  function launchConfetti() {
 			  console.log("Confetti effect launched!");
 			  // Placeholder for actual confetti code (e.g., using a library like canvas-confetti):
-			   confetti({
-				   particleCount: 100,
-				   spread: 70,
-				   origin: { y: 0.6 }
+		  confetti({
+              particleCount: 75,
+              spread: 60,
+              origin: { x: 0.2, y: 0.9 }
+          });
+          
+          // Launch another burst from the bottom right
+          confetti({
+              particleCount: 75,
+              spread: 60,
+              origin: { x: 0.8, y: 0.9 }
+          });
+
 			   });
 			  
 			  // If you use a CSS/manual animation, place the logic here.
