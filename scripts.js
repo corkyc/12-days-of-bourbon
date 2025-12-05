@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
               origin: { x: 0.8, y: 0.9 }
           });
 
-			   });
+	
 			  
 			  // If you use a CSS/manual animation, place the logic here.
 		  }
