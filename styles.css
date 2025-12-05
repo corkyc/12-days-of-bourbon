@@ -589,6 +589,18 @@ header h1 {
 }
 #guessModal {
     /* Ensure the base modal is visible when JS sets display: block */
+	background-color: transparent; 
+    display: none; 
+    position: fixed; /* Crucial for keeping it in viewport regardless of scroll */
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /* New: Use Flexbox to center the content within the fixed container */
+    display: flex;
+    align-items: center; /* Vertically centers the content */
+    justify-content: center; /* Horizontally centers the content */
     z-index: 9999;
 }
 
@@ -603,7 +615,10 @@ header h1 {
     position: relative;
     text-align: center;
     border: 4px solid #B83232; /* Deep Red Border */
-    margin: 15% auto; /* Centers the modal */
+    margin: 0;
+	box-sizing: border-box;
+	max-height: 90vh; 
+    overflow-y: auto;	
 }
 
 #guessModal h2 {
