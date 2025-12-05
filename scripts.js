@@ -142,7 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // 1. Get DOM elements for the new guessing modal (MOVED INSIDE HERE)
         const guessModal = document.getElementById('guessModal');
         const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
-        const submitButton = document.getElementById('submitGuessButton');
+		const dayGuessInput = document.getElementById('dayGuessInput');
+		const submitButton = document.getElementById('submitGuessButton');
         const dayGuessInput = document.getElementById('dayGuessInput');
         const resultMessage = document.getElementById('resultMessage');
         const doors = document.querySelectorAll('.door');
