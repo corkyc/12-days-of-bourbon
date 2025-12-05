@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
       // --- END NEW: BOURBON GUESSING GAME LOGIC ---
-  
+  	}
 
   // --- END CARD RANDOMIZATION & BOURBON MATCHING LOGIC (CONDITIONAL) ---
   
