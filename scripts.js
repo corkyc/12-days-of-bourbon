@@ -169,7 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // 3. Handle Guess Submission
         if (submitButton) {
             submitButton.addEventListener('click', () => {
-                if (!currentDoor) return;
+                dayGuessInput.blur();
+				if (!currentDoor) return;
 
                 const guess = parseInt(dayGuessInput.value);
                 const bottleContainer = currentDoor.closest('.bottle-container');
