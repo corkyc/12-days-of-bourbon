@@ -218,19 +218,23 @@ if (window.location.pathname.endsWith('all-bottles.html')) {
                 }
             });
         }
-        // 4. Modal Close Handlers
-        if (guessCloseButton) {
-            guessCloseButton.addEventListener('click', () => {
-                guessModal.style.display = 'none';
-            });
-        }
+			// 4. Modal Close Handlers
+			const closeModalAndRestoreScroll = () => {
+				guessModal.style.display = 'none';
+				// FIX: Restore background scrolling when modal is closed
+				document.body.style.overflowY = ''; 
+			};
 
-        // Close the modal if the user clicks anywhere outside of it
-        window.addEventListener('click', (event) => {
-            if (event.target === guessModal) {
-                guessModal.style.display = 'none';
-            }
-        });
+			if (guessCloseButton) {
+				guessCloseButton.addEventListener('click', closeModalAndRestoreScroll);
+			}
+
+			// Close the modal if the user clicks anywhere outside of it
+			window.addEventListener('click', (event) => {
+				if (event.target === guessModal) {
+					closeModalAndRestoreScroll();
+				}
+			});
       }
       
       // --- END NEW: BOURBON GUESSING GAME LOGIC ---

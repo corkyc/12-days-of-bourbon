@@ -587,21 +587,23 @@ header h1 {
 #submitGuessButton:hover {
     background-color: #8A2525; /* Darker Red on hover */
 }
+
 #guessModal {
     /* FIX: Set display to none by default. JS will set to flex when a door is clicked. */
     display: none; 
     
-    position: fixed; /* Crucial for keeping it in viewport regardless of scroll */
+    position: fixed; /* Stays locked to the viewport */
     z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Allows the entire modal background to scroll if needed */
+    /* REMOVED overflow: auto; as the inner content handles scrolling */
     background-color: rgba(0,0,0,0.7); /* Dark overlay */
-
-    /* REMOVED: align-items: center; and justify-content: center; */
-    /* We now use a different centering technique on modal-content */
+    
+    /* Re-add flexbox only for the vertical centering fallback */
+    align-items: center; 
+    justify-content: center;
 }
 
 #guessModal .modal-content {
@@ -612,14 +614,12 @@ header h1 {
     max-width: 520px;
     border-radius: 10px;
     padding: 30px;
-    position: absolute; /* Changed to absolute to use the centering below */
+    position: relative; 
     text-align: center;
     border: 4px solid #B83232; /* Deep Red Border */
     
-    /* FIX: Absolute Centering using top/left/transform */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    /* FIX: Combine auto margin with max-height for perfect mobile behavior */
+    margin: auto; 
     
 	box-sizing: border-box;
 	/* Allow content to shrink and scroll if necessary */
