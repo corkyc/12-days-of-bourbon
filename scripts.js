@@ -86,175 +86,175 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- CARD RANDOMIZATION & BOURBON MATCHING LOGIC (CONDITIONAL) ---
   
   // Check if the current page is 'all-bottles.html'
-  if (window.location.pathname.endsWith('all-bottles.html')) {
-      
-      /**
-       * Shuffles the order of the card elements within their parent container.
-       */
+if (window.location.pathname.endsWith('all-bottles.html')) {
+      
+      /**
+       * Shuffles the order of the card elements within their parent container.
+       */
 
-      function shuffleCards() {
-        if (cards.length === 0) return;
-        const container = cards[0].parentNode;
+      function shuffleCards() {
+        if (cards.length === 0) return;
+        const container = cards[0].parentNode;
 
-        if (container) {
-            let cardElements = Array.from(container.children); 
+        if (container) {
+            let cardElements = Array.from(container.children); 
 
-            // 2. Perform Fisher-Yates Shuffle 
-            for (let i = cardElements.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [cardElements[i], cardElements[j]] = [cardElements[j], cardElements[i]];
-            }
+            // 2. Perform Fisher-Yates Shuffle 
+            for (let i = cardElements.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cardElements[i], cardElements[j]] = [cardElements[j], cardElements[i]];
+            }
 
-            // 3. Append the shuffled elements back to the container.
-            cardElements.forEach(card => container.appendChild(card));
+            // 3. Append the shuffled elements back to the container.
+            cardElements.forEach(card => container.appendChild(card));
 
-            console.log("Card order shuffled successfully for all-bottles.html.");
-        }
-      }
+            console.log("Card order shuffled successfully for all-bottles.html.");
+        }
+      }
 
-      // --- Run the randomization ---
-      shuffleCards(); 
+      // --- Run the randomization ---
+      shuffleCards(); 
 
-      // --- NEW: BOURBON GUESSING GAME LOGIC (for all-bottles.html) ---
-    // 1. New Confetti function (Uses canvas-confetti library loaded in HTML)
-          function launchConfetti() {
-              console.log("Confetti effect launched!");
-              // Placeholder for actual confetti code (e.g., using a library like canvas-confetti):
-          confetti({
-              particleCount: 75,
-              spread: 60,
-              origin: { x: 0.2, y: 0.9 },
-              zIndex: 10000
-          });
-          
-          // Launch another burst from the bottom right
-          confetti({
-              particleCount: 75,
-              spread: 60,
-              origin: { x: 0.8, y: 0.9 },
-              zIndex: 10000
-          });
+      // --- NEW: BOURBON GUESSING GAME LOGIC (for all-bottles.html) ---
+    // 1. New Confetti function (Uses canvas-confetti library loaded in HTML)
+          function launchConfetti() {
+              console.log("Confetti effect launched!");
+              // Placeholder for actual confetti code (e.g., using a library like canvas-confetti):
+          confetti({
+              particleCount: 75,
+              spread: 60,
+              origin: { x: 0.2, y: 0.9 },
+              zIndex: 10000
+          });
+          
+          // Launch another burst from the bottom right
+          confetti({
+              particleCount: 75,
+              spread: 60,
+              origin: { x: 0.8, y: 0.9 },
+              zIndex: 10000
+          });
 
-    
-              
-              // If you use a CSS/manual animation, place the logic here.
-          }
-          
-      // 1. Get DOM elements for the new guessing modal
-      const guessModal = document.getElementById('guessModal');
-      const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
-      const submitButton = document.getElementById('submitGuessButton');
-      const dayGuessInput = document.getElementById('dayGuessInput');
-      const resultMessage = document.getElementById('resultMessage');
-      const doors = document.querySelectorAll('.door');
+    
+              
+              // If you use a CSS/manual animation, place the logic here.
+          }
+          
+      // 1. Get DOM elements for the new guessing modal (MOVED INSIDE HERE)
+      const guessModal = document.getElementById('guessModal');
+      const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
+      const submitButton = document.getElementById('submitGuessButton');
+      const dayGuessInput = document.getElementById('dayGuessInput');
+      const resultMessage = document.getElementById('resultMessage');
+      const doors = document.querySelectorAll('.door');
 
-      let currentDoor = null;
+      let currentDoor = null;
 
-      if (guessModal && doors.length > 0) {
-        // 2. Event Listener for Doors
-        doors.forEach(door => {
-            door.addEventListener('click', function(e) {
-                // Prevent the click event from triggering the parent card's click handler
-                e.stopPropagation();
-                
-                // If the door is already revealed, do nothing
-                if (this.classList.contains('revealed')) return;
-                
-                currentDoor = this; // Set the currently clicked door
-                resultMessage.textContent = ''; // Clear previous messages
-                dayGuessInput.value = ''; // Clear previous input
+      if (guessModal && doors.length > 0) {
+        // 2. Event Listener for Doors
+        doors.forEach(door => {
+            door.addEventListener('click', function(e) {
+                // Prevent the click event from triggering the parent card's click handler
+                e.stopPropagation();
                 
-                window.requestAnimationFrame(() => {
-                    guessModal.style.display = 'block'; 
-                    dayGuessInput.focus();
-                });
-            });
-        });
+                // If the door is already revealed, do nothing
+                if (this.classList.contains('revealed')) return;
+                
+                currentDoor = this; // Set the currently clicked door
+                resultMessage.textContent = ''; // Clear previous messages
+                dayGuessInput.value = ''; // Clear previous input
+                
+                window.requestAnimationFrame(() => {
+                    guessModal.style.display = 'block'; 
+                    dayGuessInput.focus();
+                });
+            });
+        });
 
-        // 3. Handle Guess Submission
-        if (submitButton) {
-            submitButton.addEventListener('click', () => {
-                dayGuessInput.blur();
-                if (!currentDoor) return;
+        // 3. Handle Guess Submission
+        if (submitButton) {
+            submitButton.addEventListener('click', () => {
+                dayGuessInput.blur();
+                if (!currentDoor) return;
 
-                const guess = parseInt(dayGuessInput.value);
-                const bottleContainer = currentDoor.closest('.bottle-container');
-                // Retrieve the correct answer from the data attribute
-                const correctAnswer = parseInt(bottleContainer.dataset.correctDay);
+                const guess = parseInt(dayGuessInput.value);
+                const bottleContainer = currentDoor.closest('.bottle-container');
+                // Retrieve the correct answer from the data attribute
+                const correctAnswer = parseInt(bottleContainer.dataset.correctDay);
 
-                if (isNaN(guess) || guess < 1 || guess > 12) {
-                    resultMessage.textContent = 'Please enter a valid number between 1 and 12.';
-                    return;
-                }
+                if (isNaN(guess) || guess < 1 || guess > 12) {
+                    resultMessage.textContent = 'Please enter a valid number between 1 and 12.';
+                    return;
+                }
 
-                if (guess === correctAnswer) {
-                    // Correct Guess: Reveal the bourbon
-                    currentDoor.classList.add('revealed'); // Hide the door
-                    const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
-                    if (numberPlate) {
-                        numberPlate.textContent = correctAnswer;
-                        numberPlate.classList.add('show-number');
-                    }
-                    resultMessage.textContent = `🎉 Correct! This is bottle ${correctAnswer}. The bottle is revealed!`;
-                    // Disable the click handler for this door after revealing
-                    window.requestAnimationFrame(() => {
-                        currentDoor.style.pointerEvents = 'none';
-                        launchConfetti();
-                    });
-                } else {
-                    // Incorrect Guess: Show message, do not reveal
-                    resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
-                                // Keep modal open briefly to show result, then close
-                    setTimeout(() => {
-                        guessModal.style.display = 'none';
-                    }, 3000);
-                }
-            });
-            dayGuessInput.addEventListener('keyup', (e) => {
-                // Check for the Enter key (key code 13 for older browsers, 'Enter' for modern)
-                if (e.key === 'Enter' || e.keyCode === 13) {
-                    e.preventDefault(); // Stop the default action (like form submission)
-                    submitButton.click(); // Programmatically click the submit button
-                }
-            });
-        }
-        // 4. Modal Close Handlers
-        if (guessCloseButton) {
-            guessCloseButton.addEventListener('click', () => {
-                guessModal.style.display = 'none';
-            });
-        }
+                if (guess === correctAnswer) {
+                    // Correct Guess: Reveal the bourbon
+                    currentDoor.classList.add('revealed'); // Hide the door
+                    const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
+                    if (numberPlate) {
+                        numberPlate.textContent = correctAnswer;
+                        numberPlate.classList.add('show-number');
+                    }
+                    resultMessage.textContent = `🎉 Correct! This is bottle ${correctAnswer}. The bottle is revealed!`;
+                    // Disable the click handler for this door after revealing
+                    window.requestAnimationFrame(() => {
+                        currentDoor.style.pointerEvents = 'none';
+                        launchConfetti();
+                    });
+                } else {
+                    // Incorrect Guess: Show message, do not reveal
+                    resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
+                                // Keep modal open briefly to show result, then close
+                    setTimeout(() => {
+                        guessModal.style.display = 'none';
+                    }, 3000);
+                }
+            });
+            dayGuessInput.addEventListener('keyup', (e) => {
+                // Check for the Enter key (key code 13 for older browsers, 'Enter' for modern)
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    e.preventDefault(); // Stop the default action (like form submission)
+                    submitButton.click(); // Programmatically click the submit button
+                }
+            });
+        }
+        // 4. Modal Close Handlers
+        if (guessCloseButton) {
+            guessCloseButton.addEventListener('click', () => {
+                guessModal.style.display = 'none';
+            });
+        }
 
-        // Close the modal if the user clicks anywhere outside of it
-        window.addEventListener('click', (event) => {
-            if (event.target === guessModal) {
-                guessModal.style.display = 'none';
-            }
-        });
-      }
-      
-      // --- END NEW: BOURBON GUESSING GAME LOGIC ---
-    } // <--- FIX 2: This brace correctly closes if (window.location.pathname.endsWith('all-bottles.html'))
+        // Close the modal if the user clicks anywhere outside of it
+        window.addEventListener('click', (event) => {
+            if (event.target === guessModal) {
+                guessModal.style.display = 'none';
+            }
+        });
+      }
+      
+      // --- END NEW: BOURBON GUESSING GAME LOGIC ---
+    } // CLOSES if (window.location.pathname.endsWith('all-bottles.html'))
 
-  // --- END CARD RANDOMIZATION & BOURBON MATCHING LOGIC (CONDITIONAL) ---
-  
-  if (resetBtn) {
-    resetBtn.addEventListener('click', resetProgress);
-  }
- if (resetPageBtn) {
-    resetPageBtn.addEventListener('click', () => {
-        window.location.reload();
-    });
-  }
- 
-  
-  
-  
-  // --- NAVIGATION / MENU LOGIC ---
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const menuClose = document.getElementById('menuClose');
-  const menuLinks = document.querySelectorAll('.mobile-menu a');
+  // --- END CARD RANDOMIZATION & BOURBON MATCHING LOGIC (CONDITIONAL) ---
+  
+  if (resetBtn) {
+    resetBtn.addEventListener('click', resetProgress);
+  }
+ if (resetPageBtn) {
+    resetPageBtn.addEventListener('click', () => {
+        window.location.reload();
+    });
+  }
+ 
+  
+  
+  
+  // --- NAVIGATION / MENU LOGIC ---
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuClose = document.getElementById('menuClose');
+  const menuLinks = document.querySelectorAll('.mobile-menu a');
 
   if (hamburgerBtn && mobileMenu && menuClose) {
     hamburgerBtn.addEventListener('click', () => {

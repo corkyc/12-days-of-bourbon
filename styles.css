@@ -598,10 +598,9 @@ header h1 {
     width: 100%;
     height: 100%;
     /* New: Use Flexbox to center the content within the fixed container */
-    display: none !important;
+    display: flex;
     align-items: center; /* Vertically centers the content */
     justify-content: center; /* Horizontally centers the content */
-    z-index: 9999;
 }
 
 #guessModal .modal-content {
