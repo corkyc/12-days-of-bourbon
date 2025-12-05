@@ -588,17 +588,18 @@ header h1 {
     background-color: #8A2525; /* Darker Red on hover */
 }
 #guessModal {
-    /* Ensure the base modal is visible when JS sets display: block */
-	background-color: transparent; 
+    /* FIX: Set display to none by default. JS will set to flex when a door is clicked. */
     display: none; 
+    
     position: fixed; /* Crucial for keeping it in viewport regardless of scroll */
     z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    /* New: Use Flexbox to center the content within the fixed container */
-    display: flex;
+    background-color: rgba(0,0,0,0.7); /* Dark overlay */
+
+    /* These properties will take effect when JS sets style.display = 'flex' */
     align-items: center; /* Vertically centers the content */
     justify-content: center; /* Horizontally centers the content */
 }
