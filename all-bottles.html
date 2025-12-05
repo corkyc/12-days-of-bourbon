@@ -41,10 +41,17 @@
   <main class="grid" id="grid">
     <article class="card revealed" data-clickable="true">
       <div class="content">
-        <img src="images/whiskey1.jpg" alt="Placeholder Bourbon 1">
-        <h3>#1: Buffalo Trace</h3>
-        <p>Classic caramel and vanilla notes with an oak finish.</p>
-        <a class="btn" href="#">View Details</a>
+		<div class="bottle-container" data-correct-day="7">
+		        <div class="bourbon-content">
+		            <img src="images/whiskey1.jpg" alt="Placeholder Bourbon 1">
+		            <h3>#1: Buffalo Trace</h3>
+		            <p>Classic caramel and vanilla notes with an oak finish.</p>
+		            [View Details (#)]
+		        </div>
+		        <div class="door">
+		            <span class="day-text">Click to Guess Day!</span>
+		        </div>
+		    </div>
       </div>
     </article>
     <article class="card revealed" data-clickable="true">
@@ -108,5 +115,15 @@
   <button id="backToTopBtn" class="back-to-top-btn" aria-label="Back to Top" title="Back to Top">&#x25B2;</button>
 
   <script src="scripts.js"></script>
+<div id="guessModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Guess the Day Number</h2>
+        <p>Enter the day number (1-12) you think this bottle is:</p>
+        <input type="number" id="dayGuessInput" min="1" max="12" placeholder="e.g., 5">
+        <button id="submitGuessButton">Submit Guess</button>
+        <p id="resultMessage"></p>
+    </div>
+</div>
 </body>
 </html>
