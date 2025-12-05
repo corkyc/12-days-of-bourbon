@@ -1,264 +1,262 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>All Bottles | 12 Days of Bourbon</title>
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>All Bottles | 12 Days of Bourbon</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Snow Container (for brief falling snow effect) -->
-  <div id="snow-container" aria-hidden="true"></div>
+    <div id="snow-container" aria-hidden="true"></div>
 
-  <nav id="mobile-menu" class="mobile-menu" aria-hidden="true">
-    <button id="menuClose" class="menu-close" aria-label="Close Menu">&times;</button>
-    <div class="menu-content">
-      <h2>Menu</h2>
-      <ul>
-        <!-- Home link (no check) -->
-        <li><a href="index.html">Home (Scratch-Off)</a></li>
-        <li><a href="all-bottles.html">Bourbon Matching</a></li>
-        <!-- All Bottles with Numbers link - Custom confirmation text -->
-        <li><a href="all-bottles-numbers.html" data-requires-confirm="true" data-spoiler-key="majorSpoiler" 
-		data-confirm-title="Complete Reveal" data-confirm-message="<strong>Major spoiler:</strong> This page shows the names of all 12 bottles AND their associated numbers.<br><br> Continue?">Complete Reveal</a></li>
-      </ul>
-    </div>
-  </nav>
+    <nav id="mobile-menu" class="mobile-menu" aria-hidden="true">
+        <button id="menuClose" class="menu-close" aria-label="Close Menu">&times;</button>
+        <div class="menu-content">
+            <h2>Menu</h2>
+            <ul>
+                <li><a href="index.html">Home (Scratch-Off)</a></li>
+                <li><a href="all-bottles.html">Bourbon Matching</a></li>
+                <li><a href="all-bottles-numbers.html" data-requires-confirm="true" data-spoiler-key="majorSpoiler" 
+                data-confirm-title="Complete Reveal" data-confirm-message="<strong>Major spoiler:</strong> This page shows the names of all 12 bottles AND their associated numbers.<br><br> Continue?">Complete Reveal</a></li>
+            </ul>
+        </div>
+    </nav>
 
-  <header>
-    <button id="hamburgerBtn" class="hamburger" aria-label="Open Menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    <header>
+        <button id="hamburgerBtn" class="hamburger" aria-label="Open Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
 
-    <div class="header-content">
-      <h1>Bourbon Matching</h1>
-      <p class="tagline">All 12 bottles in the set are randomized.<br><br>Click on a bottle to reveal it's assocaited number, cheers!</p>
-    </div>
-  </header>
+        <div class="header-content">
+            <h1>Bourbon Matching</h1>
+            <p class="tagline">All 12 bottles in the set are randomized.<br><br>Click on a bottle to reveal it's assocaited number, cheers!</p>
+        </div>
+    </header>
 
 <main class="grid" id="grid">
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-		<div class="bottle-container" data-correct-day="1">
-		        <div class="bourbon-content">
-			<div class="number-plate hidden-number-plate"></div>
-		            <img src="images/whiskey1.jpg" alt="Placeholder Bourbon 1">
-		            <h3>#1: Buffalo Trace</h3>
-		            <p>Classic caramel and vanilla notes with an oak finish.</p>
-		            <a class="btn" href="#">View Details</a>
-		        </div>
-		        <div class="door">
-		            <img src="images/whiskey1.jpg" alt="Placeholder Bourbon 1">
-		        </div>
-		    </div>
-      </div>
-    </article>
-    <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="3">
-            <div class="bourbon-content">
-              <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+2" alt="Placeholder Bourbon 2">
-              <h3>Four Roses Large Batch</h3>
-              <p>Spicy, fruity, smooth.</p>
-              <a class="btn" href="#">View Details</a>
-            </div>
-            <div class="door">
-              <span class="day-text">Click to Guess Day!</span>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="1" data-bourbon-name="Buffalo Trace">
+                <div class="bourbon-content">
+                    <div class="number-plate hidden-number-plate"></div>
+                    <img src="images/whiskey1.jpg" alt="Placeholder Bourbon 1">
+                    <h3 class="bourbon-title">#1: Buffalo Trace</h3>
+                    <p>Classic caramel and vanilla notes with an oak finish.</p>
+                    <a class="btn" href="#">View Details</a>
+                </div>
+                <div class="door">
+                    <img src="images/whiskey1.jpg" alt="Placeholder Bourbon 1">
+                </div>
             </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="1">
-            <div class="bourbon-content">
-              <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+3" alt="Placeholder Bourbon 3">
-              <h3>Woodford Reserve</h3>
-              <p>Full-bodied with prominent dried fruit and spice.</p>
-              <a class="btn" href="#">View Details</a>
-            </div>
-            <div class="door">
-              <span class="day-text">Click to Guess Day!</span>
-            </div>
-        </div>
-      </div>
-    </article>
-    <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="9">
-            <div class="bourbon-content">
-              <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+4" alt="Placeholder Bourbon 4">
-              <h3>Maker's Mark</h3>
-              <p>Wheated, gentle finish, hints of honey and wheat.</p>
-              <a class="btn" href="#">View Details</a>
-            </div>
-            <div class="door">
-              <span class="day-text">Click to Guess Day!</span>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="3" data-bourbon-name="Four Roses Large Batch">
+                <div class="bourbon-content">
+                    <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+2" alt="Placeholder Bourbon 2">
+                    <h3 class="bourbon-title">Four Roses Large Batch</h3>
+                    <p>Spicy, fruity, smooth.</p>
+                    <a class="btn" href="#">View Details</a>
+                </div>
+                <div class="door">
+                    <span class="day-text">Click to Guess Day!</span>
+                </div>
             </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="5">
-          <div class="bourbon-content">
-            <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+5" alt="">
-            <h3>Wild Turkey 101</h3>
-            <p>Bold & spicy, high proof flavor.</p>
-            <a class="btn" href="#">View Details</a>
-          </div>
-          <div class="door">
-            <span class="day-text">Click to Guess Day!</span>
-          </div>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="1" data-bourbon-name="Woodford Reserve">
+                <div class="bourbon-content">
+                    <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+3" alt="Placeholder Bourbon 3">
+                    <h3 class="bourbon-title">Woodford Reserve</h3>
+                    <p>Full-bodied with prominent dried fruit and spice.</p>
+                    <a class="btn" href="#">View Details</a>
+                </div>
+                <div class="door">
+                    <span class="day-text">Click to Guess Day!</span>
+                </div>
+            </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="10">
-          <div class="bourbon-content">
-            <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+6" alt="">
-            <h3>Elijah Craig</h3>
-            <p>Toasted oak and warm spice finish.</p>
-            <a class="btn" href="#">View Details</a>
-          </div>
-          <div class="door">
-            <span class="day-text">Click to Guess Day!</span>
-          </div>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="9" data-bourbon-name="Maker's Mark">
+                <div class="bourbon-content">
+                    <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+4" alt="Placeholder Bourbon 4">
+                    <h3 class="bourbon-title">Maker's Mark</h3>
+                    <p>Wheated, gentle finish, hints of honey and wheat.</p>
+                    <a class="btn" href="#">View Details</a>
+                </div>
+                <div class="door">
+                    <span class="day-text">Click to Guess Day!</span>
+                </div>
+            </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="8">
-          <div class="bourbon-content">
-            <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+7" alt="">
-            <h3>Knob Creek</h3>
-            <p>Aged nine years, oak and strong vanilla.</p>
-            <a class="btn" href="#">View Details</a>
-          </div>
-          <div class="door">
-            <span class="day-text">Click to Guess Day!</span>
-          </div>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="5" data-bourbon-name="Wild Turkey 101">
+              <div class="bourbon-content">
+                <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+5" alt="">
+                <h3 class="bourbon-title">Wild Turkey 101</h3>
+                <p>Bold & spicy, high proof flavor.</p>
+                <a class="btn" href="#">View Details</a>
+              </div>
+              <div class="door">
+                <span class="day-text">Click to Guess Day!</span>
+              </div>
+            </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="4">
-          <div class="bourbon-content">
-            <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+8" alt="">
-            <h3>Angel’s Envy</h3>
-            <p>Port-finished.</p>
-            <a class="btn" href="#">View Details</a>
-          </div>
-          <div class="door">
-            <span class="day-text">Click to Guess Day!</span>
-          </div>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="10" data-bourbon-name="Elijah Craig">
+              <div class="bourbon-content">
+                <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+6" alt="">
+                <h3 class="bourbon-title">Elijah Craig</h3>
+                <p>Toasted oak and warm spice finish.</p>
+                <a class="btn" href="#">View Details</a>
+              </div>
+              <div class="door">
+                <span class="day-text">Click to Guess Day!</span>
+              </div>
+            </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="11">
-          <div class="bourbon-content">
-            <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+9" alt="">
-            <h3>Bulleit</h3>
-            <p>High rye content, distinct spicy kick.</p>
-            <a class="btn" href="#">View Details</a>
-          </div>
-          <div class="door">
-            <span class="day-text">Click to Guess Day!</span>
-          </div>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="8" data-bourbon-name="Knob Creek">
+              <div class="bourbon-content">
+                <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+7" alt="">
+                <h3 class="bourbon-title">Knob Creek</h3>
+                <p>Aged nine years, oak and strong vanilla.</p>
+                <a class="btn" href="#">View Details</a>
+              </div>
+              <div class="door">
+                <span class="day-text">Click to Guess Day!</span>
+              </div>
+            </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="6">
-          <div class="bourbon-content">
-            <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+10" alt="">
-            <h3>Basil Hayden</h3>
-            <p>Light-bodied and gentle, easy sipper.</p>
-            <a class="btn" href="#">View Details</a>
-          </div>
-          <div class="door">
-            <span class="day-text">Click to Guess Day!</span>
-          </div>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="4" data-bourbon-name="Angel’s Envy">
+              <div class="bourbon-content">
+                <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+8" alt="">
+                <h3 class="bourbon-title">Angel’s Envy</h3>
+                <p>Port-finished.</p>
+                <a class="btn" href="#">View Details</a>
+              </div>
+              <div class="door">
+                <span class="day-text">Click to Guess Day!</span>
+              </div>
+            </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="12">
-          <div class="bourbon-content">
-            <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+11" alt="">
-            <h3>Old Forester</h3>
-            <p>Classic high-rye profile, balanced.</p>
-            <a class="btn" href="#">View Details</a>
-          </div>
-          <div class="door">
-            <span class="day-text">Click to Guess Day!</span>
-          </div>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="11" data-bourbon-name="Bulleit">
+              <div class="bourbon-content">
+                <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+9" alt="">
+                <h3 class="bourbon-title">Bulleit</h3>
+                <p>High rye content, distinct spicy kick.</p>
+                <a class="btn" href="#">View Details</a>
+              </div>
+              <div class="door">
+                <span class="day-text">Click to Guess Day!</span>
+              </div>
+            </div>
         </div>
-      </div>
     </article>
     <article class="card revealed" data-clickable="true">
-      <div class="content">
-        <div class="bottle-container" data-correct-day="2">
-          <div class="bourbon-content">
-            <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+12" alt="">
-            <h3>Blanton's</h3>
-            <p>Rich and complex single barrel finish.</p>
-            <a class="btn" href="#">View Details</a>
-          </div>
-          <div class="door">
-            <span class="day-text">Click to Guess Day!</span>
-          </div>
+        <div class="content">
+            <div class="bottle-container" data-correct-day="6" data-bourbon-name="Basil Hayden">
+              <div class="bourbon-content">
+                <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+10" alt="">
+                <h3 class="bourbon-title">Basil Hayden</h3>
+                <p>Light-bodied and gentle, easy sipper.</p>
+                <a class="btn" href="#">View Details</a>
+              </div>
+              <div class="door">
+                <span class="day-text">Click to Guess Day!</span>
+              </div>
+            </div>
         </div>
-      </div>
     </article>
-  </main>
+    <article class="card revealed" data-clickable="true">
+        <div class="content">
+            <div class="bottle-container" data-correct-day="12" data-bourbon-name="Old Forester">
+              <div class="bourbon-content">
+                <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+11" alt="">
+                <h3 class="bourbon-title">Old Forester</h3>
+                <p>Classic high-rye profile, balanced.</p>
+                <a class="btn" href="#">View Details</a>
+              </div>
+              <div class="door">
+                <span class="day-text">Click to Guess Day!</span>
+              </div>
+            </div>
+        </div>
+    </article>
+    <article class="card revealed" data-clickable="true">
+        <div class="content">
+            <div class="bottle-container" data-correct-day="2" data-bourbon-name="Blanton's">
+              <div class="bourbon-content">
+                <img src="https://placehold.co/400x400/5a3624/f0c674?text=BOURBON+12" alt="">
+                <h3 class="bourbon-title">Blanton's</h3>
+                <p>Rich and complex single barrel finish.</p>
+                <a class="btn" href="#">View Details</a>
+              </div>
+              <div class="door">
+                <span class="day-text">Click to Guess Day!</span>
+              </div>
+            </div>
+        </div>
+    </article>
+</main>
 
-  <div class="bottom-controls">
-    <button id="resetPageBtn" class="reset-btn">Reset Bottle Order</button>
-  </div>
+    <div class="bottom-controls">
+        <button id="resetPageBtn" class="reset-btn">Reset Bottle Order</button>
+    </div>
 
-  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="modal-inner" role="document">
-      <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
-      <div id="modal-body"></div>
+    <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal-inner" role="document">
+            <button id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+            <div id="modal-body"></div>
+        </div>
     </div>
-  </div>
 
-  <!-- CONFIRMATION MODAL -->
-  <div id="confirmModal" class="modal confirmation" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="modal-inner" role="document">
-      <h3 id="confirmTitle" class="confirm-title">Confirm Navigation</h3>
-      <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page?</p>
-      <div class="button-group">
-        <button id="confirmYes" class="btn confirm-yes">Yes, Go</button>
-        <button id="confirmNo" class="btn confirm-no">No, Stay Here</button>
-      </div>
+    <div id="confirmModal" class="modal confirmation" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal-inner" role="document">
+            <h3 id="confirmTitle" class="confirm-title">Confirm Navigation</h3>
+            <p id="confirmMessage" class="confirm-message">Are you sure you want to leave this page?</p>
+            <div class="button-group">
+                <button id="confirmYes" class="btn confirm-yes">Yes, Go</button>
+                <button id="confirmNo" class="btn confirm-no">No, Stay Here</button>
+            </div>
+        </div>
     </div>
-  </div>
-  
-  <!-- Back to Top Button -->
-  <button id="backToTopBtn" class="back-to-top-btn" aria-label="Back to Top" title="Back to Top">&#x25B2;</button>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script> 
-  <script src="scripts.js"></script>
-<div id="guessModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <h2>Guess the Day Number</h2>
-        <p>Enter the day number (1-12) you think this bottle is:</p>
-        <input type="number" id="dayGuessInput" min="1" max="12" placeholder="e.g., 5">
-        <button id="submitGuessButton">Submit Guess</button>
-        <p id="resultMessage"></p>
+    
+    <button id="backToTopBtn" class="back-to-top-btn" aria-label="Back to Top" title="Back to Top">&#x25B2;</button>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script> 
+    <script src="scripts.js"></script>
+
+    <div id="guessModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Guess the Day Number</h2>
+            
+            <p>You are guessing for: <strong id="modalBourbonName">...</strong></p>
+            
+            <p>Enter the day number (1-12) you think this bottle is:</p>
+            <input type="number" id="dayGuessInput" min="1" max="12" placeholder="e.g., 5">
+            <button id="submitGuessButton">Submit Guess</button>
+            <p id="resultMessage"></p>
+        </div>
     </div>
-</div>
 </body>
 </html>
