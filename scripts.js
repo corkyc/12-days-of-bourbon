@@ -153,7 +153,17 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentDoor = null;
 
         if (guessModal && doors.length > 0) {
-            // 2. Event Listener for Doors
+            function lockGuessModal() {
+                dayGuessInput.disabled = true;
+                submitButton.disabled = true;
+                submitButton.textContent = 'Answer Submitted';
+            }
+            function unlockGuessModal() {
+                dayGuessInput.disabled = false;
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Guess';
+            }
+			// 2. Event Listener for Doors
             doors.forEach(door => {
                 door.addEventListener('click', function(e) {
                     // Prevent the click event from triggering the parent card's click handler
@@ -189,7 +199,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     currentDoor = this; // Set the currently clicked door
                     resultMessage.textContent = ''; // Clear previous messages
                     dayGuessInput.value = ''; // Clear previous input
-                    
+	
+						unlockGuessModal(); 
+						
+						currentDoor = this; // Set the currently clicked door
+						resultMessage.textContent = ''; // Clear previous messages
+						dayGuessInput.value = ''; // Clear previous input                    
                     window.requestAnimationFrame(() => {
                         guessModal.style.display = 'flex'; 
                         // document.body.style.overflowY = 'hidden';
