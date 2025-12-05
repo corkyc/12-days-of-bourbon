@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
       /**
        * Shuffles the order of the card elements within their parent container.
        */
+
       function shuffleCards() {
         if (cards.length === 0) return;
         const container = cards[0].parentNode;
@@ -113,7 +114,19 @@ document.addEventListener("DOMContentLoaded", () => {
       shuffleCards(); 
 
       // --- NEW: BOURBON GUESSING GAME LOGIC (for all-bottles.html) ---
-
+	// 1. New Confetti function (You would replace this with your actual confetti library call or CSS/JS animation logic)
+		  function launchConfetti() {
+			  console.log("Confetti effect launched!");
+			  // Placeholder for actual confetti code (e.g., using a library like canvas-confetti):
+			   confetti({
+				   particleCount: 100,
+				   spread: 70,
+				   origin: { y: 0.6 }
+			   });
+			  
+			  // If you use a CSS/manual animation, place the logic here.
+		  }
+		  
       // 1. Get DOM elements for the new guessing modal
       const guessModal = document.getElementById('guessModal');
       const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
@@ -160,18 +173,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (guess === correctAnswer) {
                     // Correct Guess: Reveal the bourbon
                     currentDoor.classList.add('revealed'); // Hide the door
-                    resultMessage.textContent = `🎉 Correct! This is Day ${correctAnswer}. The bottle is revealed!`;
+                    resultMessage.textContent = `🎉 Correct! This is bottle ${correctAnswer}. The bottle is revealed!`;
                     // Disable the click handler for this door after revealing
                     currentDoor.style.pointerEvents = 'none';
+					launchConfetti();
                 } else {
                     // Incorrect Guess: Show message, do not reveal
-                    resultMessage.textContent = `❌ Incorrect. That's not the right number. Try another door!`;
-                }
+                    resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
+                                // Keep modal open briefly to show result, then close
+					setTimeout(() => {
+						guessModal.style.display = 'none';
+					}, 3000);
+				}
 
-                // Keep modal open briefly to show result, then close
-                setTimeout(() => {
-                    guessModal.style.display = 'none';
-                }, 1500);
+
             });
         }
         
