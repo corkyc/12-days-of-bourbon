@@ -227,13 +227,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             currentDoor.style.pointerEvents = 'none';
                             launchConfetti();
                         });
+						closeModalAndRestoreScroll();
                     } else {
                         // Incorrect Guess: Show message, do not reveal
                         resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
-                        // Keep modal open briefly to show result, then close
-                        setTimeout(() => {
-                            guessModal.style.display = 'none';
-                        }, 3000);
                     }
                 });
                 dayGuessInput.addEventListener('keyup', (e) => {
