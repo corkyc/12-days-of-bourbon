@@ -230,7 +230,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					lockGuessModal();
 
                     if (guess === correctAnswer) {
-                        // Correct Guess: Reveal the bourbon
+						resultMessage.innerHTML = `
+						<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">
+							🎉 YES! CORRECT! 🎉
+						</div>
+						This is bottle **Day ${correctAnswer}**!
+						`;
+							// Correct Guess: Reveal the bourbon
                         currentDoor.classList.add('revealed'); // Hide the door
                         const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
                         if (numberPlate) {
@@ -243,7 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             currentDoor.style.pointerEvents = 'none';
                             launchConfetti();
                         });
-						closeModalAndRestoreScroll();
+						setTimeout(() => {
+							closeModalAndRestoreScroll();
+							}, 2000);
                     } else {
                         // Incorrect Guess: Show message, do not reveal
                         resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
