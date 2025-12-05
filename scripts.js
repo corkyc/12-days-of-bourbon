@@ -127,7 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (guessModal && doors.length > 0) {
         // 2. Event Listener for Doors
         doors.forEach(door => {
-            door.addEventListener('click', function() {
+            door.addEventListener('click', function(e) {
+				// Prevent the click event from triggering the parent card's click handler
+                e.stopPropagation();
+				
                 // If the door is already revealed, do nothing
                 if (this.classList.contains('revealed')) return;
                 
