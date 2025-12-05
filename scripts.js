@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		  confetti({
               particleCount: 75,
               spread: 60,
-              origin: { x: 0.2, y: 0.9 }
+              origin: { x: 0.2, y: 0.9 },
 			  zIndex: 10000
           });
           
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
           confetti({
               particleCount: 75,
               spread: 60,
-              origin: { x: 0.8, y: 0.9 }
+              origin: { x: 0.8, y: 0.9 },
 			  zIndex: 10000
           });
 
@@ -201,18 +201,15 @@ document.addEventListener("DOMContentLoaded", () => {
 						guessModal.style.display = 'none';
 					}, 3000);
 				}
-				dayGuessInput.addEventListener('keyup', (e) => {
+			});
+            dayGuessInput.addEventListener('keyup', (e) => {
                 // Check for the Enter key (key code 13 for older browsers, 'Enter' for modern)
                 if (e.key === 'Enter' || e.keyCode === 13) {
                     e.preventDefault(); // Stop the default action (like form submission)
                     submitButton.click(); // Programmatically click the submit button
                 }
             });
-
-            });
-			
         }
-        
         // 4. Modal Close Handlers
         if (guessCloseButton) {
             guessCloseButton.addEventListener('click', () => {
