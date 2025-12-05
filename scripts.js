@@ -631,3 +631,78 @@ document.addEventListener("DOMContentLoaded", () => {
 
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) { // Show button after scrolling 300px
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+    }
+    
+    // --- TEMPORARY SNOW GENERATOR ---
+    (function createSnow(num = 75, initialDurationSeconds = 5) {
+        const container = document.getElementById('snow-container');
+        if (!container) return;
+        
+        let activeFlakes = 0;
+        const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
+        const SNOW_CHARS = ['❄', '❅', '❆', '✶', '✷', '✵']; 
+
+        function handleFlakeEnd(event) {
+            if (event.animationName === 'fall-fixed') {
+                event.target.removeEventListener('animationend', handleFlakeEnd);
+                event.target.remove();
+                activeFlakes--;
+                
+                if (flakesGenerated >= totalFlakesToGenerate && activeFlakes <= 0) {
+                    removeContainer();
+                }
+            }
+        }
+
+        function removeContainer() {
+            container.innerHTML = '';
+            container.remove();
+            console.log(`Snowfall effect complete and container removed.`);
+        }
+
+        let generationInterval;
+        let flakesGenerated = 0;
+        const totalFlakesToGenerate = num; 
+        const intervalTime = (initialDurationSeconds * 1000) / totalFlakesToGenerate; 
+
+        function generateFlake() {
+            if (flakesGenerated >= totalFlakesToGenerate) {
+                clearInterval(generationInterval);
+                console.log(`Snow generation stopped. Waiting for ${activeFlakes} flakes to clear.`);
+                if (activeFlakes <= 0) removeContainer();
+                return;
+            }
+
+            const el = document.createElement('div');
+            el.className = 'snowflake';
+            el.textContent = SNOW_CHARS[Math.floor(Math.random() * SNOW_CHARS.length)]; 
+
+            const left = Math.random() * 100;
+            const size = 15 + Math.random() * 10; 
+            const dur = 6 + Math.random() * 6; // Fall duration: 6s to 12s
+            const sway = (Math.random() - 0.5) * 50; 
+
+            el.style.color = SNOW_COLORS[Math.floor(Math.random() * SNOW_COLORS.length)];
+            el.style.left = left + 'vw';
+            el.style.fontSize = size + 'px';
+
+            el.style.animation = `fall-fixed ${dur}s linear 1, sway ${5 + Math.random() * 5}s ease-in-out infinite`;
+            el.style.setProperty('--sway', `${sway}px`);
+
+            el.addEventListener('animationend', handleFlakeEnd);
+
+            container.appendChild(el);
+            activeFlakes++;
+            flakesGenerated++;
+        }
+
+        generationInterval = setInterval(generateFlake, intervalTime);
+        generateFlake(); 
+
+    })(75, 5); 
+});
