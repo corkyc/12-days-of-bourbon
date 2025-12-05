@@ -234,7 +234,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (resetBtn) {
     resetBtn.addEventListener('click', resetProgress);
   }
-
+ if (resetPageBtn) {
+    resetPageBtn.addEventListener('click', () => {
+        window.location.reload();
+    });
+  }
  
   
   
