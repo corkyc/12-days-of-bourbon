@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
               particleCount: 75,
               spread: 60,
               origin: { x: 0.2, y: 0.9 }
+			  zIndex: 10000
           });
           
           // Launch another burst from the bottom right
@@ -129,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
               particleCount: 75,
               spread: 60,
               origin: { x: 0.8, y: 0.9 }
+			  zIndex: 10000
           });
 
 	
@@ -182,6 +184,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (guess === correctAnswer) {
                     // Correct Guess: Reveal the bourbon
                     currentDoor.classList.add('revealed'); // Hide the door
+					const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
+                    if (numberPlate) {
+                        numberPlate.textContent = correctAnswer;
+                        numberPlate.classList.add('show-number');
+                    }
                     resultMessage.textContent = `🎉 Correct! This is bottle ${correctAnswer}. The bottle is revealed!`;
                     // Disable the click handler for this door after revealing
                     currentDoor.style.pointerEvents = 'none';
@@ -194,9 +201,16 @@ document.addEventListener("DOMContentLoaded", () => {
 						guessModal.style.display = 'none';
 					}, 3000);
 				}
-
+				dayGuessInput.addEventListener('keyup', (e) => {
+                // Check for the Enter key (key code 13 for older browsers, 'Enter' for modern)
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    e.preventDefault(); // Stop the default action (like form submission)
+                    submitButton.click(); // Programmatically click the submit button
+                }
+            });
 
             });
+			
         }
         
         // 4. Modal Close Handlers
