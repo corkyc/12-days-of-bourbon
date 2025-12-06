@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalClose = document.getElementById("modalClose");
     const resetBtn = document.getElementById('resetProgressBtn');
     const backToTopBtn = document.getElementById('backToTopBtn'); // NEW
+
+    // NEW: Global variable for Reset Page button
     const resetPageBtn = document.getElementById('resetPageBtn'); 
 
     // Confirmation Modal Elements
@@ -45,22 +47,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
- //   function saveSpoilerConfirmation(key) {
- //       try {
+    function saveSpoilerConfirmation(key) {
+        try {
+            // MODIFIED: This function now does nothing to prevent saving the confirmation.
             // localStorage.setItem(key, 'true'); 
- //       } catch (e) {
- //           console.error("Error saving spoiler confirmation:", e);
- //       }
- //   }
+        } catch (e) {
+            console.error("Error saving spoiler confirmation:", e);
+        }
+    }
 
-//    function checkSpoilerConfirmation(key) {
-//        try {
-//            return false;
+    function checkSpoilerConfirmation(key) {
+        try {
+            // MODIFIED: This function now always returns false to force the modal.
+            return false;
             // return localStorage.getItem(key) === 'true'; 
-//        } catch (e) {
-//            return false;
-//        }
-//    }
+        } catch (e) {
+            return false;
+        }
+    }
 
     function resetProgress() {
         try {
@@ -83,40 +87,35 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check if the current page is 'all-bottles.html'
     if (window.location.pathname.endsWith('all-bottles.html')) {
         
-		  /**
-         * Shuffles the order of the card elements within their parent container 
-         * using a Document Fragment for optimal DOM performance.
+        /**
+         * Shuffles the order of the card elements within their parent container.
          */
+
         function shuffleCards() {
             if (cards.length === 0) return;
             const container = cards[0].parentNode;
 
             if (container) {
                 let cardElements = Array.from(container.children); 
-                
-                // 1. Create a Document Fragment (In-memory container)
-                const fragment = document.createDocumentFragment();
 
-                // 2. Perform Fisher-Yates Shuffle on the Array
+                // 2. Perform Fisher-Yates Shuffle 
                 for (let i = cardElements.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [cardElements[i], cardElements[j]] = [cardElements[j], cardElements[i]];
                 }
 
-                // 3. Append the shuffled elements to the fragment (no browser reflows triggered here)
-                cardElements.forEach(card => fragment.appendChild(card));
+                // 3. Append the shuffled elements back to the container.
+                cardElements.forEach(card => container.appendChild(card));
 
-                // 4. Append the fragment back to the live DOM (only ONE reflow is triggered)
-                container.appendChild(fragment);
-                console.log("Card order shuffled successfully with Document Fragment.");
+                console.log("Card order shuffled successfully for all-bottles.html.");
             }
         }
 
         // --- Run the randomization ---
-        shuffleCards();
+        shuffleCards(); 
 
-        // BOURBON GUESSING GAME LOGIC (for all-bottles.html)
-        // 1. Confetti function (Uses canvas-confetti library loaded in HTML)
+        // --- NEW: BOURBON GUESSING GAME LOGIC (for all-bottles.html) ---
+        // 1. New Confetti function (Uses canvas-confetti library loaded in HTML)
         function launchConfetti() {
             console.log("Confetti effect launched!");
             // Placeholder for actual confetti code (e.g., using a library like canvas-confetti):
@@ -134,6 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 origin: { x: 0.8, y: 0.9 },
                 zIndex: 10000
             });
+
+            
+            
+            // If you use a CSS/manual animation, place the logic here.
         }
         
         // 1. Get DOM elements for the new guessing modal (MOVED INSIDE HERE)
@@ -146,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // ADDED: Element to display the Bourbon name in the modal
         const modalBourbonName = document.getElementById('modalBourbonName');
+
         let currentDoor = null;
 
         if (guessModal && doors.length > 0) {
@@ -163,6 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // 4. Modal Close Handlers
             const closeModalAndRestoreScroll = () => {
                 guessModal.style.display = 'none';
+                // FIX: Restore background scrolling when modal is closed
                 unlockGuessModal();
 				document.body.style.overflowY = ''; 
             };
@@ -212,29 +217,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitButton.addEventListener('click', () => {
                     dayGuessInput.blur();
                     if (!currentDoor) return;
+
                     const guess = parseInt(dayGuessInput.value);
                     const bottleContainer = currentDoor.closest('.bottle-container');
                     // Retrieve the correct answer from the data attribute
                     const correctAnswer = parseInt(bottleContainer.dataset.correctDay);
+
                     if (isNaN(guess) || guess < 1 || guess > 12) {
                         resultMessage.textContent = 'Please enter a valid number between 1 and 12.';
                         return;
                     }
 					lockGuessModal();
+
                     if (guess === correctAnswer) {
-						//resultMessage.innerHTML = `
-						//<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">
-						//	🎉 YES! CORRECT! 🎉
-						//</div>
-						//This is bottle **Day ${correctAnswer}**!
-						//`;
+						resultMessage.innerHTML = `
+						<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">
+							🎉 YES! CORRECT! 🎉
+						</div>
+						This is bottle **Day ${correctAnswer}**!
+						`;
+							// Correct Guess: Reveal the bourbon
                         currentDoor.classList.add('revealed'); // Hide the door
                         const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
                         if (numberPlate) {
                             numberPlate.textContent = correctAnswer;
                             numberPlate.classList.add('show-number');
                         }
-                        resultMessage.textContent = `🎉 Correct! 🎉 This is bottle ${correctAnswer}. Cheers!`;
+                        resultMessage.textContent = `🎉 Correct! This is bottle ${correctAnswer}. The bottle is revealed!`;
                         // Disable the click handler for this door after revealing
                         window.requestAnimationFrame(() => {
                             currentDoor.style.pointerEvents = 'none';
@@ -246,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
 							}, 10000);
                     } else {
                         // Incorrect Guess: Show message, do not reveal
-                        resultMessage.textContent = `❌ Incorrect ❌ That's not the right bottle number. Try another bottle!`;
+                        resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
                     }
                 });
                 dayGuessInput.addEventListener('keyup', (e) => {
@@ -273,6 +282,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // --- END NEW: BOURBON GUESSING GAME LOGIC ---
     } // CLOSES if (window.location.pathname.endsWith('all-bottles.html'))
+
+    // --- END CARD RANDOMIZATION & BOURBON MATCHING LOGIC (CONDITIONAL) ---
     
     if (resetBtn) {
         resetBtn.addEventListener('click', resetProgress);
@@ -282,7 +293,9 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.reload();
         });
     }
-	
+
+    
+    
     // --- NAVIGATION / MENU LOGIC ---
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobile-menu');
