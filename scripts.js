@@ -13,31 +13,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createAndSaveBourbonData() {
 		const bourbonData = {};
-		// Query all cards that have a data-day attribute (i.e., the scratch-off cards)
 		const cards = document.querySelectorAll('.card[data-day]');
 
 		cards.forEach(card => {
 			const day = card.dataset.day;
 			const name = card.querySelector('h3').textContent;
-			// 🔑 Retrieve the Proof directly from the new data attribute
-			const proof = card.dataset.proof || card.dataset.proof || 'N/A'; // Use proof from data-proof if available
+			const proof = card.dataset.proof || 'N/A';
 			const imgSrc = card.querySelector('img').src;
 
-			bourbonData[day] = {
-				name: name,
-				proof: proof,
-				imgSrc: imgSrc
-			};
+			bourbonData[day] = { name, proof, imgSrc };
 		});
 
 		try {
 			localStorage.setItem(BOURBON_DATA_KEY, JSON.stringify(bourbonData));
 		} catch (e) {
-			console.error("Error saving bourbon data to Local Storage", e);
+			console.error("Error saving bourbon data:", e);
 		}
 	}
     
-    // FIX: Re-run the saving function when the script loads on the index page
 	if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
 		createAndSaveBourbonData();
 	}
@@ -66,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.removeItem(STORAGE_KEY);
             localStorage.removeItem('semiSpoiler');
             localStorage.removeItem('majorSpoiler');
-            console.log("Progress cleared. Reloading page.");
             window.location.reload();
         } catch (e) {
             console.error("Error clearing progress:", e);
@@ -144,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
         link.addEventListener('click', (e) => {
             if (link.dataset.requiresConfirm === 'true') {
                 e.preventDefault();
-                // Spoiler confirmation logic simplified (always opens modal due to checkSpoilerConfirmation always returning false in original code)
                 confirmTitle.textContent = link.dataset.confirmTitle || "Confirm Navigation";
                 confirmMessage.innerHTML = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
                 confirmedLinkHref = link.href;
@@ -184,7 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     card.classList.add("revealed");
                     saveProgress(card.dataset.day);
                     
-                    // Automatically open modal immediately on reveal
                     const contentNode = card.querySelector(".content");
                     if (contentNode) openModal(contentNode);
                 }
@@ -201,7 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const ctx = canvas.getContext("2d");
                 const day = card.dataset.day;
 
-                // Set card background image
                 const imgSrc = card.dataset.img;
                 if (imgSrc) card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
 
@@ -222,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card._scratch = {
                     canvas, ctx, cssW, cssH,
                     brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)),
-                    revealed: !!scratchedDays[day] // Check persistence here
+                    revealed: !!scratchedDays[day]
                 };
 
                 if (card._scratch.revealed) {
@@ -250,14 +239,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 s.ctx.fill();
             };
 
-            const onDown = (x, y) => {
+            const onDown = (x, y, isTouch) => { // Added isTouch parameter
                 if (s.revealed) return;
                 drawing = true;
                 last = { x, y };
+                if (isTouch) {
+                    // Prevent page scroll/zoom on touch start
+                    document.body.style.touchAction = 'none';
+                }
             };
 
-            const onMove = (x, y) => {
+            const onMove = (x, y, isTouch) => { // Added isTouch parameter
                 if (!drawing || s.revealed) return;
+                
                 const dist = Math.hypot(x - last.x, y - last.y);
                 const steps = Math.ceil(dist / (s.brush * 0.25));
                 for (let i = 0; i < steps; i++) {
@@ -274,21 +268,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (drawing) {
                     drawing = false;
                     last = null;
+                    document.body.style.touchAction = ''; // Restore default touch action
                     checkRevealed(card);
                 }
             };
 
             canvas.addEventListener("pointerdown", e => {
-                if (e.pointerType === "mouse") e.preventDefault();
+                // FIX 1: Prevent default action for touch/pen/mouse on pointerdown
+                e.preventDefault(); 
+                const isTouch = e.pointerType === "touch" || e.pointerType === "pen";
                 const p = localPos(canvas, e.clientX, e.clientY);
-                onDown(p.x, p.y);
+                onDown(p.x, p.y, isTouch);
             });
 
             canvas.addEventListener("pointermove", e => {
-                if (drawing && e.cancelable && (e.pointerType === "mouse" || e.pointerType === "touch")) {
-                    e.preventDefault();
-                    const p = localPos(canvas, e.clientX, e.clientY);
-                    onMove(p.x, p.y);
+                const isTouch = e.pointerType === "touch" || e.pointerType === "pen";
+                if (drawing && e.cancelable) {
+                    // FIX 2: Ensure preventDefault is called on move for smooth scratching
+                    if (isTouch || e.pointerType === "mouse") {
+                        e.preventDefault();
+                        const p = localPos(canvas, e.clientX, e.clientY);
+                        onMove(p.x, p.y, isTouch);
+                    }
                 }
             });
 
@@ -301,11 +302,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const scratchState = initCanvas(card);
             setupScratchLogic(card, scratchState);
             
-            // Handle clicks on revealed cards (or any card not using scratch logic)
             card.addEventListener("click", (e) => {
                 if (e.target.closest('a') !== null) return;
                 
-                // Only open the modal if the card is revealed
                 if (card.classList.contains("revealed")) {
                     const contentNode = card.querySelector(".content");
                     if (contentNode) openModal(contentNode);
@@ -354,16 +353,13 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Failed to load full bourbon data.");
         }
 
-        // --- Confetti function (Assumes canvas-confetti library is loaded) ---
         const launchConfetti = () => {
-            console.log("Confetti effect launched!");
             const bursts = [{x: 0.2, y: 0.9}, {x: 0.8, y: 0.9}];
             bursts.forEach(origin => {
                 confetti({ particleCount: 75, spread: 60, origin, zIndex: 10000 });
             });
         };
         
-        // --- Modal Elements and Helpers ---
         const guessModal = document.getElementById('guessModal');
         const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
         const submitButton = document.getElementById('submitGuessButton');
@@ -392,7 +388,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.style.overflowY = ''; 
         };
         
-        // --- Door Click Handler (Fixed for synchronous modal opening) ---
         doors.forEach(door => {
             door.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -407,7 +402,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 let currentNameElement = document.getElementById('modalBourbonName');
                 
-                // Ensure name is a link (one-time replacement)
                 if (currentNameElement && currentNameElement.tagName !== 'A') {
                     const newLink = document.createElement('a');
                     Object.assign(newLink, {
@@ -424,7 +418,6 @@ document.addEventListener("DOMContentLoaded", () => {
                      currentNameElement.href = bourbonLinkHref;
                 }
                 
-                // Update proof and image details
                 const modalBourbonProof = document.getElementById('modalBourbonProof');
                 if (modalBourbonProof) modalBourbonProof.textContent = ` (Proof: ${proof})`; 
                 if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
@@ -435,7 +428,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     modalBourbonImage.style.display = 'block'; 
                 }
                 
-                // --- MODAL OPEN (FIX: Synchronous display) ---
                 unlockGuessModal(); 
                 currentDoor = this; 
                 resultMessage.textContent = '';
@@ -445,7 +437,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // --- Guess Submission Handler ---
         if (submitButton) {
             submitButton.addEventListener('click', () => {
                 dayGuessInput.blur();
@@ -496,7 +487,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (event.target === guessModal) closeModalAndRestoreScroll();
         });
         
-    } // End all-bottles.html logic
+    } 
 
     // --- BACK TO TOP LOGIC ---
     if (backToTopBtn) {
@@ -526,7 +517,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (flakesGenerated >= totalFlakesToGenerate && activeFlakes <= 0) {
                     container.innerHTML = '';
                     container.remove();
-                    console.log(`Snowfall effect complete and container removed.`);
                 }
             }
         };
@@ -561,6 +551,5 @@ document.addEventListener("DOMContentLoaded", () => {
         generateFlake();
     })(75, 5);
 
-    // Run once at start
     loadProgress();
 });
