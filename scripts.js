@@ -122,7 +122,15 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Check if the current page is 'all-bottles.html'
     if (window.location.pathname.endsWith('all-bottles.html')) {
-        
+		const BOURBON_DATA_KEY = 'allBourbonData';
+		let fullBourbonList = {};
+		try {
+			const storedData = localStorage.getItem(BOURBON_DATA_KEY);
+			// Load the full list saved from index.html
+			fullBourbonList = storedData ? JSON.parse(storedData) : {}; 
+		} catch(e) {
+			console.error("Failed to load full bourbon data.");
+		}      
         function shuffleCards() {
             if (cards.length === 0) return;
             const container = cards[0].parentNode;
@@ -278,11 +286,14 @@ document.addEventListener("DOMContentLoaded", () => {
 					lockGuessModal();
 
                     if (guess === correctAnswer) {
+						// 🔑 Look up the proof value using the correct day number (key)
+						const bourbonDetails = fullBourbonList[correctAnswer] || {};
+						const proofValue = bourbonDetails.proof || 'N/A';
 						resultMessage.innerHTML = `
 						<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">
 							🎉 YES! CORRECT! 🎉
 						</div>
-						This is bottle **Day ${correctAnswer}**!
+						This is bottle **Day ${correctAnswer}**! (Proof: **${proofValue}**)
 						`;
 							// Correct Guess: Reveal the bourbon
                         currentDoor.classList.add('revealed'); // Hide the door
@@ -291,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             numberPlate.textContent = correctAnswer;
                             numberPlate.classList.add('show-number');
                         }
-                        resultMessage.textContent = `🎉 Correct! 🎉 This is bottle ${correctAnswer}.`;
+                        resultMessage.textContent = `🎉 Correct! 🎉 This is bottle ${correctAnswer}. (Proof: **${proofValue}**)`;
                         // Disable the click handler for this door after revealing
                         window.requestAnimationFrame(() => {
                             currentDoor.style.pointerEvents = 'none';
