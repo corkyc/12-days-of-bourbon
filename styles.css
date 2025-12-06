@@ -638,3 +638,21 @@ header h1 {
     margin-bottom: 15px;
     font-size: 1.1rem;
 }
+/* --- New Bourbon Thumbnail Styling (for #guessModal) --- */
+.bourbon-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 2px solid #B83232;
+    
+    /* Centering: Treat the image as a block element */
+    display: block !important; 
+    margin: 0 auto 10px auto; /* Centers the block element and sets margin */
+}
+
+/* Ensure the image is initially hidden, as handled in JS */
+.bourbon-thumbnail {
+    display: none;
+}
