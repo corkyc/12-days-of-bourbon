@@ -337,7 +337,7 @@ header h1 {
 .card .scratch {
     position: absolute;
     inset: 0;
-    z-index: 5;
+    z-index: 10; /* INCREASED Z-INDEX to ensure it covers the number plate and content */
     display: block;
     background: #5a3624; /* Door color (Bourbon Brown) */
     box-shadow: inset 0 0 10px rgba(0,0,0,0.5); /* Inner shadow for depth */
@@ -402,6 +402,7 @@ header h1 {
 .card .content img {
   width: 100%;
   height: 100%;
+  /* FIX: Ensure the image fully covers the card area */
   object-fit: cover;
   border-radius: 0; 
   margin: 0;
@@ -499,7 +500,7 @@ header h1 {
   object-fit: contain;
   margin: 0 auto 16px;
   border-radius: 8px;
-  display: block;
+  display: block; /* Keeping display: block here for proper centering/sizing in modal */
 }
 #modal-body .content h3,
 #modal-body .content p,
