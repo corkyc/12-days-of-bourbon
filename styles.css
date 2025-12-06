@@ -579,7 +579,24 @@ header h1 {
     font-weight: bold;
     text-align: center;
     border: none;
-    padding: 15px; /* Added padding to prevent text from hitting edges */
+    padding: 15px; /* Added padding to prevent content from hitting edges */
+}
+
+/* New style for the image inside the door */
+.door-icon {
+    width: 60%; /* Adjust size as needed */
+    height: 60%;
+    max-width: 100px; /* Prevent it from getting too large on big screens */
+    max-height: 100px;
+    object-fit: contain;
+    /* Optional: a subtle white/gold border to make it pop */
+    border: 3px solid #f0c674; 
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    /* Make the image not shrink or grow */
+    flex-shrink: 0;
+    flex-grow: 0;
+    opacity: 0.9;
 }
 
 .door.revealed {

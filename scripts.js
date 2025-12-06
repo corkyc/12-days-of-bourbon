@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- SLIDE/SWIPE REVEAL LOGIC (Index Page Only) ---
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
         
-        const REVEAL_THRESHOLD_PERCENT = 10;
+        const REVEAL_THRESHOLD_PERCENT = 60;
         
         function setupSlideLogic(card) {
             const scratch = card.querySelector(".scratch");
