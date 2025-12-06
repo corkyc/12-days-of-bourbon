@@ -242,9 +242,10 @@ header h1 {
 /* --- GRID --- */
 .grid {
   display: grid;
-  /* Reverting to original 2 columns for mobile before scrolling fix */
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
+  /* FIX: Changed to 1 column for mobile scrolling ease (was repeat(2, 1fr)) */
+  grid-template-columns: 1fr;
+  /* FIX: Increased gap for better separation on mobile (was 18px) */
+  gap: 30px; 
   padding: 18px;
   max-width: 1100px;
   margin: 12px auto;
@@ -300,7 +301,7 @@ header h1 {
   position: absolute;
   right: 12px;
   top: 12px;
-  z-index: 6; /* Reverting to original z-index */
+  z-index: 6; 
   background: linear-gradient(180deg,#FFD700,#C0A04C);
   color: #1b1209;
   font-weight: 700;
