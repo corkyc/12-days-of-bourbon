@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Check if a specific modal image is defined and apply it
         const imgElement = clone.querySelector('img');
         if (imgElement && modalImgSrc) {
-            // This replaces the image with the designated modal image source
+            // This replaces the "reveal" image (images/revealBourbon.jpg) with the "modal" image
             imgElement.src = modalImgSrc; 
         }
 
@@ -478,19 +478,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (isNaN(guess) || guess < 1 || guess > 12) {
                     resultMessage.textContent = 'Please enter a valid number between 1 and 12.';
+                    // FIX: Ensure the modal remains unlocked so user can correct the input
+                    unlockGuessModal();
                     return;
                 }
                 lockGuessModal();
 
                 if (guess === correctAnswer) {
                     
-                    resultMessage.innerHTML = `<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">🎉 YES! CORRECT! 🎉</div>${bourbonName} is mini-bottle number ${correctDay}!`;
+                    resultMessage.innerHTML = `<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">🎉 YES! CORRECT! 🎉</div>${bourbonName} is mini-bottle number ${correctAnswer}!`;
 
                     // Mark the door as revealed and show the number plate
                     currentDoor.classList.add('revealed');
                     const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
                     if (numberPlate) {
-                        numberPlate.textContent = correctDay;
+                        numberPlate.textContent = correctAnswer;
                         numberPlate.classList.add('show-number');
                     }
                     window.requestAnimationFrame(() => {
@@ -498,11 +500,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         launchConfetti();
                     });
                     
-                    setTimeout(closeModalAndRestoreScroll, 10000);
+                    // Delay close to show success and confetti animation
+                    setTimeout(closeModalAndRestoreScroll, 3000); 
                 } else {
                     resultMessage.innerHTML = `❌ Incorrect ❌ That's not the right mini-bottle number. Try another bottle!`;
+                    // FIX: Unlock the modal immediately after an incorrect guess
+                    unlockGuessModal();
                 }
-                unlockGuessModal();
             });
             
             dayGuessInput.addEventListener('keyup', (e) => {
@@ -578,7 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
             flakesGenerated++;
         };
 
-        generationInterval = setInterval(generateFlake, intervalTime);
+        generationInterval = setInterval(generateFlflake, intervalTime);
         generateFlake();
     })(75, 5);
 
