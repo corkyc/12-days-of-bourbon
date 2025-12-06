@@ -194,6 +194,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
     if (confirmYes) confirmYes.addEventListener('click', () => {
         if (confirmedLinkHref) {
+            // REMOVED LOGIC: Do not save spoiler key to Local Storage
+            /*
             const link = Array.from(menuLinks).find(l => l.href === confirmedLinkHref);
             if (link && link.dataset.spoilerKey) {
                  try {
@@ -202,6 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
                      console.error("Error setting spoiler key:", e);
                  }
             }
+            */
             window.location.href = confirmedLinkHref;
         }
         closeConfirmModal();
@@ -210,6 +213,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === confirmModalEl) closeConfirmModal();
     });
     
+    // REMOVED LOGIC: Skip reading spoiler key and setting data-requires-confirm to false
+    /*
     menuLinks.forEach(link => {
         if (link.dataset.requiresConfirm === 'true' && link.dataset.spoilerKey) {
             try {
@@ -221,9 +226,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+    */
 
     menuLinks.forEach(link => {
         link.addEventListener('click', (e) => {
+            // Since we removed the check for the saved key, `data-requires-confirm` 
+            // will always be "true" for spoiler links.
             if (link.dataset.requiresConfirm === 'true') {
                 e.preventDefault();
                 confirmTitle.textContent = link.dataset.confirmTitle || "Confirm Navigation";
@@ -231,13 +239,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 confirmedLinkHref = link.href;
                 if (confirmModalEl) confirmModalEl.setAttribute("aria-hidden", "false");
                 if (mobileMenu) mobileMenu.classList.remove('open');
-            } else if (link.dataset.spoilerKey) {
+            } 
+            // REMOVED LOGIC: Do not save spoiler key on click
+            /*
+            else if (link.dataset.spoilerKey) {
                  try {
                      localStorage.setItem(link.dataset.spoilerKey, 'true');
                  } catch (e) {
                      console.error("Error setting spoiler key:", e);
                  }
             }
+            */
         });
     });
 
