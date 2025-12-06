@@ -400,7 +400,8 @@ header h1 {
 
 /* The revealed state of the door (door slid open) */
 .card.revealed .scratch { 
-    transform: translateX(100%); /* Slides the door off the right side */
+    /* FIX: Over-translate by 105% to ensure no sliver remains visible */
+    transform: translateX(105%); 
     pointer-events: none; /* Make it unclickable once opened */
 }
 
