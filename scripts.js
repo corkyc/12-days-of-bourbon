@@ -232,9 +232,13 @@ document.addEventListener("DOMContentLoaded", () => {
 					const details = fullBourbonList[correctDay] || {};
 					const proofValue = details.proof || 'N/A';
 					const nameFromData = details.name || '';
-                    let bourbonName = '';
-					let bourbonImageSrc = '';
+                    const linkElement = bourbonContainer.querySelector('.btn');
 
+					let bourbonName = '';
+					let bourbonImageSrc = '';
+					if (linkElement) {
+						bourbonLinkHref = linkElement.href;
+					}
                     if (bourbonContainer) {
                         // 1. Read the name from the data attribute (preferred method)
                       //  bourbonName = bourbonContainer.dataset.bourbonName || '';
@@ -256,9 +260,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     
                     // 3. Update the modal's display element
-                    if (modalBourbonName) {
-                        modalBourbonName.textContent = bourbonName || 'this bottle';
-                    }
+					if (modalBourbonName && modalBourbonName.parentNode) {
+								// 1. Create the new link element
+								const newLink = document.createElement('a');
+								newLink.id = 'modalBourbonName';
+								newLink.href = bourbonLinkHref;
+								newLink.textContent = bourbonName || 'this bottle';
+								newLink.target = '_blank'; // Optional: Open link in a new tab
+								
+								// 2. Add style (make it look like strong text, or add class)
+								newLink.style.fontWeight = 'bold'; 
+								newLink.style.color = 'inherit';
+								newLink.style.textDecoration = 'underline'; // Add styling for clarity
+								
+								// 3. Replace the old <strong> element with the new <a> element
+								modalBourbonName.parentNode.replaceChild(newLink, modalBourbonName);
+								
+								// 4. Update the reference to the new element
+								modalBourbonName = newLink; // Reassign modalBourbonName to the new <a> element
+							}
 					const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
 
 					if (modalBourbonNameGuessPrompt) {
