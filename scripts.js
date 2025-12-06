@@ -11,6 +11,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const BOURBON_DATA_KEY = 'allBourbonData';
     let scratchedDays = {};
 
+    function createAndSaveBourbonData() {
+		const bourbonData = {};
+		// Query all cards that have a data-day attribute (i.e., the scratch-off cards)
+		const cards = document.querySelectorAll('.card[data-day]');
+
+		cards.forEach(card => {
+			const day = card.dataset.day;
+			const name = card.querySelector('h3').textContent;
+			// 🔑 Retrieve the Proof directly from the new data attribute
+			const proof = card.dataset.proof || card.dataset.proof || 'N/A'; // Use proof from data-proof if available
+			const imgSrc = card.querySelector('img').src;
+
+			bourbonData[day] = {
+				name: name,
+				proof: proof,
+				imgSrc: imgSrc
+			};
+		});
+
+		try {
+			localStorage.setItem(BOURBON_DATA_KEY, JSON.stringify(bourbonData));
+		} catch (e) {
+			console.error("Error saving bourbon data to Local Storage", e);
+		}
+	}
+    
+    // FIX: Re-run the saving function when the script loads on the index page
+	if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+		createAndSaveBourbonData();
+	}
+
     function loadProgress() {
         try {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -68,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resetBtnEl) resetBtnEl.addEventListener('click', resetProgress);
     if (resetPageBtnEl) resetPageBtnEl.addEventListener('click', () => window.location.reload());
 
-    // --- NAVIGATION / MENU LOGIC (Condensed) ---
+    // --- NAVIGATION / MENU LOGIC ---
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobile-menu');
     const menuClose = document.getElementById('menuClose');
@@ -126,6 +157,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- SCRATCH-OFF LOGIC (Index Page Only) ---
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
         
+        function localPos(canvas, clientX, clientY) {
+            const r = canvas.getBoundingClientRect();
+            return { x: clientX - r.left, y: clientY - r.top };
+        }
+
         function checkRevealed(card) {
             const s = card._scratch;
             if (!s || s.revealed) return;
@@ -462,7 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
     } // End all-bottles.html logic
 
-    // --- BACK TO TOP LOGIC (Condensed) ---
+    // --- BACK TO TOP LOGIC ---
     if (backToTopBtn) {
         backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
         window.addEventListener('scroll', () => {
@@ -470,7 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-    // --- TEMPORARY SNOW GENERATOR (Condensed) ---
+    // --- TEMPORARY SNOW GENERATOR ---
     (function createSnow(num = 75, initialDurationSeconds = 5) {
         const container = document.getElementById('snow-container');
         if (!container) return;
