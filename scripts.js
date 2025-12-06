@@ -72,19 +72,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function openModal(node) {
         if (!modalBody || !node || !node.cloneNode) return;
+        
+        // Find the original card that was clicked to access its data attributes
+        const originalCard = node.closest('.card');
+        const modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
+
         modalBody.innerHTML = "";
         const clone = node.cloneNode(true);
         const plate = clone.querySelector('.number-plate');
         if (plate) plate.remove();
         
-        // FIX: Ensure content details are explicitly displayed in the modal
+        // Check if a specific modal image is defined and apply it
+        const imgElement = clone.querySelector('img');
+        if (imgElement && modalImgSrc) {
+            // This replaces the "reveal" image (images/whiskey2.jpg) with the "modal" image (images/whiskey2-modal.jpg)
+            imgElement.src = modalImgSrc; 
+        }
+
+        // Ensure content details are explicitly displayed in the modal
         const h3 = clone.querySelector('h3');
         const p = clone.querySelector('p');
         const btn = clone.querySelector('.btn');
         if (h3) h3.style.display = 'block';
         if (p) p.style.display = 'block';
         if (btn) btn.style.display = 'inline-block';
-        // END FIX
+        
 
         modalBody.appendChild(clone);
         if (modal) modal.setAttribute("aria-hidden", "false");
@@ -237,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 pointerId = id;
             };
 
-            const onMove = (clientX, e) => { // Pass event object
+            const onMove = (clientX, e) => {
                 if (startX === null || card.classList.contains("revealed")) return;
                 const deltaX = clientX - startX;
                 if (deltaX > 0) { // Only allow swiping right
