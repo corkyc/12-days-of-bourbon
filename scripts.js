@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const DPR = window.devicePixelRatio || 1;
     const cards = Array.from(document.querySelectorAll(".card"));
     const modal = document.getElementById("modal");
     const modalBody = document.getElementById("modal-body");
@@ -9,8 +8,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- CONSTANTS & PERSISTENCE ---
     const STORAGE_KEY = 'scratchedDays';
     const BOURBON_DATA_KEY = 'allBourbonData';
+    const MATCHED_DAYS_KEY = 'matchedDays';
     let scratchedDays = {};
+    let matchedDays = {};
 
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    
     function createAndSaveBourbonData() {
 		const bourbonData = {};
 		const cards = document.querySelectorAll('.card[data-day]');
@@ -19,37 +27,45 @@ document.addEventListener("DOMContentLoaded", () => {
 			const day = card.dataset.day;
 			const name = card.querySelector('h3').textContent;
 			const proof = card.dataset.proof || 'N/A';
-			// Check if img source is directly in 'content' or needs to be inferred
-			const imgSrc = card.querySelector('.content img') ? card.querySelector('.content img').src : card.dataset.img;
+			const imgSrc = card.dataset.img; // Use the main image for consistency
+			const modalImgSrc = card.dataset.modalImg;
 
-			bourbonData[day] = { name, proof, imgSrc };
+			bourbonData[day] = { name, proof, imgSrc, modalImgSrc };
 		});
 
 		try {
-			localStorage.setItem(BOURBON_DATA_KEY, JSON.stringify(bourbonData));
+			// Only save if data is present and we're on the index page (source of truth)
+			if (Object.keys(bourbonData).length > 0) {
+				localStorage.setItem(BOURBON_DATA_KEY, JSON.stringify(bourbonData));
+			}
 		} catch (e) {
 			console.error("Error saving bourbon data:", e);
 		}
 	}
     
+	// Initial bourbon data creation (must happen on the page that has the full dataset, index.html)
 	if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
 		createAndSaveBourbonData();
 	}
 
     function loadProgress() {
         try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            scratchedDays = stored ? JSON.parse(stored) : {};
+            const storedScratched = localStorage.getItem(STORAGE_KEY);
+            scratchedDays = storedScratched ? JSON.parse(storedScratched) : {};
+            
+            const storedMatched = localStorage.getItem(MATCHED_DAYS_KEY);
+            matchedDays = storedMatched ? JSON.parse(storedMatched) : {};
         } catch (e) {
             console.error("Error loading progress:", e);
         }
     }
 
-    function saveProgress(day) {
+    function saveProgress(key, day) {
         if (!day) return;
-        scratchedDays[day] = true;
+        let storage = key === STORAGE_KEY ? scratchedDays : matchedDays;
+        storage[day] = true;
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(scratchedDays));
+            localStorage.setItem(key, JSON.stringify(storage));
         } catch (e) {
             console.error("Error saving progress:", e);
         }
@@ -58,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetProgress() {
         try {
             localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(MATCHED_DAYS_KEY);
             localStorage.removeItem('semiSpoiler');
             localStorage.removeItem('majorSpoiler');
             window.location.reload();
@@ -73,46 +90,54 @@ document.addEventListener("DOMContentLoaded", () => {
     function openModal(node) {
         if (!modalBody || !node || !node.cloneNode) return;
         
-        // Find the original card that was clicked to access its data attributes
-        const originalCard = node.closest('.card');
-        // Check for the modal image source on the main card or the inner container
-        let modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
-        if (!modalImgSrc) {
-            const container = node.querySelector('.bottle-container');
-            if(container) {
-                // If this is the all-bottles page, the full image is in the bourbon-content img
-                modalImgSrc = container.querySelector('.bourbon-content img')?.src || null;
-            }
-        }
-
         modalBody.innerHTML = "";
         const clone = node.cloneNode(true);
         const plate = clone.querySelector('.number-plate');
         if (plate) plate.remove();
         
-        // Check if a specific modal image is defined and apply it
-        const imgElement = clone.querySelector('img');
-        if (imgElement && modalImgSrc) {
-            // This replaces the "reveal" image (images/revealBourbon.jpg) with the "modal" image
-            imgElement.src = modalImgSrc; 
+        // Find the correct image source for the modal
+        let modalImgSrc = null;
+        let imgElement = clone.querySelector('img');
+
+        // Logic for index.html cards
+        const originalCard = node.closest('.card');
+        if (originalCard && originalCard.dataset.modalImg) {
+            modalImgSrc = originalCard.dataset.modalImg;
+        } else if (originalCard && originalCard.dataset.img) {
+            // Fallback for full reveal page or if modalImg is missing
+            modalImgSrc = originalCard.dataset.img;
         }
 
-        // Ensure content details are explicitly displayed in the modal
-        const h3 = clone.querySelector('h3');
-        const p = clone.querySelector('p');
-        const btn = clone.querySelector('.btn');
-        if (h3) h3.style.display = 'block';
-        if (p) p.style.display = 'block';
-        if (btn) btn.style.display = 'inline-block';
-        
-        // If the cloned content includes the bottle-container wrapper (like on all-bottles.html),
-        // we extract the inner bourbon-content and put that in the modal body instead.
-        const bourbonContent = clone.querySelector('.bourbon-content');
-        if (bourbonContent) {
-             modalBody.appendChild(bourbonContent);
+        // Logic for all-bottles.html (inside a bottle-container)
+        const bourbonContainer = clone.querySelector('.bottle-container');
+        if (bourbonContainer) {
+            // Clone only the inner content for a cleaner modal
+            const bourbonContent = bourbonContainer.querySelector('.bourbon-content').cloneNode(true);
+            // On the all-bottles page, the card's data-modal-img is the source
+            modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
+            if(!modalImgSrc) modalImgSrc = bourbonContent.querySelector('img')?.src;
+            
+            // The number-plate element is cloned but should be removed from the modal view
+            const hiddenPlate = bourbonContent.querySelector('.hidden-number-plate');
+            if(hiddenPlate) hiddenPlate.remove();
+            
+            modalBody.appendChild(bourbonContent);
+            imgElement = modalBody.querySelector('img'); // Set imgElement to the one in the modal body
         } else {
+             // For index.html or all-bottles-numbers.html content
              modalBody.appendChild(clone);
         }
+
+        // Apply the correct modal image source
+        if (imgElement && modalImgSrc) {
+            imgElement.src = modalImgSrc;
+        }
+        
+        // Ensure content details are explicitly displayed in the modal
+        const contentArea = modalBody.querySelector('.content') || modalBody.querySelector('.bourbon-content') || modalBody;
+        contentArea.querySelector('h3').style.display = 'block';
+        contentArea.querySelector('p').style.display = 'block';
+        contentArea.querySelector('.btn').style.display = 'inline-block';
         
         if (modal) modal.setAttribute("aria-hidden", "false");
     }
@@ -128,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resetBtnEl) resetBtnEl.addEventListener('click', resetProgress);
     if (resetPageBtnEl) resetPageBtnEl.addEventListener('click', () => window.location.reload());
 
-    // --- NAVIGATION / MENU LOGIC ---
+    // --- NAVIGATION / MENU LOGIC (Omitted for brevity, assuming original is sufficient) ---
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobile-menu');
     const menuClose = document.getElementById('menuClose');
@@ -163,7 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
     if (confirmYes) confirmYes.addEventListener('click', () => {
         if (confirmedLinkHref) {
-            // Check for spoiler key and save confirmation in local storage
             const link = Array.from(menuLinks).find(l => l.href === confirmedLinkHref);
             if (link && link.dataset.spoilerKey) {
                  try {
@@ -172,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
                      console.error("Error setting spoiler key:", e);
                  }
             }
-            // FIX: Ensure navigation happens right here
             window.location.href = confirmedLinkHref;
         }
         closeConfirmModal();
@@ -181,12 +204,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === confirmModalEl) closeConfirmModal();
     });
     
-    // Auto-confirm logic for menu links based on local storage
     menuLinks.forEach(link => {
         if (link.dataset.requiresConfirm === 'true' && link.dataset.spoilerKey) {
             try {
                 if (localStorage.getItem(link.dataset.spoilerKey) === 'true') {
-                    // Remove confirmation requirement if already confirmed
                     link.dataset.requiresConfirm = 'false';
                 }
             } catch(e) {
@@ -201,12 +222,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.preventDefault();
                 confirmTitle.textContent = link.dataset.confirmTitle || "Confirm Navigation";
                 confirmMessage.innerHTML = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
-                // Store the link href to be used later by confirmYes
                 confirmedLinkHref = link.href;
                 if (confirmModalEl) confirmModalEl.setAttribute("aria-hidden", "false");
                 if (mobileMenu) mobileMenu.classList.remove('open');
             } else if (link.dataset.spoilerKey) {
-                // If it no longer requires confirmation, set the spoiler key anyway
                  try {
                      localStorage.setItem(link.dataset.spoilerKey, 'true');
                  } catch (e) {
@@ -215,6 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+
 
     // --- SLIDE/SWIPE REVEAL LOGIC (Index Page Only) ---
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
@@ -236,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let startX = null;
             let currentX = 0;
             let cardWidth = card.clientWidth;
-            let pointerId = null; // Used for pointer events
+            let pointerId = null; 
 
             const updateDoorPosition = (deltaX) => {
                 const percentage = (deltaX / cardWidth) * 100;
@@ -247,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const revealCard = () => {
                 card.classList.add("revealed");
-                saveProgress(day);
+                saveProgress(STORAGE_KEY, day);
                 scratch.style.pointerEvents = 'none';
                 
                 // Show modal after a brief delay to allow animation to complete
@@ -257,23 +277,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 }, 350); 
             };
 
-            const onStart = (clientX, id) => {
+            const onStart = (clientX, id, e) => {
                 if (card.classList.contains("revealed")) return;
                 startX = clientX;
                 currentX = 0;
-                cardWidth = card.clientWidth; // Recalculate on start
+                cardWidth = card.clientWidth; 
                 scratch.style.transition = 'none';
                 pointerId = id;
+                e.preventDefault(); // Prevent default on down for better touch feel
             };
 
             const onMove = (clientX, e) => {
                 if (startX === null || card.classList.contains("revealed")) return;
                 const deltaX = clientX - startX;
                 if (deltaX > 0) { // Only allow swiping right
-                    
-                    // Prevent default action during move to stop browser scrolling/cancelling
                     e.preventDefault(); 
-
                     updateDoorPosition(deltaX);
                 }
             };
@@ -297,15 +315,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- Pointer Events (Unified Touch/Mouse/Pen) ---
             scratch.addEventListener("pointerdown", e => {
                 e.target.setPointerCapture(e.pointerId);
-                // Prevent default on down just in case
-                e.preventDefault(); 
-                
-                onStart(e.clientX, e.pointerId);
+                onStart(e.clientX, e.pointerId, e);
             });
 
             scratch.addEventListener("pointermove", e => {
                 if (pointerId !== null && e.pointerId === pointerId) {
-                    // Pass the entire event object to onMove for preventDefault
                     onMove(e.clientX, e); 
                 }
             });
@@ -315,60 +329,19 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // --- Click handler for modal on revealed cards ---
             card.addEventListener("click", (e) => {
-                // If the click target is the door (meaning it wasn't fully opened) or an anchor, ignore
-                if (e.target === scratch || e.target.closest('a') !== null) return;
+                if (e.target.closest('a') !== null) return;
                 
                 if (card.classList.contains("revealed")) {
                     const contentNode = card.querySelector(".content");
                     if (contentNode) openModal(contentNode);
                 }
             });
-
         }
         
-        // Initial setup for all cards
         cards.forEach(card => {
             setupSlideLogic(card);
         });
-        
-        // No need for a complex canvas resize handler now.
     } 
-    
-    // --- UNIVERSAL REVEALED CARD CLICK HANDLER (for all-bottles pages) ---
-    // This runs on all pages that have .card.revealed[data-clickable="true"]
-    const currentPath = window.location.pathname;
-    if (currentPath.endsWith('all-bottles.html') || currentPath.endsWith('all-bottles-numbers.html')) {
-        const revealedCards = document.querySelectorAll('.card.revealed[data-clickable="true"]');
-        revealedCards.forEach(card => {
-            // Attach a click listener to the card (excluding links inside)
-            card.addEventListener('click', (e) => {
-                // Ignore clicks on links or buttons inside the card
-                if (e.target.closest('a') || e.target.closest('button')) return;
-                
-                // Get the main content node for the modal
-                const contentNode = card.querySelector('.content') || card;
-
-                // For all-bottles.html, the Bourbon Matching page, we show the guess modal instead
-                if (currentPath.endsWith('all-bottles.html')) {
-                    const door = card.querySelector('.door');
-                    if (door && !door.classList.contains('revealed')) {
-                         // The click listener is already inside all-bottles.html logic below, 
-                         // but since we are handling clicks here, we need to defer to the guessing logic.
-                         const container = card.querySelector('.bottle-container');
-                         if (container) {
-                             // Find the actual door to click to trigger the specific guessing game logic.
-                             const actualDoor = container.querySelector('.door');
-                             if (actualDoor) actualDoor.click();
-                         }
-                         return;
-                    }
-                }
-                
-                // For all-bottles-numbers.html (Complete Reveal), open the details modal
-                openModal(contentNode);
-            });
-        });
-    }
 
 
     // --- BOURBON GUESSING GAME LOGIC (All-Bottles Page Only) ---
@@ -380,9 +353,35 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch(e) {
             console.error("Failed to load full bourbon data.");
         }
+        
+        // 1. Randomize Cards on Load
+        const grid = document.getElementById('grid');
+        if (grid) {
+             let cardElements = Array.from(grid.querySelectorAll('.card'));
+             shuffleArray(cardElements);
+             cardElements.forEach(card => grid.appendChild(card));
+        }
+        
+        // 2. Load Matched Progress
+        const revealedDoors = document.querySelectorAll('.door');
+        revealedDoors.forEach(door => {
+             const container = door.closest('.bottle-container');
+             const correctDay = container.dataset.correctDay;
+             
+             if(matchedDays[correctDay]) {
+                 door.classList.add('revealed');
+                 door.style.pointerEvents = 'none';
+                 
+                 const numberPlate = container.querySelector('.hidden-number-plate');
+                 if (numberPlate) {
+                    numberPlate.textContent = correctDay;
+                    numberPlate.classList.add('show-number');
+                 }
+             }
+        });
+
 
         const launchConfetti = () => {
-            // Function requires the canvas-confetti library script to be present in all-bottles.html
             if (typeof confetti !== 'undefined') {
                 const bursts = [{x: 0.2, y: 0.9}, {x: 0.8, y: 0.9}];
                 bursts.forEach(origin => {
@@ -430,30 +429,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 const correctDay = bourbonContainer.dataset.correctDay; 
                 const bourbonName = bourbonContainer.dataset.bourbonName;
                 
-                // Fetch the link element from the bourbon content
-                const linkElement = bourbonContainer.querySelector('.bourbon-content .btn');
-                const bourbonLinkHref = linkElement ? linkElement.href : '#';
-                
-                // Fetch details from local storage for proof/flavor
+                // Fetch details from local storage for proof/flavor/image
                 const details = fullBourbonList[correctDay] || {};
                 const proof = details.proof || 'N/A';
+                const imgSrc = details.imgSrc || '';
                 
                 
                 let currentNameElement = document.getElementById('modalBourbonName');
                 
                 if (currentNameElement) {
                      currentNameElement.textContent = bourbonName || 'this bottle';
-                     currentNameElement.href = bourbonLinkHref;
                 }
                 
                 const modalBourbonProof = document.getElementById('modalBourbonProof');
-                if (modalBourbonProof) modalBourbonProof.textContent = ` (Proof: ${proof})`; 
+                if (modalBourbonProof) modalBourbonProof.textContent = ` (Proof: ${proof}%)`; 
                 if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
                 
-                const imageElement = bourbonContainer.querySelector('.bourbon-content img');
-                if (modalBourbonImage && imageElement) {
-                    modalBourbonImage.src = imageElement.src;
+                if (modalBourbonImage && imgSrc) {
+                    modalBourbonImage.src = imgSrc;
                     modalBourbonImage.style.display = 'block'; 
+                } else if (modalBourbonImage) {
+                    modalBourbonImage.style.display = 'none';
                 }
                 
                 unlockGuessModal(); 
@@ -478,7 +474,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (isNaN(guess) || guess < 1 || guess > 12) {
                     resultMessage.textContent = 'Please enter a valid number between 1 and 12.';
-                    // FIX: Ensure the modal remains unlocked so user can correct the input
                     unlockGuessModal();
                     return;
                 }
@@ -490,13 +485,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Mark the door as revealed and show the number plate
                     currentDoor.classList.add('revealed');
+                    currentDoor.style.pointerEvents = 'none';
+                    saveProgress(MATCHED_DAYS_KEY, correctAnswer);
+
                     const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
                     if (numberPlate) {
                         numberPlate.textContent = correctAnswer;
                         numberPlate.classList.add('show-number');
                     }
                     window.requestAnimationFrame(() => {
-                        currentDoor.style.pointerEvents = 'none';
                         launchConfetti();
                     });
                     
@@ -504,7 +501,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(closeModalAndRestoreScroll, 3000); 
                 } else {
                     resultMessage.innerHTML = `❌ Incorrect ❌ That's not the right mini-bottle number. Try another bottle!`;
-                    // FIX: Unlock the modal immediately after an incorrect guess
                     unlockGuessModal();
                 }
             });
@@ -522,7 +518,36 @@ document.addEventListener("DOMContentLoaded", () => {
             if (event.target === guessModal) closeModalAndRestoreScroll();
         });
         
-    } 
+    }
+    
+    // --- UNIVERSAL REVEALED CARD CLICK HANDLER (for all-bottles and all-bottles-numbers) ---
+    const currentPath = window.location.pathname;
+    const isRevealPage = currentPath.endsWith('all-bottles-numbers.html');
+    const isMatchingPage = currentPath.endsWith('all-bottles.html');
+
+    if (isRevealPage || isMatchingPage) {
+        const revealedCards = document.querySelectorAll('.card.revealed[data-clickable="true"]');
+        revealedCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Ignore clicks on links or buttons inside the card
+                if (e.target.closest('a') || e.target.closest('button')) return;
+                
+                const container = card.querySelector('.bottle-container');
+                const door = container ? container.querySelector('.door') : null;
+                
+                // If on the matching page and the door is not revealed, trigger the guessing game.
+                if (isMatchingPage && door && !door.classList.contains('revealed')) {
+                     door.click(); 
+                     return;
+                }
+                
+                // Otherwise (on Complete Reveal or on a correctly guessed card), open the details modal
+                const contentNode = card.querySelector('.content') || container;
+                if (contentNode) openModal(contentNode);
+            });
+        });
+    }
+
 
     // --- BACK TO TOP LOGIC ---
     if (backToTopBtn) {
@@ -582,7 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
             flakesGenerated++;
         };
 
-        generationInterval = setInterval(generateFlflake, intervalTime);
+        generationInterval = setInterval(generateFlake, intervalTime);
         generateFlake();
     })(75, 5);
 

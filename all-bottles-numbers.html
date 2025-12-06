@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Snow Container (for brief falling snow effect) -->
   <div id="snow-container" aria-hidden="true"></div>
 
   <nav id="mobile-menu" class="mobile-menu" aria-hidden="true">
@@ -15,11 +14,9 @@
     <div class="menu-content">
       <h2>Menu</h2>
       <ul>
-        <!-- Home link (no check) -->
         <li><a href="index.html">Home (Scratch-Off)</a></li>
-        <!-- All Bottles link - Custom confirmation text -->
-        <li><a href="all-bottles.html" data-requires-confirm="flase" data-spoiler-key="semiSpoiler" data-confirm-title="Bourbon Matching" 
-               data-confirm-message="Semi spoiler - This list shows all 12 bottles and there are no numbers assoicated with each bottle.  Allowing for a semi-blind taste test. Continue?">Bourbon Matching</a></li>
+        <li><a href="all-bottles.html" data-requires-confirm="true" data-spoiler-key="semiSpoiler" data-confirm-title="Bourbon Matching" 
+               data-confirm-message="<strong>Semi spoiler:</strong> This page shows the names all 12 bottles in the set randomized WITHOUT the assoicated mini-bottle number.<br><br>Continue?">Bourbon Matching</a></li>
         <li><a href="all-bottles-numbers.html">Complete Reveal</a></li>
       </ul>
     </div>
@@ -39,55 +36,54 @@
   </header>
 
   <main class="grid" id="grid">
-    <article class="card revealed" data-clickable="true">
+    <article class="card revealed" data-clickable="true" data-img="images/whiskey2.jpg" data-modal-img="images/whiskey2-modal.jpg">
       <div class="number-plate">1</div>
       <div class="content">
-        <img src="images/whiskey1.jpg">
+        <img src="images/whiskey2.jpg" alt="Buffalo Trace">
         <h3>Buffalo Trace</h3>
         <p>Classic caramel and vanilla notes with an oak finish.</p>
-        <a class="btn" href="#">View Details</a>
+        <a class="btn" href="https://www.bourbonreviews.com/buffalo-trace" target="_blank">Review Site</a>
       </div>
     </article>
-    <article class="card revealed" data-clickable="true">
+    <article class="card revealed" data-clickable="true" data-img="images/whiskey1.jpg" data-modal-img="images/whiskey1-modal.jpg">
       <div class="number-plate">2</div>
       <div class="content">
-        <img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+2+BOTTLE" alt="Placeholder Bourbon 2">
+        <img src="images/whiskey1.jpg" alt="Four Roses Large Batch">
         <h3>Four Roses Large Batch</h3>
         <p>Spicy, fruity, and smooth on the palate.</p>
-        <a class="btn" href="#">View Details</a>
+        <a class="btn" href="https://www.bourbonreviews.com/four-roses" target="_blank">Review Site</a>
       </div>
     </article>
-    <article class="card revealed" data-clickable="true">
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon3.jpg" data-modal-img="images/bourbon3-modal.jpg">
       <div class="number-plate">3</div>
       <div class="content">
-        <img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+3+BOTTLE" alt="Placeholder Bourbon 3">
+        <img src="images/bourbon3.jpg" alt="Woodford Reserve">
         <h3>Woodford Reserve</h3>
         <p>Full-bodied with prominent dried fruit and spice.</p>
-        <a class="btn" href="#">View Details</a>
+        <a class="btn" href="https://www.bourbonreviews.com/woodford-reserve" target="_blank">Review Site</a>
       </div>
     </article>
-    <article class="card revealed" data-clickable="true">
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon4.jpg" data-modal-img="images/bourbon4-modal.jpg">
       <div class="number-plate">4</div>
       <div class="content">
-        <img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+4+BOTTLE" alt="Placeholder Bourbon 4">
+        <img src="images/bourbon4.jpg" alt="Maker's Mark">
         <h3>Maker's Mark</h3>
         <p>Wheated, gentle finish, hints of honey and wheat.</p>
-        <a class="btn" href="#">View Details</a>
+        <a class="btn" href="https://www.bourbonreviews.com/makers-mark" target="_blank">Review Site</a>
       </div>
     </article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">5</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+5+BOTTLE" alt=""><h3>Wild Turkey 101</h3><p>Bold & spicy, high proof flavor.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">6</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+6+BOTTLE" alt=""><h3>Elijah Craig</h3><p>Toasted oak and warm spice finish.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">7</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+7+BOTTLE" alt=""><h3>Knob Creek</h3><p>Aged nine years, oak and strong vanilla.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">8</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+8+BOTTLE" alt=""><h3>Angel’s Envy</h3><p>Port-finished.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">9</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+9+BOTTLE" alt=""><h3>Bulleit</h3><p>High rye content, distinct spicy kick.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">10</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+10+BOTTLE" alt=""><h3>Basil Hayden</h3><p>Light-bodied and gentle, easy sipper.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">11</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+11+BOTTLE" alt=""><h3>Old Forester</h3><p>Classic high-rye profile, balanced.</p><a class="btn" href="#">View Details</a></div></article>
-    <article class="card revealed" data-clickable="true"><div class="number-plate">12</div><div class="content"><img src="https://placehold.co/400x400/5a3624/f0c674?text=DAY+12+BOTTLE" alt=""><h3>Blanton's</h3><p>Rich and complex single barrel finish.</p><a class="btn" href="#">View Details</a></div></article>
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon5.jpg" data-modal-img="images/bourbon5-modal.jpg"><div class="number-plate">5</div><div class="content"><img src="images/bourbon5.jpg" alt="Wild Turkey 101"><h3>Wild Turkey 101</h3><p>Bold & spicy, high proof flavor.</p><a class="btn" href="https://www.bourbonreviews.com/wild-turkey" target="_blank">Review Site</a></div></article>
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon6.jpg" data-modal-img="images/bourbon6-modal.jpg"><div class="number-plate">6</div><div class="content"><img src="images/bourbon6.jpg" alt="Elijah Craig"><h3>Elijah Craig</h3><p>Toasted oak and warm spice finish.</p><a class="btn" href="https://www.bourbonreviews.com/elijah-craig" target="_blank">Review Site</a></div></article>
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon7.jpg" data-modal-img="images/bourbon7-modal.jpg"><div class="number-plate">7</div><div class="content"><img src="images/bourbon7.jpg" alt="Knob Creek"><h3>Knob Creek</h3><p>Aged nine years, oak and strong vanilla.</p><a class="btn" href="https://www.bourbonreviews.com/knob-creek" target="_blank">Review Site</a></div></article>
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon8.jpg" data-modal-img="images/bourbon8-modal.jpg"><div class="number-plate">8</div><div class="content"><img src="images/bourbon8.jpg" alt="Angel’s Envy"><h3>Angel’s Envy</h3><p>Port-finished.</p><a class="btn" href="https://www.bourbonreviews.com/angels-envy" target="_blank">Review Site</a></div></article>
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon9.jpg" data-modal-img="images/bourbon9-modal.jpg"><div class="number-plate">9</div><div class="content"><img src="images/bourbon9.jpg" alt="Bulleit"><h3>Bulleit</h3><p>High rye content, distinct spicy kick.</p><a class="btn" href="https://www.bourbonreviews.com/bulleit" target="_blank">Review Site</a></div></article>
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon10.jpg" data-modal-img="images/bourbon10-modal.jpg"><div class="number-plate">10</div><div class="content"><img src="images/bourbon10.jpg" alt="Basil Hayden"><h3>Basil Hayden</h3><p>Light-bodied and gentle, easy sipper.</p><a class="btn" href="https://www.bourbonreviews.com/basil-hayden" target="_blank">Review Site</a></div></article>
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon11.jpg" data-modal-img="images/bourbon11-modal.jpg"><div class="number-plate">11</div><div class="content"><img src="images/bourbon11.jpg" alt="Old Forester"><h3>Old Forester</h3><p>Classic high-rye profile, balanced.</p><a class="btn" href="https://www.bourbonreviews.com/old-forester" target="_blank">Review Site</a></div></article>
+    <article class="card revealed" data-clickable="true" data-img="images/bourbon12.jpg" data-modal-img="images/bourbon12-modal.jpg"><div class="number-plate">12</div><div class="content"><img src="images/bourbon12.jpg" alt="Blanton's"><h3>Blanton's</h3><p>Rich and complex single barrel finish.</p><a class="btn" href="https://www.bourbonreviews.com/blantons" target="_blank">Review Site</a></div></article>
   </main>
 
   <div class="bottom-controls">
-    <!-- Button is intentionally absent on this page, as reset only applies to scratch state -->
-  </div>
+    </div>
 
   <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
@@ -96,7 +92,6 @@
     </div>
   </div>
 
-  <!-- CONFIRMATION MODAL -->
   <div id="confirmModal" class="modal confirmation" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
       <h3 id="confirmTitle" class="confirm-title">Confirm Navigation</h3>
@@ -108,7 +103,6 @@
     </div>
   </div>
   
-  <!-- Back to Top Button -->
   <button id="backToTopBtn" class="back-to-top-btn" aria-label="Back to Top" title="Back to Top">&#x25B2;</button>
 
   <script src="scripts.js"></script>
