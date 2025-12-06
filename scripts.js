@@ -24,6 +24,42 @@ document.addEventListener("DOMContentLoaded", () => {
     const STORAGE_KEY = 'scratchedDays';
     const LS_KEY_SEMI_SPOILER = 'semiSpoiler'; 
     const LS_KEY_MAJOR_SPOILER = 'majorSpoiler'; 
+	
+	// --- Bourbon Data Storage Functions (scripts.js) ---
+
+	const BOURBON_DATA_KEY = 'allBourbonData';
+
+	function createAndSaveBourbonData() {
+		const bourbonData = {};
+		// Query all cards that have a data-day attribute (i.e., the scratch-off cards)
+		const cards = document.querySelectorAll('.card[data-day]');
+
+		cards.forEach(card => {
+			const day = card.dataset.day;
+			const name = card.querySelector('h3').textContent;
+			// 🔑 Retrieve the Proof directly from the new data attribute
+			const proof = card.dataset.proof || 'N/A'; 
+			const imgSrc = card.querySelector('img').src;
+
+			bourbonData[day] = {
+				name: name,
+				proof: proof, // Storing the proof
+				imgSrc: imgSrc
+			};
+		});
+
+		try {
+			localStorage.setItem(BOURBON_DATA_KEY, JSON.stringify(bourbonData));
+			console.log("Bourbon data stored in Local Storage.");
+		} catch (e) {
+			console.error("Error saving bourbon data to Local Storage", e);
+		}
+	}
+
+	// Run the saving function when the script loads on the index page
+	if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+		createAndSaveBourbonData();
+	}
 
     let scratchedDays = {};
 
