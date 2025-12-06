@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
             modalBody.appendChild(contentArea);
         }
         
-        // --- MODIFICATION for Number Plate in Modal (Index Page) ---
+        // --- MODIFICATION for Number Plate in Modal (Index/Reveal Pages) ---
         if (!bourbonContainer) {
             let cardPlate = originalCard.querySelector('.number-plate');
             if (cardPlate) {
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // This guarantees the image is cleared, solving the artifact issue.
                 setTimeout(() => {
                     if(scratch) scratch.remove();
-                }, 0); // Matches the 0.3s transition duration
+                }, 0); // Changed to 0ms for instant removal
                 // **********************************************************
 
                 // Show modal after a brief delay to allow animation to complete
@@ -519,7 +519,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     resultMessage.innerHTML = `<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">🎉 YES! CORRECT! 🎉</div>${bourbonName} is mini-bottle number ${correctAnswer}!`;
 
-                    // Mark the door as revealed and show the number plate
+                    // Mark the door as revealed and show the number plate on the card
                     currentDoor.classList.add('revealed');
                     currentDoor.style.pointerEvents = 'none';
                     saveProgress(MATCHED_DAYS_KEY, correctAnswer);
@@ -528,6 +528,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (numberPlate) {
                         numberPlate.textContent = correctAnswer;
                         numberPlate.classList.add('show-number');
+
+                        // *** MODIFICATION: Clone the revealed plate and display it in the modal ***
+                        const clonedPlate = numberPlate.cloneNode(true);
+                        const modalContent = guessModal.querySelector('.modal-content');
+
+                        // Apply absolute positioning relative to .modal-content
+                        clonedPlate.style.position = 'absolute';
+                        clonedPlate.style.top = '10px';
+                        clonedPlate.style.right = '50px'; // Offset from close button
+                        clonedPlate.style.zIndex = '99999'; // High z-index
+
+                        modalContent.appendChild(clonedPlate);
+                        // *************************************************************
                     }
                     window.requestAnimationFrame(() => {
                         launchConfetti();
