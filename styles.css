@@ -500,6 +500,17 @@ header h1 {
   background: #366c61;
 }
 
+/* Style for the bourbon name link inside the guess modal */
+.modal-bourbon-link {
+    color: #8A2525; /* Dark Red, a good strong color */
+    text-decoration: underline; 
+    cursor: pointer;
+}
+.modal-bourbon-link:hover {
+    color: #B83232; /* Brighter red on hover */
+    text-decoration: none;
+}
+
 
 /* Modal Content Overrides (For bottle detail modal) */
 #modal-body .content,

@@ -35,10 +35,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			    }
 			}
 			
+            // Capture Review URL from the content link
+            const reviewLinkElement = card.querySelector('.content a.btn');
+            const reviewUrl = reviewLinkElement ? reviewLinkElement.href : '#';
+            
 			const imgSrc = card.dataset.img; 
 			const modalImgSrc = card.dataset.modalImg;
 
-			bourbonData[day] = { name, proof: proof || 'N/A', imgSrc, modalImgSrc };
+			// Save the reviewUrl along with other data
+			bourbonData[day] = { name, proof: proof || 'N/A', imgSrc, modalImgSrc, reviewUrl };
 		});
 
 		try {
@@ -441,16 +446,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 const correctDay = bourbonContainer.dataset.correctDay; 
                 const bourbonName = bourbonContainer.dataset.bourbonName;
                 
-                // Fetch details from local storage for proof/flavor/image
+                // Fetch details from local storage for proof/flavor/image/link
                 const details = fullBourbonList[correctDay] || {};
                 const proof = details.proof || 'N/A';
                 const imgSrc = details.imgSrc || ''; // Use main image for thumbnail
+                const reviewUrl = details.reviewUrl || '#'; // Fetch the saved review URL
                 
                 
                 let currentNameElement = document.getElementById('modalBourbonName');
+                const nameLinkElement = document.getElementById('modalBourbonNameLink'); // Get the new link element
                 
                 if (currentNameElement) {
                      currentNameElement.textContent = bourbonName || 'this bottle';
+                }
+                
+                if (nameLinkElement) {
+                    nameLinkElement.href = reviewUrl; // Set the href attribute
                 }
                 
                 const modalBourbonProof = document.getElementById('modalBourbonProof');
