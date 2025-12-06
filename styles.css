@@ -242,7 +242,8 @@ header h1 {
 /* --- GRID --- */
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* MODIFICATION: Set default to single column for mobile phones */
+  grid-template-columns: 1fr;
   gap: 18px;
   padding: 18px;
   max-width: 1100px;
@@ -295,6 +296,7 @@ header h1 {
 }
 
 /* Number Plate */
+/* Ensure z-index is high enough (e.g., 15) to sit on top of the scratch door (z-index 10) */
 .number-plate {
   position: absolute;
   right: 12px;
@@ -315,7 +317,7 @@ header h1 {
     position: absolute;
     right: 12px;
     top: 12px;
-    z-index: 20; /* Ensure it's above the image/content */
+    z-index: 20; /* Ensure it's above the door in all-bottles.html */
     background: linear-gradient(180deg,#FFD700,#C0A04C);
     color: #1b1209;
     font-weight: 700;
@@ -338,17 +340,17 @@ header h1 {
 
 /* Updated .scratch to be a div container, containing an image and text overlay */
 .card .scratch {
-	position: absolute;
+    position: absolute;
     /* Use explicit 0 positioning for reliable coverage */
     top: 0; 
     left: 0; 
     right: 0; 
     bottom: 0; 
-    z-index: 10; 
-    display: flex; /* Used to stack content */
+    z-index: 10; /* Door slides away */
+    display: flex; 
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end; /* Push text to the bottom */
+    justify-content: flex-end; 
     
     /* Key properties for slide effect: */
     transform: translateX(0);
@@ -371,14 +373,14 @@ header h1 {
     width: 100%;
     height: 100%;
     object-fit: cover; /* Ensures the image fills the entire door area */
-    z-index: 1; /* Below the number plate and swipe text */
+    z-index: 1; /* Below the swipe text (2) and number plate (15) */
     border-radius: 12px;
 }
 
 /* Style for the swipe text overlay */
 .card .scratch .swipe-text {
     position: relative;
-    z-index: 2; /* Above the image */
+    z-index: 2; /* Above the image, below the number plate */
     margin-bottom: 10px;
     font-size: 0.8rem;
     font-weight: normal;
@@ -386,7 +388,6 @@ header h1 {
     text-shadow: 0 0 3px rgba(0,0,0,0.7);
     padding: 0 10px 
 }
-
 
 /* The revealed state of the door (door slid open) */
 .card.revealed .scratch { 
@@ -456,7 +457,7 @@ header h1 {
   max-width: 520px;
   border-radius: 10px;
   padding: 24px;
-  position: relative;
+  position: relative; /* Provides positioning context for the plate */
   text-align: center;
 }
 
@@ -470,6 +471,7 @@ header h1 {
   border: none;
   cursor: pointer;
   color: #333;
+  z-index: 999999; /* Ensure close button is on top */
 }
 
 /* Confirmation Modal Overrides */
@@ -522,8 +524,9 @@ header h1 {
 /* Modal Content Overrides (For bottle detail modal) */
 #modal-body .content,
 #modal-body .bourbon-content {
+  /* Setting positioning to static here so content flows normally */
   display: block;
-  position: static;
+  position: static; 
   color: #222;
 }
 #modal-body .content img,
@@ -538,6 +541,17 @@ header h1 {
   position: static; 
   display: block; 
 }
+
+/* MODAL PLATE FIX: Reposition the number plate inside the modal to sit relative to the modal container. */
+/* This is a general rule that will apply to .number-plate when its parent is positioned (like .modal-inner) */
+.modal-inner > .number-plate {
+    position: absolute;
+    top: 10px;
+    right: 50px; /* Adjusted to avoid the close button */
+    z-index: 99999; 
+}
+
+
 #modal-body h3,
 #modal-body p,
 #modal-body .btn {

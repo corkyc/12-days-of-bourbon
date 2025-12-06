@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const clone = node.cloneNode(true);
         const plate = clone.querySelector('.number-plate');
-        if (plate) plate.remove();
+//        if (plate) plate.remove();
         
         const bourbonContainer = clone.querySelector('.bottle-container');
         let contentArea;
@@ -257,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- SLIDE/SWIPE REVEAL LOGIC (Index Page Only) ---
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
         
-        const REVEAL_THRESHOLD_PERCENT = 60;
+        const REVEAL_THRESHOLD_PERCENT = 100;
         
         function setupSlideLogic(card) {
             const scratch = card.querySelector(".scratch");
