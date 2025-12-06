@@ -242,6 +242,7 @@ header h1 {
 /* --- GRID --- */
 .grid {
   display: grid;
+  /* FIX: Force 2 columns for all screen sizes */
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
   padding: 18px;
@@ -250,13 +251,8 @@ header h1 {
   position: relative;
   z-index: 3;
 }
-@media (min-width: 768px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
-  /* Center Header Content on Desktop */
-  header { grid-template-columns: 1fr auto 1fr; }
-  .header-content { grid-column: 2 / 3; }
-  .hamburger { grid-column: 1 / 2; justify-self: start; }
-}
+/* Removed the old @media (min-width: 768px) rule to force mobile layout on desktop */
+
 
 /* --- CARD (Door Look) --- */
 .card {
@@ -336,11 +332,10 @@ header h1 {
 /* THE CRITICAL FIX: Explicitly set all position boundaries for scratch canvas */
 .card .scratch {
     position: absolute;
-    top: 0; /* Added/Ensured */
-    left: 0; /* Added/Ensured */
-    right: 0; /* Added/Ensured */
-    bottom: 0; /* Added/Ensured */
-    /* inset: 0; was the previous line, replaced with the explicit top/left/right/bottom */
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
     z-index: 10; 
     display: block;
     background: #5a3624; /* Door color (Bourbon Brown) */
