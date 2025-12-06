@@ -318,7 +318,7 @@ header h1 {
     z-index: 20; /* Ensure it's above the image/content */
     background: linear-gradient(180deg,#FFD700,#C0A04C);
     color: #1b1209;
-    font-weight: 700;
+    font-weight: 7-0;
     font-size: 18px;
     padding: 8px 12px;
     border-radius: 8px;
@@ -559,6 +559,7 @@ header h1 {
     display: flex;
     flex-direction: column;
 }
+
 .bourbon-content {
     /* For the matching game, ensure content fills the container */
     height: 100%;
@@ -590,24 +591,26 @@ header h1 {
     font-weight: bold;
     text-align: center;
     border: none;
-    padding: 15px; /* Added padding to prevent content from hitting edges */
+    /* CHANGE: Removed padding to allow the image to fill the entire door area */
+    padding: 0; 
 }
 
 /* New style for the image inside the door */
 .door-icon {
-    width: 60%; /* Adjust size as needed */
-    height: 60%;
-    max-width: 100px; /* Prevent it from getting too large on big screens */
-    max-height: 100px;
-    object-fit: contain;
-    /* Optional: a subtle white/gold border to make it pop */
-    border: 3px solid #f0c674; 
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    /* Make the image not shrink or grow */
+    /* CHANGE: Set to 100% and object-fit: cover to fill the entire door */
+    width: 100%; 
+    height: 100%;
+    max-width: 100%; 
+    max-height: 100%;
+    object-fit: cover; 
+    
+    /* Removed extra styling to ensure clean full coverage */
+    border: none; 
+    border-radius: 0; 
+    box-shadow: none; 
     flex-shrink: 0;
-    flex-grow: 0;
-    opacity: 0.9;
+    flex-grow: 1;
+    opacity: 1;
 }
 
 .door.revealed {
