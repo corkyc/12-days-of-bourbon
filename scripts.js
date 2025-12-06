@@ -107,13 +107,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const clone = node.cloneNode(true);
         
+        // --- MODIFICATION: REMOVED PLATE REMOVAL LOGIC FOR INDEX/REVEAL PAGES ---
+        // This ensures the plate is visible in the modal for index.html/all-bottles-numbers.html
+        // const plate = clone.querySelector('.number-plate');
+        // if (plate) plate.remove();
+        // --- END MODIFICATION ---
+        
         const bourbonContainer = clone.querySelector('.bottle-container');
         let contentArea;
         
         if (bourbonContainer) {
             contentArea = bourbonContainer.querySelector('.bourbon-content').cloneNode(true);
-            const hiddenPlate = contentArea.querySelector('.hidden-number-plate');
-            if(hiddenPlate) hiddenPlate.remove();
+            
+            // --- MODIFICATION: REMOVED HIDDEN PLATE REMOVAL LOGIC FOR MATCHING PAGE ---
+            // This ensures the now-visible .hidden-number-plate is cloned into the modal
+            // const hiddenPlate = contentArea.querySelector('.hidden-number-plate');
+            // if(hiddenPlate) hiddenPlate.remove(); 
+            // --- END MODIFICATION ---
+            
             modalBody.appendChild(contentArea);
         } else {
             contentArea = clone.querySelector('.content') || clone;
@@ -529,18 +540,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         numberPlate.textContent = correctAnswer;
                         numberPlate.classList.add('show-number');
 
-                        // *** MODIFICATION: Clone the revealed plate and display it in the modal ***
-                        const clonedPlate = numberPlate.cloneNode(true);
-                        const modalContent = guessModal.querySelector('.modal-content');
-
-                        // Apply absolute positioning relative to .modal-content
-                        clonedPlate.style.position = 'absolute';
-                        clonedPlate.style.top = '10px';
-                        clonedPlate.style.right = '50px'; // Offset from close button
-                        clonedPlate.style.zIndex = '99999'; // High z-index
-
-                        modalContent.appendChild(clonedPlate);
-                        // *************************************************************
+                        // *** MODIFICATION: REMOVED CLONING OF PLATE TO #guessModal ***
+                        // The plate is now visible on the card and will be cloned later by openModal into #modal
                     }
                     window.requestAnimationFrame(() => {
                         launchConfetti();
