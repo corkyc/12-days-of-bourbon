@@ -337,7 +337,7 @@ header h1 {
 .card .scratch {
     position: absolute;
     inset: 0;
-    z-index: 10; /* INCREASED Z-INDEX to ensure it covers the number plate and content */
+    z-index: 10; 
     display: block;
     background: #5a3624; /* Door color (Bourbon Brown) */
     box-shadow: inset 0 0 10px rgba(0,0,0,0.5); /* Inner shadow for depth */
@@ -383,7 +383,11 @@ header h1 {
 /* Content (Hidden until revealed) */
 .card .content {
   position: absolute;
-  inset: 0;
+  /* FIX: Ensure content covers the full inset of the card */
+  top: 0; 
+  left: 0;
+  right: 0;
+  bottom: 0;
   padding: 0;
   display: block; /* Content is visible underneath the door */
   color: #fff;
@@ -400,9 +404,12 @@ header h1 {
   border-color: #1A3D36; 
 }
 .card .content img {
+  /* FIX: Ensure the image is absolutely positioned and fills the entire content area */
+  position: absolute; 
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  /* FIX: Ensure the image fully covers the card area */
   object-fit: cover;
   border-radius: 0; 
   margin: 0;
@@ -500,7 +507,9 @@ header h1 {
   object-fit: contain;
   margin: 0 auto 16px;
   border-radius: 8px;
-  display: block; /* Keeping display: block here for proper centering/sizing in modal */
+  /* Reset positioning for modal view */
+  position: static; 
+  display: block; 
 }
 #modal-body .content h3,
 #modal-body .content p,
