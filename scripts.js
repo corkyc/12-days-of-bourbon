@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Check if a specific modal image is defined and apply it
         const imgElement = clone.querySelector('img');
         if (imgElement && modalImgSrc) {
-            // This replaces the "reveal" image (images/whiskey2.jpg) with the "modal" image (images/whiskey2-modal.jpg)
+            // This replaces the "reveal" image (images/revealBourbon.jpg) with the "modal" image
             imgElement.src = modalImgSrc; 
         }
 
@@ -157,6 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
                      console.error("Error setting spoiler key:", e);
                  }
             }
+            // FIX: Ensure navigation happens right here
             window.location.href = confirmedLinkHref;
         }
         closeConfirmModal();
@@ -185,6 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.preventDefault();
                 confirmTitle.textContent = link.dataset.confirmTitle || "Confirm Navigation";
                 confirmMessage.innerHTML = link.dataset.confirmMessage || "Are you sure you want to visit this page?";
+                // Store the link href to be used later by confirmYes
                 confirmedLinkHref = link.href;
                 if (confirmModalEl) confirmModalEl.setAttribute("aria-hidden", "false");
                 if (mobileMenu) mobileMenu.classList.remove('open');
@@ -202,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- SLIDE/SWIPE REVEAL LOGIC (Index Page Only) ---
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
         
-        const REVEAL_THRESHOLD_PERCENT = 75;
+        const REVEAL_THRESHOLD_PERCENT = 10;
         
         function setupSlideLogic(card) {
             const scratch = card.querySelector(".scratch");
@@ -254,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const deltaX = clientX - startX;
                 if (deltaX > 0) { // Only allow swiping right
                     
-                    // FIX: Prevent default action during move to stop browser scrolling/cancelling
+                    // Prevent default action during move to stop browser scrolling/cancelling
                     e.preventDefault(); 
 
                     updateDoorPosition(deltaX);
