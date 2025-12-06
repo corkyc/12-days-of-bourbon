@@ -347,6 +347,10 @@ header h1 {
     right: 0; 
     bottom: 0; 
     z-index: 10; /* Door slides away */
+    
+    /* ADDED: Crucial to ensure nothing peeks out during sliding animation */
+    overflow: hidden; 
+    
     display: flex; 
     flex-direction: column;
     align-items: center;
@@ -379,9 +383,14 @@ header h1 {
 
 /* Style for the swipe text overlay */
 .card .scratch .swipe-text {
-    position: relative;
+    /* CHANGED: Positioning should be absolute for robust sliding */
+    position: absolute; 
+    bottom: 10px; /* Fixing position relative to the bottom of the sliding door */
+    right: 10px; /* Fixing position relative to the right of the sliding door */
+    
     z-index: 2; /* Above the image, below the number plate */
-    margin-bottom: 10px;
+    
+    margin-bottom: 0; /* Clear margin since position is absolute */
     font-size: 0.8rem;
     font-weight: normal;
     color: rgba(240, 198, 116, 0.8); /* Lighter gold */
