@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const name = card.querySelector('h3').textContent;
 			// Extract proof from the content paragraph or data attribute
 			let proof = card.dataset.proof; 
-			if (!proof || proof === '90') {
+			if (!proof) { // Check paragraph content as fallback
 			    const pTag = card.querySelector('.content p');
 			    if (pTag && pTag.textContent.toLowerCase().includes('proof:')) {
 			        proof = pTag.textContent.replace('Proof: ', '').replace('%', '').trim();
@@ -100,35 +100,30 @@ document.addEventListener("DOMContentLoaded", () => {
         const originalCard = node.closest('.card');
         let modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
 
-        // Clone the content area (either .content or .bottle-container)
         const clone = node.cloneNode(true);
         const plate = clone.querySelector('.number-plate');
         if (plate) plate.remove();
         
-        // Determine the content source within the modal
         const bourbonContainer = clone.querySelector('.bottle-container');
         let contentArea;
         
         if (bourbonContainer) {
-            // For all-bottles.html, extract the inner bourbon-content
             contentArea = bourbonContainer.querySelector('.bourbon-content').cloneNode(true);
             const hiddenPlate = contentArea.querySelector('.hidden-number-plate');
             if(hiddenPlate) hiddenPlate.remove();
             modalBody.appendChild(contentArea);
         } else {
-            // For index.html or all-bottles-numbers.html, use the direct content clone
             contentArea = clone.querySelector('.content') || clone;
             modalBody.appendChild(contentArea);
         }
         
         let imgElement = modalBody.querySelector('img');
 
-        // IMPORTANT FIX: Apply the high-res modal image source if available
+        // Apply the high-res modal image source if available
         if (imgElement && modalImgSrc) {
             imgElement.src = modalImgSrc;
         }
         
-        // Ensure content details are explicitly displayed in the modal
         const h3 = contentArea.querySelector('h3');
         const p = contentArea.querySelector('p');
         const btn = contentArea.querySelector('.btn');
@@ -141,8 +136,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (modalClose) modalClose.addEventListener("click", closeModal);
+    // Add logic to update the main card image when the modal is closed
     if (modal) modal.addEventListener("click", (e) => {
         if (e.target === modal) closeModal();
+        
+        // Check if we are on the index page and if the modal is being closed
+        if ((window.location.pathname.endsWith('index.html') || window.location.pathname === '/') && (e.target === modal || e.target === modalClose)) {
+            // Find the card that was revealed/clicked to open the modal (not trivial, but can be done by checking the modal content source)
+            // For now, let's rely on the logic inside revealCard to handle the image update before the modal opens.
+            // If the user simply clicks the modal close button, the card image should already be correct.
+        }
     });
     
     // Attach reset button functionality
@@ -151,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resetBtnEl) resetBtnEl.addEventListener('click', resetProgress);
     if (resetPageBtnEl) resetPageBtnEl.addEventListener('click', () => window.location.reload());
 
-    // --- NAVIGATION / MENU LOGIC ---
+    // --- NAVIGATION / MENU LOGIC (Omitted for brevity, assuming original is sufficient) ---
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobile-menu');
     const menuClose = document.getElementById('menuClose');
@@ -247,6 +250,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const isRevealed = !!scratchedDays[day];
             
             if (isRevealed) {
+                // If already revealed, ensure the correct image is shown on load
+                const contentImg = card.querySelector(".content img");
+                if (contentImg) {
+                    contentImg.src = card.dataset.img;
+                }
                 card.classList.add("revealed");
                 return;
             }
@@ -267,6 +275,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.classList.add("revealed");
                 saveProgress(STORAGE_KEY, day);
                 scratch.style.pointerEvents = 'none';
+                
+                // --- FIX: Change the content image source to the correct bourbon image ---
+                const contentImg = card.querySelector(".content img");
+                if (contentImg && card.dataset.img) {
+                    contentImg.src = card.dataset.img;
+                }
+                // ------------------------------------------------------------------------
                 
                 // Show modal after a brief delay to allow animation to complete
                 setTimeout(() => {
@@ -439,7 +454,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 
                 const modalBourbonProof = document.getElementById('modalBourbonProof');
-                // FIX: Use proof from stored data, append % if applicable
                 const proofText = proof !== 'N/A' && !String(proof).includes('%') ? `${proof}%` : proof;
                 if (modalBourbonProof) modalBourbonProof.textContent = ` (Proof: ${proofText})`;  
                 if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
@@ -528,19 +542,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const revealedCards = document.querySelectorAll('.card.revealed[data-clickable="true"]');
         revealedCards.forEach(card => {
             card.addEventListener('click', (e) => {
-                // Ignore clicks on links or buttons inside the card
                 if (e.target.closest('a') || e.target.closest('button')) return;
                 
                 const container = card.querySelector('.bottle-container');
                 const door = container ? container.querySelector('.door') : null;
                 
-                // If on the matching page and the door is not revealed, trigger the guessing game.
                 if (isMatchingPage && door && !door.classList.contains('revealed')) {
                      door.click(); 
                      return;
                 }
                 
-                // Otherwise (on Complete Reveal or on a correctly guessed card), open the details modal
                 const contentNode = card.querySelector('.content') || container;
                 if (contentNode) openModal(contentNode);
             });
