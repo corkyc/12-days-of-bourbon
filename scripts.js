@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // This guarantees the image is cleared, solving the artifact issue.
                 setTimeout(() => {
                     if(scratch) scratch.remove();
-                }, 100); // Matches the 0.3s transition duration
+                }, 0); // Matches the 0.3s transition duration
                 // **********************************************************
 
                 // Show modal after a brief delay to allow animation to complete
