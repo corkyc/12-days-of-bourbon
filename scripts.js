@@ -239,17 +239,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 s.ctx.fill();
             };
 
-            const onDown = (x, y, isTouch) => { // Added isTouch parameter
+            const onDown = (x, y, isTouch) => { 
                 if (s.revealed) return;
                 drawing = true;
                 last = { x, y };
+                
+                // FIX: Immediately erase the first spot touched to ensure a smooth start
+                eraseAt(x, y); 
+                
                 if (isTouch) {
-                    // Prevent page scroll/zoom on touch start
                     document.body.style.touchAction = 'none';
                 }
             };
 
-            const onMove = (x, y, isTouch) => { // Added isTouch parameter
+            const onMove = (x, y, isTouch) => { 
                 if (!drawing || s.revealed) return;
                 
                 const dist = Math.hypot(x - last.x, y - last.y);
@@ -268,13 +271,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (drawing) {
                     drawing = false;
                     last = null;
-                    document.body.style.touchAction = ''; // Restore default touch action
+                    document.body.style.touchAction = ''; 
                     checkRevealed(card);
                 }
             };
 
             canvas.addEventListener("pointerdown", e => {
-                // FIX 1: Prevent default action for touch/pen/mouse on pointerdown
                 e.preventDefault(); 
                 const isTouch = e.pointerType === "touch" || e.pointerType === "pen";
                 const p = localPos(canvas, e.clientX, e.clientY);
@@ -284,7 +286,6 @@ document.addEventListener("DOMContentLoaded", () => {
             canvas.addEventListener("pointermove", e => {
                 const isTouch = e.pointerType === "touch" || e.pointerType === "pen";
                 if (drawing && e.cancelable) {
-                    // FIX 2: Ensure preventDefault is called on move for smooth scratching
                     if (isTouch || e.pointerType === "mouse") {
                         e.preventDefault();
                         const p = localPos(canvas, e.clientX, e.clientY);
@@ -455,12 +456,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (guess === correctAnswer) {
                     const { name: bourbonName = 'Unknown Bourbon' } = fullBourbonList[correctAnswer] || {};
                     
-                    resultMessage.innerHTML = `<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">🎉 YES! CORRECT! 🎉</div>${bourbonName} is mini-bottle bumber:${correctAnswer}!`;
+                    resultMessage.innerHTML = `<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">🎉 YES! CORRECT! 🎉</div>${bourbonName} is mini-bottle bumber:${correctDay}!`;
 
                     currentDoor.classList.add('revealed');
                     const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
                     if (numberPlate) {
-                        numberPlate.textContent = correctAnswer;
+                        numberPlate.textContent = correctDay;
                         numberPlate.classList.add('show-number');
                     }
                     window.requestAnimationFrame(() => {
