@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">
 							🎉 YES! CORRECT! 🎉
 						</div>
-						This is bottle **Day ${correctAnswer}**! (Proof: **${proofValue}**)
+						This is bottle ${correctAnswer}! (Proof: **${proofValue}**)
 						`;
 							// Correct Guess: Reveal the bourbon
                         currentDoor.classList.add('revealed'); // Hide the door
@@ -314,7 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
 							}, 10000);
                     } else {
                         // Incorrect Guess: Show message, do not reveal
-                        resultMessage.textContent = `❌ Incorrect ❌ That's not the right bottle number. Try another bottle!`;
+                        resultMessage.innerHTML = `❌ Incorrect ❌ That's not the right bottle number. Try another bottle!`;
                     }
                 });
                 dayGuessInput.addEventListener('keyup', (e) => {
