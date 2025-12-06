@@ -249,10 +249,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             currentDoor.style.pointerEvents = 'none';
                             launchConfetti();
                         });
-						closeModalAndRestoreScroll();
-						//setTimeout(() => {
-						//	closeModalAndRestoreScroll();
-						//	}, 6000);
+						
+						setTimeout(() => {
+							closeModalAndRestoreScroll();
+							}, 10000);
                     } else {
                         // Incorrect Guess: Show message, do not reveal
                         resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
