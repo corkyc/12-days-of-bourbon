@@ -318,7 +318,7 @@ header h1 {
     z-index: 20; /* Ensure it's above the image/content */
     background: linear-gradient(180deg,#FFD700,#C0A04C);
     color: #1b1209;
-    font-weight: 7-0;
+    font-weight: 700;
     font-size: 18px;
     padding: 8px 12px;
     border-radius: 8px;
@@ -336,7 +336,7 @@ header h1 {
 
 /* --- SWIPE/SLIDE DOOR STYLES (for index.html) --- */
 
-/* THE CRITICAL FIX: Ensure the scratch element covers the parent perfectly */
+/* Updated .scratch to be a div container, containing an image and text overlay */
 .card .scratch {
     position: absolute;
     /* Use explicit 0 positioning for reliable coverage */
@@ -345,9 +345,10 @@ header h1 {
     right: 0; 
     bottom: 0; 
     z-index: 10; 
-    display: block;
-    background: #5a3624; /* Door color (Bourbon Brown) */
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5); /* Inner shadow for depth */
+    display: flex; /* Used to center the text */
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end; /* Push text to the bottom */
     
     /* Key properties for slide effect: */
     transform: translateX(0);
@@ -356,30 +357,36 @@ header h1 {
     /* FIX: Explicitly disable touch default actions for better swipe */
     touch-action: none;
     
-    /* Center text within the door */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: #f0c674; /* Gold text */
-    font-weight: bold;
-    text-align: center;
-    padding: 10%;
+    /* Overlay background color for fallback or blend */
+    background: rgba(90, 54, 36, 0.2); 
     
     /* Prevent text selection */
     user-select: none;
 }
 
-/* Add an indicator or text to the sliding door for better UX */
-.card .scratch::after {
-    content: 'Swipe to Open \u276F'; /* Unicode right arrow */
+/* Style for the new cover image inside the scratch div */
+.card .scratch .door-cover-img {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image fills the entire door area */
+    z-index: 1; /* Below the number plate and swipe text */
+    border-radius: 12px;
+}
+
+/* Style for the swipe text overlay */
+.card .scratch .swipe-text {
+    position: relative;
+    z-index: 2; /* Above the image */
+    margin-bottom: 10px;
     font-size: 0.8rem;
     font-weight: normal;
-    color: rgba(240, 198, 116, 0.7); /* Lighter gold */
+    color: rgba(240, 198, 116, 0.8); /* Lighter gold */
+    text-shadow: 0 0 3px rgba(0,0,0,0.7);
+    padding: 0 10px 
 }
+
 
 /* The revealed state of the door (door slid open) */
 .card.revealed .scratch { 
