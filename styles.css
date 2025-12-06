@@ -337,7 +337,8 @@ header h1 {
   inset: 0;
   z-index: 5;
   display: block;
-  touch-action: pan-y; 
+  /* FIX: Remove explicit pan-y touch action to prevent conflicts with JS touch-action: none */
+  /* touch-action: pan-y; */ 
 }
 
 /* Content (Hidden until revealed) */
