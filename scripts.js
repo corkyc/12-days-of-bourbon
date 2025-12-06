@@ -106,8 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
 
         const clone = node.cloneNode(true);
-        const plate = clone.querySelector('.number-plate');
-//        if (plate) plate.remove();
         
         const bourbonContainer = clone.querySelector('.bottle-container');
         let contentArea;
@@ -122,6 +120,22 @@ document.addEventListener("DOMContentLoaded", () => {
             modalBody.appendChild(contentArea);
         }
         
+        // --- MODIFICATION for Number Plate in Modal (Index Page) ---
+        if (!bourbonContainer) {
+            let cardPlate = originalCard.querySelector('.number-plate');
+            if (cardPlate) {
+                const clonedPlate = cardPlate.cloneNode(true);
+                
+                clonedPlate.style.position = 'absolute';
+                clonedPlate.style.top = '10px';
+                clonedPlate.style.right = '50px'; 
+                clonedPlate.style.zIndex = '99999'; 
+                
+                document.getElementById('modal').querySelector('.modal-inner').appendChild(clonedPlate);
+            }
+        }
+        // --- END MODIFICATION ---
+
         let imgElement = modalBody.querySelector('img');
 
         // Apply the high-res modal image source if available
@@ -194,17 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
     if (confirmYes) confirmYes.addEventListener('click', () => {
         if (confirmedLinkHref) {
-            // REMOVED LOGIC: Do not save spoiler key to Local Storage
-            /*
-            const link = Array.from(menuLinks).find(l => l.href === confirmedLinkHref);
-            if (link && link.dataset.spoilerKey) {
-                 try {
-                     localStorage.setItem(link.dataset.spoilerKey, 'true');
-                 } catch (e) {
-                     console.error("Error setting spoiler key:", e);
-                 }
-            }
-            */
             window.location.href = confirmedLinkHref;
         }
         closeConfirmModal();
@@ -213,25 +216,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === confirmModalEl) closeConfirmModal();
     });
     
-    // REMOVED LOGIC: Skip reading spoiler key and setting data-requires-confirm to false
-    /*
-    menuLinks.forEach(link => {
-        if (link.dataset.requiresConfirm === 'true' && link.dataset.spoilerKey) {
-            try {
-                if (localStorage.getItem(link.dataset.spoilerKey) === 'true') {
-                    link.dataset.requiresConfirm = 'false';
-                }
-            } catch(e) {
-                 console.error("Error reading spoiler key:", e);
-            }
-        }
-    });
-    */
 
     menuLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            // Since we removed the check for the saved key, `data-requires-confirm` 
-            // will always be "true" for spoiler links.
             if (link.dataset.requiresConfirm === 'true') {
                 e.preventDefault();
                 confirmTitle.textContent = link.dataset.confirmTitle || "Confirm Navigation";
@@ -240,16 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (confirmModalEl) confirmModalEl.setAttribute("aria-hidden", "false");
                 if (mobileMenu) mobileMenu.classList.remove('open');
             } 
-            // REMOVED LOGIC: Do not save spoiler key on click
-            /*
-            else if (link.dataset.spoilerKey) {
-                 try {
-                     localStorage.setItem(link.dataset.spoilerKey, 'true');
-                 } catch (e) {
-                     console.error("Error setting spoiler key:", e);
-                 }
-            }
-            */
         });
     });
 
@@ -273,6 +250,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     contentImg.src = card.dataset.img;
                 }
                 card.classList.add("revealed");
+                
+                // FIX: Remove scratch element on load if already revealed
+                if(scratch) scratch.remove();
+                
                 return;
             }
 
@@ -300,6 +281,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 // ------------------------------------------------------------------------
                 
+                // *** FIX: JS removal of the sliding door after animation ***
+                // This guarantees the image is cleared, solving the artifact issue.
+                setTimeout(() => {
+                    if(scratch) scratch.remove();
+                }, 300); // Matches the 0.3s transition duration
+                // **********************************************************
+
                 // Show modal after a brief delay to allow animation to complete
                 setTimeout(() => {
                     const contentNode = card.querySelector(".content");

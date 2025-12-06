@@ -242,7 +242,7 @@ header h1 {
 /* --- GRID --- */
 .grid {
   display: grid;
-  /* FIX: Changed to 1 column for mobile scrolling ease (was repeat(2, 1fr)) */
+  /* FIX: Change to 1 column for mobile scrolling ease (was repeat(2, 1fr)) */
   grid-template-columns: 1fr;
   /* FIX: Increased gap for better separation on mobile (was 18px) */
   gap: 30px; 
@@ -301,7 +301,7 @@ header h1 {
   position: absolute;
   right: 12px;
   top: 12px;
-  z-index: 6; 
+  z-index: 15; /* Retaining higher z-index for visibility */
   background: linear-gradient(180deg,#FFD700,#C0A04C);
   color: #1b1209;
   font-weight: 700;
@@ -338,7 +338,7 @@ header h1 {
 
 /* --- SWIPE/SLIDE DOOR STYLES (for index.html) --- */
 
-/* Reverting .scratch to its initial state (minus canvas/text) and retaining necessary positioning for the custom image structure */
+/* Retaining necessary positioning for the custom image structure */
 .card .scratch {
     position: absolute;
     /* Use explicit 0 positioning for reliable coverage */
@@ -364,7 +364,7 @@ header h1 {
     
     /* Prevent text selection */
     user-select: none;
-    overflow: hidden; /* Reverting overflow back here */
+    overflow: hidden; 
 }
 
 /* Style for the new cover image inside the scratch div */
@@ -380,7 +380,7 @@ header h1 {
 
 /* Style for the swipe text overlay */
 .card .scratch .swipe-text {
-    position: relative; /* Reverting to relative position */
+    position: relative; 
     z-index: 2; 
     margin-bottom: 10px;
     font-size: 0.8rem;
@@ -392,9 +392,9 @@ header h1 {
 
 /* The revealed state of the door (door slid open) */
 .card.revealed .scratch { 
-    transform: translateX(110%); /* Reverting to 110% translation */
+    transform: translateX(100%); /* Reverting to 100% translation (JS now removes the element) */
     pointer-events: none; /* Make it unclickable once opened */
-    will-change: transform; /* Reverting will-change */
+    will-change: auto; 
 }
 
 /* Content (Hidden until revealed) */
@@ -425,8 +425,8 @@ header h1 {
   position: absolute; 
   top: 0;
   left: 0;
-  width: 100%; /* Reverting size tweak */
-  height: 100%; /* Reverting size tweak */
+  width: 100%; 
+  height: 100%; 
   object-fit: cover;
   border-radius: 0; 
   margin: 0;
