@@ -1,6 +1,7 @@
+// Updated scripts.js will go here. Please provide your existing scripts.js content so I can update it accurately.
 /*
-  Note: This script includes Back-to-Top logic,
-  Persistent Confirmation logic, and the main Scratch-Off game functionality.
+  Note: This script includes Back-to-Top logic,
+  Persistent Confirmation logic, and the main Scratch-Off game functionality.
 */
 document.addEventListener("DOMContentLoaded", () => {
     const DPR = window.devicePixelRatio || 1;
@@ -24,42 +25,42 @@ document.addEventListener("DOMContentLoaded", () => {
     const STORAGE_KEY = 'scratchedDays';
     const LS_KEY_SEMI_SPOILER = 'semiSpoiler'; 
     const LS_KEY_MAJOR_SPOILER = 'majorSpoiler'; 
-	
-	// --- Bourbon Data Storage Functions (scripts.js) ---
 
-	const BOURBON_DATA_KEY = 'allBourbonData';
+        // --- Bourbon Data Storage Functions (scripts.js) ---
 
-	function createAndSaveBourbonData() {
-		const bourbonData = {};
-		// Query all cards that have a data-day attribute (i.e., the scratch-off cards)
-		const cards = document.querySelectorAll('.card[data-day]');
+        const BOURBON_DATA_KEY = 'allBourbonData';
 
-		cards.forEach(card => {
-			const day = card.dataset.day;
-			const name = card.querySelector('h3').textContent;
-			// 🔑 Retrieve the Proof directly from the new data attribute
-			const proof = card.dataset.proof || 'N/A'; 
-			const imgSrc = card.querySelector('img').src;
+        function createAndSaveBourbonData() {
+                const bourbonData = {};
+                // Query all cards that have a data-day attribute (i.e., the scratch-off cards)
+                const cards = document.querySelectorAll('.card[data-day]');
 
-			bourbonData[day] = {
-				name: name,
-				proof: proof, // Storing the proof
-				imgSrc: imgSrc
-			};
-		});
+                cards.forEach(card => {
+                        const day = card.dataset.day;
+                        const name = card.querySelector('h3').textContent;
+                        // 🔑 Retrieve the Proof directly from the new data attribute
+                        const proof = card.dataset.proof || 'N/A'; 
+                        const imgSrc = card.querySelector('img').src;
 
-		try {
-			localStorage.setItem(BOURBON_DATA_KEY, JSON.stringify(bourbonData));
-			console.log("Bourbon data stored in Local Storage.");
-		} catch (e) {
-			console.error("Error saving bourbon data to Local Storage", e);
-		}
-	}
+                        bourbonData[day] = {
+                                name: name,
+                                proof: proof, // Storing the proof
+                                imgSrc: imgSrc
+                        };
+                });
 
-	// Run the saving function when the script loads on the index page
-	if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
-		createAndSaveBourbonData();
-	}
+                try {
+                        localStorage.setItem(BOURBON_DATA_KEY, JSON.stringify(bourbonData));
+                        console.log("Bourbon data stored in Local Storage.");
+                } catch (e) {
+                        console.error("Error saving bourbon data to Local Storage", e);
+                }
+        }
+
+        // Run the saving function when the script loads on the index page
+        if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+                createAndSaveBourbonData();
+        }
 
     let scratchedDays = {};
 
@@ -115,29 +116,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    
+
     loadProgress();
-    
+
     // --- CARD RANDOMIZATION & BOURBON MATCHING LOGIC (CONDITIONAL) ---
-    
+
     // Check if the current page is 'all-bottles.html'
     if (window.location.pathname.endsWith('all-bottles.html')) {
-		const BOURBON_DATA_KEY = 'allBourbonData';
-		let fullBourbonList = {};
-		try {
-			const storedData = localStorage.getItem(BOURBON_DATA_KEY);
-			// Load the full list saved from index.html
-			fullBourbonList = storedData ? JSON.parse(storedData) : {}; 
-		} catch(e) {
-			console.error("Failed to load full bourbon data.");
-		}      
+                const BOURBON_DATA_KEY = 'allBourbonData';
+                let fullBourbonList = {};
+                try {
+                        const storedData = localStorage.getItem(BOURBON_DATA_KEY);
+                        // Load the full list saved from index.html
+                        fullBourbonList = storedData ? JSON.parse(storedData) : {}; 
+                } catch(e) {
+                        console.error("Failed to load full bourbon data.");
+                }      
         function shuffleCards() {
             if (cards.length === 0) return;
             const container = cards[0].parentNode;
 
             if (container) {
                 let cardElements = Array.from(container.children); 
-                
+
                 // 1. Create a Document Fragment (In-memory container)
                 const fragment = document.createDocumentFragment();
 
@@ -171,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 origin: { x: 0.2, y: 0.9 },
                 zIndex: 10000
             });
-            
+
             // Launch another burst from the bottom right
             confetti({
                 particleCount: 75,
@@ -180,128 +181,128 @@ document.addEventListener("DOMContentLoaded", () => {
                 zIndex: 10000
             });
 
-            
-            
+
+
             // If you use a CSS/manual animation, place the logic here.
         }
-        
+
         // 1. Get DOM elements for the new guessing modal (MOVED INSIDE HERE)
         const guessModal = document.getElementById('guessModal');
         const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
-		const submitButton = document.getElementById('submitGuessButton');
+                const submitButton = document.getElementById('submitGuessButton');
         const dayGuessInput = document.getElementById('dayGuessInput');
         const resultMessage = document.getElementById('resultMessage');
         const doors = document.querySelectorAll('.door');
-        
+
         // ADDED: Element to display the Bourbon name in the modal
         const modalBourbonName = document.getElementById('modalBourbonName');
-		const modalBourbonImage = document.getElementById('modalBourbonImage');
-		const modalBourbonProof = document.getElementById('modalBourbonProof');
+                const modalBourbonImage = document.getElementById('modalBourbonImage');
+                const modalBourbonProof = document.getElementById('modalBourbonProof');
         let currentDoor = null;
 
         if (guessModal && doors.length > 0) {
-			function lockGuessModal() {
-				dayGuessInput.disabled = true;
-				submitButton.disabled = true;
-				submitButton.textContent = 'Answer Submitted';
-			}
-			
-			function unlockGuessModal() {
-				dayGuessInput.disabled = false;
-				submitButton.disabled = false;
-				submitButton.textContent = 'Submit Guess';
-			}
+                        function lockGuessModal() {
+                                dayGuessInput.disabled = true;
+                                submitButton.disabled = true;
+                                submitButton.textContent = 'Answer Submitted';
+                        }
+
+                        function unlockGuessModal() {
+                                dayGuessInput.disabled = false;
+                                submitButton.disabled = false;
+                                submitButton.textContent = 'Submit Guess';
+                        }
             // 4. Modal Close Handlers
             const closeModalAndRestoreScroll = () => {
                 guessModal.style.display = 'none';
                 // FIX: Restore background scrolling when modal is closed
                 unlockGuessModal();
-				document.body.style.overflowY = ''; 
+                                document.body.style.overflowY = ''; 
             };
-				
-		// 2. Event Listener for Doors (CLEANED UP AND FIXED)
-			doors.forEach(door => {
-			door.addEventListener('click', function(e) {
-			e.stopPropagation();
-			if (this.classList.contains('revealed')) return;
-			
-			// --- DATA RETRIEVAL ---
-			const bourbonContainer = this.closest('.bottle-container'); 
-			const correctDay = bourbonContainer.dataset.correctDay; 
-			
-			const details = fullBourbonList[correctDay] || {};
-			const proofValue = details.proof || 'N/A';
-			const nameFromData = details.name || '';
-			
-			const linkElement = bourbonContainer.querySelector('.btn');
-			const bourbonLinkHref = linkElement ? linkElement.href : '#';
 
-			let bourbonName = nameFromData;
-			let bourbonImageSrc = '';
-			
-			const imageElement = bourbonContainer.querySelector('.bourbon-content img');
-			if (imageElement) {
-				bourbonImageSrc = imageElement.src;
-			}
+                // 2. Event Listener for Doors (CLEANED UP AND FIXED)
+                        doors.forEach(door => {
+                        door.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (this.classList.contains('revealed')) return;
 
-			// --- LINK REPLACEMENT LOGIC (CRITICAL FIX: Consolidate to one check/action) ---
-			// 1. Get the current reference to the element in the DOM
-			let currentNameElement = document.getElementById('modalBourbonName');
-			
-			// 2. If it's the original strong tag (not yet an A tag), replace it once.
-			if (currentNameElement && currentNameElement.tagName !== 'A') {
-				const newLink = document.createElement('a');
-				newLink.id = 'modalBourbonName';
-				newLink.href = bourbonLinkHref;
-				newLink.target = '_blank'; 
-				newLink.style.fontWeight = 'bold'; 
-				newLink.style.color = 'inherit';
-				newLink.style.textDecoration = 'underline'; 
-				
-				currentNameElement.parentNode.replaceChild(newLink, currentNameElement);
-				currentNameElement = newLink; // Update the local variable to the new link
-				modalBourbonName = newLink; // Update the global variable reference (let/var depending on scope)
-			}
-			
-			// --- DATA DISPLAY ---
-			
-			// 3. Update the content of the link (whether it's the new <a> or the existing <a>)
-			if (currentNameElement) {
-				currentNameElement.textContent = bourbonName || 'this bottle';
-				// Also ensure the href is correct on repeat clicks, as link shuffling may change data
-				if (currentNameElement.tagName === 'A') {
-					 currentNameElement.href = bourbonLinkHref;
-				}
-			}
-			
-			// Display Proof in modal introduction
-			const modalBourbonProof = document.getElementById('modalBourbonProof');
-			if (modalBourbonProof) {
-				modalBourbonProof.textContent = ` (Proof: ${proofValue})`; 
-			}
-			
-			// Update the second instance of the name in the guess prompt
-			const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
-			if (modalBourbonNameGuessPrompt) {
-				modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
-			}
-			
-			if (modalBourbonImage) {
-				modalBourbonImage.src = bourbonImageSrc;
-				modalBourbonImage.style.display = 'block'; 
-			}
-			
-			// --- MODAL OPEN ---
-			unlockGuessModal(); 
-			currentDoor = this; 
-			resultMessage.textContent = '';
-			dayGuessInput.value = ''; 
-			
-			window.requestAnimationFrame(() => {
-				guessModal.style.display = 'flex'; // This should now fire correctly on the first click
-			});
-		});
-	});
+                        // --- DATA RETRIEVAL ---
+                        const bourbonContainer = this.closest('.bottle-container'); 
+                        const correctDay = bourbonContainer.dataset.correctDay; 
+
+                        const details = fullBourbonList[correctDay] || {};
+                        const proofValue = details.proof || 'N/A';
+                        const nameFromData = details.name || '';
+
+                        const linkElement = bourbonContainer.querySelector('.btn');
+                        const bourbonLinkHref = linkElement ? linkElement.href : '#';
+
+                        let bourbonName = nameFromData;
+                        let bourbonImageSrc = '';
+
+                        const imageElement = bourbonContainer.querySelector('.bourbon-content img');
+                        if (imageElement) {
+                                bourbonImageSrc = imageElement.src;
+                        }
+
+                        // --- LINK REPLACEMENT LOGIC (CRITICAL FIX: Consolidate to one check/action) ---
+                        // 1. Get the current reference to the element in the DOM
+                        let currentNameElement = document.getElementById('modalBourbonName');
+
+                        // 2. If it's the original strong tag (not yet an A tag), replace it once.
+                        if (currentNameElement && currentNameElement.tagName !== 'A') {
+                                const newLink = document.createElement('a');
+                                newLink.id = 'modalBourbonName';
+                                newLink.href = bourbonLinkHref;
+                                newLink.target = '_blank'; 
+                                newLink.style.fontWeight = 'bold'; 
+                                newLink.style.color = 'inherit';
+                                newLink.style.textDecoration = 'underline'; 
+
+                                currentNameElement.parentNode.replaceChild(newLink, currentNameElement);
+                                currentNameElement = newLink; // Update the local variable to the new link
+                                modalBourbonName = newLink; // Update the global variable reference (let/var depending on scope)
+                        }
+
+                        // --- DATA DISPLAY ---
+
+                        // 3. Update the content of the link (whether it's the new <a> or the existing <a>)
+                        if (currentNameElement) {
+                                currentNameElement.textContent = bourbonName || 'this bottle';
+                                // Also ensure the href is correct on repeat clicks, as link shuffling may change data
+                                if (currentNameElement.tagName === 'A') {
+                                         currentNameElement.href = bourbonLinkHref;
+                                }
+                        }
+
+                        // Display Proof in modal introduction
+                        const modalBourbonProof = document.getElementById('modalBourbonProof');
+                        if (modalBourbonProof) {
+                                modalBourbonProof.textContent = ` (Proof: ${proofValue})`; 
+                        }
+
+                        // Update the second instance of the name in the guess prompt
+                        const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
+                        if (modalBourbonNameGuessPrompt) {
+                                modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
+                        }
+
+                        if (modalBourbonImage) {
+                                modalBourbonImage.src = bourbonImageSrc;
+                                modalBourbonImage.style.display = 'block'; 
+                        }
+
+                        // --- MODAL OPEN ---
+                        unlockGuessModal(); 
+                        currentDoor = this; 
+                        resultMessage.textContent = '';
+                        dayGuessInput.value = ''; 
+
+                        window.requestAnimationFrame(() => {
+                                guessModal.style.display = 'flex'; // This should now fire correctly on the first click
+                        });
+                });
+        });
 
             // 3. Handle Guess Submission
             if (submitButton) {
@@ -318,20 +319,20 @@ document.addEventListener("DOMContentLoaded", () => {
                         resultMessage.textContent = 'Please enter a valid number between 1 and 12.';
                         return;
                     }
-					lockGuessModal();
+                                        lockGuessModal();
 
                     if (guess === correctAnswer) {
-						// 🔑 Look up the proof value using the correct day number (key)
-						const bourbonDetails = fullBourbonList[correctAnswer] || {};
-						const proofValue = bourbonDetails.proof || 'N/A';
-						const bourbonName = bourbonDetails.name || 'Unknown Bourbon';
-						resultMessage.innerHTML = `
-						<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">
-							🎉 YES! CORRECT! 🎉
-						</div>
-						${bourbonName} is mini-bottle bumber:${correctAnswer}!
-						`;
-							// Correct Guess: Reveal the bourbon
+                                                // 🔑 Look up the proof value using the correct day number (key)
+                                                const bourbonDetails = fullBourbonList[correctAnswer] || {};
+                                                const proofValue = bourbonDetails.proof || 'N/A';
+                                                const bourbonName = bourbonDetails.name || 'Unknown Bourbon';
+                                                resultMessage.innerHTML = `
+                                                <div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">
+                                                        🎉 YES! CORRECT! 🎉
+                                                </div>
+                                                ${bourbonName} is mini-bottle bumber:${correctAnswer}!
+                                                `;
+                                                        // Correct Guess: Reveal the bourbon
                         currentDoor.classList.add('revealed'); // Hide the door
                         const numberPlate = bottleContainer.querySelector('.hidden-number-plate');
                         if (numberPlate) {
@@ -344,10 +345,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             currentDoor.style.pointerEvents = 'none';
                             launchConfetti();
                         });
-						
-						setTimeout(() => {
-							closeModalAndRestoreScroll();
-							}, 10000);
+
+                                                setTimeout(() => {
+                                                        closeModalAndRestoreScroll();
+                                                        }, 10000);
                     } else {
                         // Incorrect Guess: Show message, do not reveal
                         resultMessage.innerHTML = `❌ Incorrect ❌ That's not the right bottle number. Try another bottle!`;
@@ -374,12 +375,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
-        
+
         // --- END NEW: BOURBON GUESSING GAME LOGIC ---
     } // CLOSES if (window.location.pathname.endsWith('all-bottles.html'))
 
     // --- END CARD RANDOMIZATION & BOURBON MATCHING LOGIC (CONDITIONAL) ---
-    
+
     if (resetBtn) {
         resetBtn.addEventListener('click', resetProgress);
     }
@@ -389,8 +390,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    
-    
+
+
     // --- NAVIGATION / MENU LOGIC ---
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -486,7 +487,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-    
+
     // FIX: Allow clicking outside confirmation modal to close
     if (confirmModal) {
         confirmModal.addEventListener("click", (e) => {
@@ -517,7 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (modalClose) modalClose.addEventListener("click", closeModal);
-    
+
     // FIX: Allow clicking outside bottle detail modal to close
     if (modal) {
         modal.addEventListener("click", (e) => {
@@ -696,7 +697,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (card.classList.contains('revealed')) {
             setupClickableCardLogic(card);
         }
-        
+
         // Attach the modal click handler ONCE to the card element itself, 
         card.addEventListener("click", (e) => {
             if (e.target.closest('a') !== null) return; 
@@ -750,12 +751,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-    
+
     // --- TEMPORARY SNOW GENERATOR ---
     (function createSnow(num = 75, initialDurationSeconds = 5) {
         const container = document.getElementById('snow-container');
         if (!container) return;
-        
+
         let activeFlakes = 0;
         const SNOW_COLORS = ['#FFFFFF', '#F0F8FF', '#CCFFFF', '#99FFFF', '#B0E0E6']; 
         const SNOW_CHARS = ['❄', '❅', '❆', '✶', '✷', '✵']; 
@@ -765,7 +766,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 event.target.removeEventListener('animationend', handleFlakeEnd);
                 event.target.remove();
                 activeFlakes--;
-                
+
                 if (flakesGenerated >= totalFlakesToGenerate && activeFlakes <= 0) {
                     removeContainer();
                 }
