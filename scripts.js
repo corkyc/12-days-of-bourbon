@@ -26,15 +26,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		cards.forEach(card => {
 			const day = card.dataset.day;
 			const name = card.querySelector('h3').textContent;
-			const proof = card.dataset.proof || 'N/A';
-			const imgSrc = card.dataset.img; // Use the main image for consistency
+			// Extract proof from the content paragraph or data attribute
+			let proof = card.dataset.proof; 
+			if (!proof || proof === '90') {
+			    const pTag = card.querySelector('.content p');
+			    if (pTag && pTag.textContent.toLowerCase().includes('proof:')) {
+			        proof = pTag.textContent.replace('Proof: ', '').replace('%', '').trim();
+			    }
+			}
+			
+			const imgSrc = card.dataset.img; 
 			const modalImgSrc = card.dataset.modalImg;
 
-			bourbonData[day] = { name, proof, imgSrc, modalImgSrc };
+			bourbonData[day] = { name, proof: proof || 'N/A', imgSrc, modalImgSrc };
 		});
 
 		try {
-			// Only save if data is present and we're on the index page (source of truth)
 			if (Object.keys(bourbonData).length > 0) {
 				localStorage.setItem(BOURBON_DATA_KEY, JSON.stringify(bourbonData));
 			}
@@ -43,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
     
-	// Initial bourbon data creation (must happen on the page that has the full dataset, index.html)
 	if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
 		createAndSaveBourbonData();
 	}
@@ -91,53 +97,45 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!modalBody || !node || !node.cloneNode) return;
         
         modalBody.innerHTML = "";
+        const originalCard = node.closest('.card');
+        let modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
+
+        // Clone the content area (either .content or .bottle-container)
         const clone = node.cloneNode(true);
         const plate = clone.querySelector('.number-plate');
         if (plate) plate.remove();
         
-        // Find the correct image source for the modal
-        let modalImgSrc = null;
-        let imgElement = clone.querySelector('img');
-
-        // Logic for index.html cards
-        const originalCard = node.closest('.card');
-        if (originalCard && originalCard.dataset.modalImg) {
-            modalImgSrc = originalCard.dataset.modalImg;
-        } else if (originalCard && originalCard.dataset.img) {
-            // Fallback for full reveal page or if modalImg is missing
-            modalImgSrc = originalCard.dataset.img;
-        }
-
-        // Logic for all-bottles.html (inside a bottle-container)
+        // Determine the content source within the modal
         const bourbonContainer = clone.querySelector('.bottle-container');
+        let contentArea;
+        
         if (bourbonContainer) {
-            // Clone only the inner content for a cleaner modal
-            const bourbonContent = bourbonContainer.querySelector('.bourbon-content').cloneNode(true);
-            // On the all-bottles page, the card's data-modal-img is the source
-            modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
-            if(!modalImgSrc) modalImgSrc = bourbonContent.querySelector('img')?.src;
-            
-            // The number-plate element is cloned but should be removed from the modal view
-            const hiddenPlate = bourbonContent.querySelector('.hidden-number-plate');
+            // For all-bottles.html, extract the inner bourbon-content
+            contentArea = bourbonContainer.querySelector('.bourbon-content').cloneNode(true);
+            const hiddenPlate = contentArea.querySelector('.hidden-number-plate');
             if(hiddenPlate) hiddenPlate.remove();
-            
-            modalBody.appendChild(bourbonContent);
-            imgElement = modalBody.querySelector('img'); // Set imgElement to the one in the modal body
+            modalBody.appendChild(contentArea);
         } else {
-             // For index.html or all-bottles-numbers.html content
-             modalBody.appendChild(clone);
+            // For index.html or all-bottles-numbers.html, use the direct content clone
+            contentArea = clone.querySelector('.content') || clone;
+            modalBody.appendChild(contentArea);
         }
+        
+        let imgElement = modalBody.querySelector('img');
 
-        // Apply the correct modal image source
+        // IMPORTANT FIX: Apply the high-res modal image source if available
         if (imgElement && modalImgSrc) {
             imgElement.src = modalImgSrc;
         }
         
         // Ensure content details are explicitly displayed in the modal
-        const contentArea = modalBody.querySelector('.content') || modalBody.querySelector('.bourbon-content') || modalBody;
-        contentArea.querySelector('h3').style.display = 'block';
-        contentArea.querySelector('p').style.display = 'block';
-        contentArea.querySelector('.btn').style.display = 'inline-block';
+        const h3 = contentArea.querySelector('h3');
+        const p = contentArea.querySelector('p');
+        const btn = contentArea.querySelector('.btn');
+        
+        if (h3) h3.style.display = 'block';
+        if (p) p.style.display = 'block';
+        if (btn) btn.style.display = 'inline-block';
         
         if (modal) modal.setAttribute("aria-hidden", "false");
     }
@@ -153,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (resetBtnEl) resetBtnEl.addEventListener('click', resetProgress);
     if (resetPageBtnEl) resetPageBtnEl.addEventListener('click', () => window.location.reload());
 
-    // --- NAVIGATION / MENU LOGIC (Omitted for brevity, assuming original is sufficient) ---
+    // --- NAVIGATION / MENU LOGIC ---
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobile-menu');
     const menuClose = document.getElementById('menuClose');
@@ -284,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 cardWidth = card.clientWidth; 
                 scratch.style.transition = 'none';
                 pointerId = id;
-                e.preventDefault(); // Prevent default on down for better touch feel
+                e.preventDefault(); 
             };
 
             const onMove = (clientX, e) => {
@@ -363,8 +361,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         // 2. Load Matched Progress
-        const revealedDoors = document.querySelectorAll('.door');
-        revealedDoors.forEach(door => {
+        const doors = document.querySelectorAll('.door');
+        doors.forEach(door => {
              const container = door.closest('.bottle-container');
              const correctDay = container.dataset.correctDay;
              
@@ -397,7 +395,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const submitButton = document.getElementById('submitGuessButton');
         const dayGuessInput = document.getElementById('dayGuessInput');
         const resultMessage = document.getElementById('resultMessage');
-        const doors = document.querySelectorAll('.door');
         const modalBourbonImage = document.getElementById('modalBourbonImage');
         const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
         let currentDoor = null;
@@ -432,7 +429,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Fetch details from local storage for proof/flavor/image
                 const details = fullBourbonList[correctDay] || {};
                 const proof = details.proof || 'N/A';
-                const imgSrc = details.imgSrc || '';
+                const imgSrc = details.imgSrc || ''; // Use main image for thumbnail
                 
                 
                 let currentNameElement = document.getElementById('modalBourbonName');
@@ -442,7 +439,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 
                 const modalBourbonProof = document.getElementById('modalBourbonProof');
-                if (modalBourbonProof) modalBourbonProof.textContent = ` (Proof: ${proof}%)`; 
+                // FIX: Use proof from stored data, append % if applicable
+                const proofText = proof !== 'N/A' && !String(proof).includes('%') ? `${proof}%` : proof;
+                if (modalBourbonProof) modalBourbonProof.textContent = ` (Proof: ${proofText})`;  
                 if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
                 
                 if (modalBourbonImage && imgSrc) {
