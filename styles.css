@@ -333,10 +333,14 @@ header h1 {
 
 /* --- SWIPE/SLIDE DOOR STYLES (for index.html) --- */
 
-/* The 'scratch' canvas element is repurposed as the sliding door */
+/* THE CRITICAL FIX: Explicitly set all position boundaries for scratch canvas */
 .card .scratch {
     position: absolute;
-    inset: 0;
+    top: 0; /* Added/Ensured */
+    left: 0; /* Added/Ensured */
+    right: 0; /* Added/Ensured */
+    bottom: 0; /* Added/Ensured */
+    /* inset: 0; was the previous line, replaced with the explicit top/left/right/bottom */
     z-index: 10; 
     display: block;
     background: #5a3624; /* Door color (Bourbon Brown) */
