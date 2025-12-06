@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // ADDED: Element to display the Bourbon name in the modal
         const modalBourbonName = document.getElementById('modalBourbonName');
-
+		const modalBourbonImage = document.getElementById('modalBourbonImage');
         let currentDoor = null;
 
         if (guessModal && doors.length > 0) {
@@ -183,11 +183,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     // --- START NEW BOURBON NAME PASSING LOGIC ---
                     const bourbonContainer = this.closest('.bottle-container'); 
                     let bourbonName = '';
+					let bourbonImageSrc = '';
 
                     if (bourbonContainer) {
                         // 1. Read the name from the data attribute (preferred method)
                         bourbonName = bourbonContainer.dataset.bourbonName || '';
 
+						// 2. Read the image source (from the first <img> inside .bourbon-content)
+						const imageElement = bourbonContainer.querySelector('.bourbon-content img');
+						if (imageElement) {
+							bourbonImageSrc = imageElement.src;
+						}
                         // 2. Fallback: If no data attribute, try to find the h3 title
                         if (!bourbonName) {
                             const titleElement = bourbonContainer.querySelector('h3.bourbon-title');
@@ -202,6 +208,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (modalBourbonName) {
                         modalBourbonName.textContent = bourbonName || 'this bottle';
                     }
+					if (modalBourbonImage) {
+						modalBourbonImage.src = bourbonImageSrc;
+						modalBourbonImage.style.display = 'block'; 
+					}
                     // --- END NEW BOURBON NAME PASSING LOGIC ---	
 					unlockGuessModal(); 
 					currentDoor = this; // Set the currently clicked door
