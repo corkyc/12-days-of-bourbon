@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         });
 						setTimeout(() => {
 							closeModalAndRestoreScroll();
-							}, 2000);
+							}, 6000);
                     } else {
                         // Incorrect Guess: Show message, do not reveal
                         resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
