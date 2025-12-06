@@ -259,6 +259,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (modalBourbonName) {
                         modalBourbonName.textContent = bourbonName || 'this bottle';
                     }
+					const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
+
+					if (modalBourbonNameGuessPrompt) {
+						modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
+					}
 					if (modalBourbonImage) {
 						modalBourbonImage.src = bourbonImageSrc;
 						modalBourbonImage.style.display = 'block'; 
