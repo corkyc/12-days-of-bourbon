@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             numberPlate.textContent = correctAnswer;
                             numberPlate.classList.add('show-number');
                         }
-                        resultMessage.textContent = `🎉 Correct! 🎉 This is bottle ${correctAnswer}. (Proof: **${proofValue}**)`;
+                       // resultMessage.textContent = `🎉 Correct! 🎉 This is bottle ${correctAnswer}. (Proof: **${proofValue}**)`;
                         // Disable the click handler for this door after revealing
                         window.requestAnimationFrame(() => {
                             currentDoor.style.pointerEvents = 'none';
