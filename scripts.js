@@ -218,90 +218,90 @@ document.addEventListener("DOMContentLoaded", () => {
                 unlockGuessModal();
 				document.body.style.overflowY = ''; 
             };
+				
+		// 2. Event Listener for Doors (CLEANED UP AND FIXED)
+			doors.forEach(door => {
+			door.addEventListener('click', function(e) {
+			e.stopPropagation();
+			if (this.classList.contains('revealed')) return;
 			
-			// 2. Event Listener for Doors
-            doors.forEach(door => {
-                door.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    if (this.classList.contains('revealed')) return;
-                    
-                    // --- START NEW BOURBON NAME PASSING LOGIC ---
-                    const bourbonContainer = this.closest('.bottle-container'); 
-					const correctDay = bourbonContainer.dataset.correctDay; 
-            
-					const details = fullBourbonList[correctDay] || {};
-					const proofValue = details.proof || 'N/A';
-					const nameFromData = details.name || '';
-                    const linkElement = bourbonContainer.querySelector('.btn');
+			// --- DATA RETRIEVAL ---
+			const bourbonContainer = this.closest('.bottle-container'); 
+			const correctDay = bourbonContainer.dataset.correctDay; 
+			
+			const details = fullBourbonList[correctDay] || {};
+			const proofValue = details.proof || 'N/A';
+			const nameFromData = details.name || '';
+			
+			const linkElement = bourbonContainer.querySelector('.btn');
+			const bourbonLinkHref = linkElement ? linkElement.href : '#';
 
-					let bourbonName = '';
-					let bourbonImageSrc = '';
-					if (linkElement) {
-						bourbonLinkHref = linkElement.href;
-					}
-                    if (bourbonContainer) {
-                        // 1. Read the name from the data attribute (preferred method)
-                      //  bourbonName = bourbonContainer.dataset.bourbonName || '';
-						bourbonName = nameFromData;
+			let bourbonName = nameFromData;
+			let bourbonImageSrc = '';
+			
+			const imageElement = bourbonContainer.querySelector('.bourbon-content img');
+			if (imageElement) {
+				bourbonImageSrc = imageElement.src;
+			}
 
-						// 2. Read the image source (from the first <img> inside .bourbon-content)
-						const imageElement = bourbonContainer.querySelector('.bourbon-content img');
-						if (imageElement) {
-							bourbonImageSrc = imageElement.src;
-						}
-                        // 2. Fallback: If no data attribute, try to find the h3 title
-                        if (!bourbonName) {
-                            const titleElement = bourbonContainer.querySelector('h3.bourbon-title');
-                            if (titleElement) {
-                                // Extract text and remove the optional leading "#X: "
-                                bourbonName = titleElement.textContent.trim().replace(/^#\d+:\s*/, '');
-                            }
-                        }
-                    }
-                    
-                    // 3. Update the modal's display element
-					if (modalBourbonName && modalBourbonName.parentNode) {
-								// 1. Create the new link element
-								const newLink = document.createElement('a');
-								newLink.id = 'modalBourbonName';
-								newLink.href = bourbonLinkHref;
-								newLink.textContent = bourbonName || 'this bottle';
-								newLink.target = '_blank'; // Optional: Open link in a new tab
-								
-								// 2. Add style (make it look like strong text, or add class)
-								newLink.style.fontWeight = 'bold'; 
-								newLink.style.color = 'inherit';
-								newLink.style.textDecoration = 'underline'; // Add styling for clarity
-								
-								// 3. Replace the old <strong> element with the new <a> element
-								modalBourbonName.parentNode.replaceChild(newLink, modalBourbonName);
-								
-								// 4. Update the reference to the new element
-								modalBourbonName = newLink; // Reassign modalBourbonName to the new <a> element
-							}
-					const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
-
-					if (modalBourbonNameGuessPrompt) {
-						modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
-					}
-					if (modalBourbonImage) {
-						modalBourbonImage.src = bourbonImageSrc;
-						modalBourbonImage.style.display = 'block'; 
-					}
-					if (modalBourbonProof) {
-					modalBourbonProof.textContent = ` (Proof: ${proofValue})`; 
-					}
-                    // --- END NEW BOURBON NAME PASSING LOGIC ---	
-					unlockGuessModal(); 
-					currentDoor = this; // Set the currently clicked door
-					resultMessage.textContent = ''; // Clear previous messages
-					dayGuessInput.value = ''; // Clear previous input                    
-                    window.requestAnimationFrame(() => {
-                        guessModal.style.display = 'flex'; 
-                        // document.body.style.overflowY = 'hidden';
-                    });
-                });
-            });
+			// --- LINK REPLACEMENT LOGIC (CRITICAL FIX: Consolidate to one check/action) ---
+			// 1. Get the current reference to the element in the DOM
+			let currentNameElement = document.getElementById('modalBourbonName');
+			
+			// 2. If it's the original strong tag (not yet an A tag), replace it once.
+			if (currentNameElement && currentNameElement.tagName !== 'A') {
+				const newLink = document.createElement('a');
+				newLink.id = 'modalBourbonName';
+				newLink.href = bourbonLinkHref;
+				newLink.target = '_blank'; 
+				newLink.style.fontWeight = 'bold'; 
+				newLink.style.color = 'inherit';
+				newLink.style.textDecoration = 'underline'; 
+				
+				currentNameElement.parentNode.replaceChild(newLink, currentNameElement);
+				currentNameElement = newLink; // Update the local variable to the new link
+				modalBourbonName = newLink; // Update the global variable reference (let/var depending on scope)
+			}
+			
+			// --- DATA DISPLAY ---
+			
+			// 3. Update the content of the link (whether it's the new <a> or the existing <a>)
+			if (currentNameElement) {
+				currentNameElement.textContent = bourbonName || 'this bottle';
+				// Also ensure the href is correct on repeat clicks, as link shuffling may change data
+				if (currentNameElement.tagName === 'A') {
+					 currentNameElement.href = bourbonLinkHref;
+				}
+			}
+			
+			// Display Proof in modal introduction
+			const modalBourbonProof = document.getElementById('modalBourbonProof');
+			if (modalBourbonProof) {
+				modalBourbonProof.textContent = ` (Proof: ${proofValue})`; 
+			}
+			
+			// Update the second instance of the name in the guess prompt
+			const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
+			if (modalBourbonNameGuessPrompt) {
+				modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
+			}
+			
+			if (modalBourbonImage) {
+				modalBourbonImage.src = bourbonImageSrc;
+				modalBourbonImage.style.display = 'block'; 
+			}
+			
+			// --- MODAL OPEN ---
+			unlockGuessModal(); 
+			currentDoor = this; 
+			resultMessage.textContent = '';
+			dayGuessInput.value = ''; 
+			
+			window.requestAnimationFrame(() => {
+				guessModal.style.display = 'flex'; // This should now fire correctly on the first click
+			});
+		});
+	});
 
             // 3. Handle Guess Submission
             if (submitButton) {
