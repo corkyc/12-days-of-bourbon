@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (confirmYes) confirmYes.addEventListener('click', () => {
         if (confirmedLinkHref) {
             // Check for spoiler key and save confirmation in local storage
-            const link = menuLinks.find(l => l.href === confirmedLinkHref);
+            const link = Array.from(menuLinks).find(l => l.href === confirmedLinkHref);
             if (link && link.dataset.spoilerKey) {
                  try {
                      localStorage.setItem(link.dataset.spoilerKey, 'true');
@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- SLIDE/SWIPE REVEAL LOGIC (Index Page Only) ---
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
         
-        const REVEAL_THRESHOLD_PERCENT = 10;
+        const REVEAL_THRESHOLD_PERCENT = 75;
         
         function setupSlideLogic(card) {
             const scratch = card.querySelector(".scratch");
