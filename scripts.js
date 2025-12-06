@@ -196,6 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // ADDED: Element to display the Bourbon name in the modal
         const modalBourbonName = document.getElementById('modalBourbonName');
 		const modalBourbonImage = document.getElementById('modalBourbonImage');
+		const modalBourbonProof = document.getElementById('modalBourbonProof');
         let currentDoor = null;
 
         if (guessModal && doors.length > 0) {
@@ -226,12 +227,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     
                     // --- START NEW BOURBON NAME PASSING LOGIC ---
                     const bourbonContainer = this.closest('.bottle-container'); 
+					const correctDay = bourbonContainer.dataset.correctDay; 
+            
+					const details = fullBourbonList[correctDay] || {};
+					const proofValue = details.proof || 'N/A';
+					const nameFromData = details.name || '';
                     let bourbonName = '';
 					let bourbonImageSrc = '';
 
                     if (bourbonContainer) {
                         // 1. Read the name from the data attribute (preferred method)
-                        bourbonName = bourbonContainer.dataset.bourbonName || '';
+                      //  bourbonName = bourbonContainer.dataset.bourbonName || '';
+						bourbonName = nameFromData;
 
 						// 2. Read the image source (from the first <img> inside .bourbon-content)
 						const imageElement = bourbonContainer.querySelector('.bourbon-content img');
@@ -255,6 +262,9 @@ document.addEventListener("DOMContentLoaded", () => {
 					if (modalBourbonImage) {
 						modalBourbonImage.src = bourbonImageSrc;
 						modalBourbonImage.style.display = 'block'; 
+					}
+					if (modalBourbonProof) {
+					modalBourbonProof.textContent = ` (Proof: ${proofValue})`; 
 					}
                     // --- END NEW BOURBON NAME PASSING LOGIC ---	
 					unlockGuessModal(); 
@@ -289,11 +299,12 @@ document.addEventListener("DOMContentLoaded", () => {
 						// 🔑 Look up the proof value using the correct day number (key)
 						const bourbonDetails = fullBourbonList[correctAnswer] || {};
 						const proofValue = bourbonDetails.proof || 'N/A';
+						const bourbonName = bourbonDetails.name || 'Unknown Bourbon';
 						resultMessage.innerHTML = `
 						<div style="font-size: 1.5rem; color: #B83232; font-weight: bold; margin: 10px 0;">
 							🎉 YES! CORRECT! 🎉
 						</div>
-						This is bottle ${correctAnswer}! (Proof: **${proofValue}**)
+						${bourbonName} is mini-bottle bumber:${correctAnswer}!
 						`;
 							// Correct Guess: Reveal the bourbon
                         currentDoor.classList.add('revealed'); // Hide the door

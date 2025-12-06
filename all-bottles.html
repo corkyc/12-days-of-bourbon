@@ -245,16 +245,24 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script> 
     <script src="scripts.js"></script>
 
-    <div id="guessModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Match the Mini-Bottle</h2>
+	<div id="guessModal" class="modal">
+		<div class="modal-content">
+			<span class="close-button">&times;</span>
+			<h2>Match the Mini-Bottle</h2>
+			
 			<img id="modalBourbonImage" class="bourbon-thumbnail" src="" alt="Bourbon thumbnail">
-            <p>Enter the mini-bottle number (1-12) you think is for: <strong id="modalBourbonName">...</strong></p>
-            <input type="number" id="dayGuessInput" min="1" max="12" placeholder="e.g., 5">
-            <button id="submitGuessButton">Submit Guess</button>
-            <p id="resultMessage"></p>
-        </div>
-    </div>
+			
+			<p>
+				You are guessing for: 
+				<strong id="modalBourbonName">...</strong> 
+				<span id="modalBourbonProof"></span>
+			</p>
+			
+			<p>Enter the mini-bottle number (1-12) you think this bottle is:</p>
+			<input type="number" id="dayGuessInput" min="1" max="12" placeholder="e.g., 5">
+			<button id="submitGuessButton">Submit Guess</button>
+			<p id="resultMessage"></p>
+		</div>
+	</div>
 </body>
 </html>
