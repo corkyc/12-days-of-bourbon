@@ -418,6 +418,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const modalBourbonImage = document.getElementById('modalBourbonImage');
         const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
         let currentDoor = null;
+        
+        const modalNameLink = document.getElementById('modalBourbonNameLink'); 
+
+        // --- FIX: Stop click propagation for the link inside the guess modal ---
+        if (modalNameLink) {
+            modalNameLink.addEventListener('click', function(e) {
+                // Prevents the click from bubbling up to the modal background/document, which triggers closing the modal.
+                e.stopPropagation(); 
+            });
+        }
+        // -----------------------------------------------------------------------
+
 
         const lockGuessModal = () => {
             dayGuessInput.disabled = true;
