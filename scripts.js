@@ -77,13 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const plate = clone.querySelector('.number-plate');
         if (plate) plate.remove();
         
-        // Ensure content details are displayed in the modal
+        // FIX: Ensure content details are explicitly displayed in the modal
         const h3 = clone.querySelector('h3');
         const p = clone.querySelector('p');
         const btn = clone.querySelector('.btn');
         if (h3) h3.style.display = 'block';
         if (p) p.style.display = 'block';
         if (btn) btn.style.display = 'inline-block';
+        // END FIX
 
         modalBody.appendChild(clone);
         if (modal) modal.setAttribute("aria-hidden", "false");
@@ -189,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- SLIDE/SWIPE REVEAL LOGIC (Index Page Only) ---
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
         
-        const REVEAL_THRESHOLD_PERCENT = 10; // 10% swipe to reveal
+        const REVEAL_THRESHOLD_PERCENT = 10;
         
         function setupSlideLogic(card) {
             const scratch = card.querySelector(".scratch");
@@ -236,10 +237,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 pointerId = id;
             };
 
-            const onMove = (clientX) => {
+            const onMove = (clientX, e) => { // Pass event object
                 if (startX === null || card.classList.contains("revealed")) return;
                 const deltaX = clientX - startX;
                 if (deltaX > 0) { // Only allow swiping right
+                    
+                    // FIX: Prevent default action during move to stop browser scrolling/cancelling
+                    e.preventDefault(); 
+
                     updateDoorPosition(deltaX);
                 }
             };
@@ -262,15 +267,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // --- Pointer Events (Unified Touch/Mouse/Pen) ---
             scratch.addEventListener("pointerdown", e => {
-                // Prevent scrolling when swiping horizontally
                 e.target.setPointerCapture(e.pointerId);
+                // Prevent default on down just in case
+                e.preventDefault(); 
                 
                 onStart(e.clientX, e.pointerId);
             });
 
             scratch.addEventListener("pointermove", e => {
                 if (pointerId !== null && e.pointerId === pointerId) {
-                    onMove(e.clientX);
+                    // Pass the entire event object to onMove for preventDefault
+                    onMove(e.clientX, e); 
                 }
             });
 

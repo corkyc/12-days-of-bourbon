@@ -346,6 +346,9 @@ header h1 {
     transform: translateX(0);
     transition: transform 0.3s ease-in-out; 
     
+    /* FIX: Explicitly disable touch default actions for better swipe */
+    touch-action: none;
+    
     /* Center text within the door */
     display: flex;
     align-items: center;
