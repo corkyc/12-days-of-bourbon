@@ -242,7 +242,6 @@ header h1 {
 /* --- GRID --- */
 .grid {
   display: grid;
-  /* FIX: Force 2 columns for all screen sizes */
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
   padding: 18px;
@@ -251,8 +250,16 @@ header h1 {
   position: relative;
   z-index: 3;
 }
-/* Removed the old @media (min-width: 768px) rule to force mobile layout on desktop */
-
+/* Reverting desktop media query back for 4-column layout */
+@media (min-width: 768px) {
+  .grid { 
+    grid-template-columns: repeat(4, 1fr); 
+  }
+  /* Center Header Content on Desktop */
+  header { grid-template-columns: 1fr auto 1fr; }
+  .header-content { grid-column: 2 / 3; }
+  .hamburger { grid-column: 1 / 2; justify-self: start; }
+}
 
 /* --- CARD (Door Look) --- */
 .card {
@@ -329,9 +336,10 @@ header h1 {
 
 /* --- SWIPE/SLIDE DOOR STYLES (for index.html) --- */
 
-/* THE CRITICAL FIX: Explicitly set all position boundaries for scratch canvas */
+/* THE CRITICAL FIX: Ensure the scratch element covers the parent perfectly */
 .card .scratch {
     position: absolute;
+    /* Use explicit 0 positioning for reliable coverage */
     top: 0; 
     left: 0; 
     right: 0; 
