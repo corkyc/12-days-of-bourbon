@@ -19,7 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const day = card.dataset.day;
 			const name = card.querySelector('h3').textContent;
 			const proof = card.dataset.proof || 'N/A';
-			const imgSrc = card.querySelector('img').src;
+			// Check if img source is directly in 'content' or needs to be inferred
+			const imgSrc = card.querySelector('.content img') ? card.querySelector('.content img').src : card.dataset.img;
 
 			bourbonData[day] = { name, proof, imgSrc };
 		});
@@ -76,6 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const plate = clone.querySelector('.number-plate');
         if (plate) plate.remove();
         
+        // Ensure content details are displayed in the modal
+        const h3 = clone.querySelector('h3');
+        const p = clone.querySelector('p');
+        const btn = clone.querySelector('.btn');
+        if (h3) h3.style.display = 'block';
+        if (p) p.style.display = 'block';
+        if (btn) btn.style.display = 'inline-block';
+
         modalBody.appendChild(clone);
         if (modal) modal.setAttribute("aria-hidden", "false");
     }
@@ -125,11 +134,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
     if (confirmYes) confirmYes.addEventListener('click', () => {
-        if (confirmedLinkHref) window.location.href = confirmedLinkHref;
+        if (confirmedLinkHref) {
+            // Check for spoiler key and save confirmation in local storage
+            const link = menuLinks.find(l => l.href === confirmedLinkHref);
+            if (link && link.dataset.spoilerKey) {
+                 try {
+                     localStorage.setItem(link.dataset.spoilerKey, 'true');
+                 } catch (e) {
+                     console.error("Error setting spoiler key:", e);
+                 }
+            }
+            window.location.href = confirmedLinkHref;
+        }
         closeConfirmModal();
     });
     if (confirmModalEl) confirmModalEl.addEventListener("click", (e) => {
         if (e.target === confirmModalEl) closeConfirmModal();
+    });
+    
+    // Auto-confirm logic for menu links based on local storage
+    menuLinks.forEach(link => {
+        if (link.dataset.requiresConfirm === 'true' && link.dataset.spoilerKey) {
+            try {
+                if (localStorage.getItem(link.dataset.spoilerKey) === 'true') {
+                    // Remove confirmation requirement if already confirmed
+                    link.dataset.requiresConfirm = 'false';
+                }
+            } catch(e) {
+                 console.error("Error reading spoiler key:", e);
+            }
+        }
     });
 
     menuLinks.forEach(link => {
@@ -141,207 +175,127 @@ document.addEventListener("DOMContentLoaded", () => {
                 confirmedLinkHref = link.href;
                 if (confirmModalEl) confirmModalEl.setAttribute("aria-hidden", "false");
                 if (mobileMenu) mobileMenu.classList.remove('open');
+            } else if (link.dataset.spoilerKey) {
+                // If it no longer requires confirmation, set the spoiler key anyway
+                 try {
+                     localStorage.setItem(link.dataset.spoilerKey, 'true');
+                 } catch (e) {
+                     console.error("Error setting spoiler key:", e);
+                 }
             }
         });
     });
 
-    // --- SCRATCH-OFF LOGIC (Index Page Only) ---
+    // --- SLIDE/SWIPE REVEAL LOGIC (Index Page Only) ---
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
         
-        function localPos(canvas, clientX, clientY) {
-            const r = canvas.getBoundingClientRect();
-            return { x: clientX - r.left, y: clientY - r.top };
-        }
+        const REVEAL_THRESHOLD_PERCENT = 30; // 30% swipe to reveal
+        
+        function setupSlideLogic(card) {
+            const scratch = card.querySelector(".scratch");
+            if (!scratch) return;
 
-        function checkRevealed(card) {
-            const s = card._scratch;
-            if (!s || s.revealed) return;
+            const day = card.dataset.day;
+            const isRevealed = !!scratchedDays[day];
+            
+            if (isRevealed) {
+                card.classList.add("revealed");
+                return;
+            }
 
-            try {
-                const imageData = s.ctx.getImageData(0, 0, s.cssW, s.cssH);
-                let clear = 0;
-                let total = 0;
-                const data = imageData.data;
-                const len = data.length;
-                const step = 4 * 40; 
+            let startX = null;
+            let currentX = 0;
+            let cardWidth = card.clientWidth;
+            let pointerId = null; // Used for pointer events
+
+            const updateDoorPosition = (deltaX) => {
+                const percentage = (deltaX / cardWidth) * 100;
+                const clampedPercentage = Math.min(100, Math.max(0, percentage));
+                scratch.style.transform = `translateX(${clampedPercentage}%)`;
+                currentX = deltaX;
+            };
+            
+            const revealCard = () => {
+                card.classList.add("revealed");
+                saveProgress(day);
+                scratch.style.pointerEvents = 'none';
                 
-                for (let i = 3; i < len; i += step) {
-                    total++;
-                    if (data[i] === 0) clear++;
-                }
-
-                if ((clear / total) > 0.4) {
-                    s.revealed = true;
-                    card.classList.add("revealed");
-                    saveProgress(card.dataset.day);
-                    
+                // Show modal after a brief delay to allow animation to complete
+                setTimeout(() => {
                     const contentNode = card.querySelector(".content");
                     if (contentNode) openModal(contentNode);
-                }
-            } catch (err) {
-                console.error("Error during checkRevealed:", err);
-            }
-        }
-
-        function initCanvas(card) {
-            const canvas = card.querySelector(".scratch");
-            if (!canvas) return;
-
-            try {
-                const ctx = canvas.getContext("2d");
-                const day = card.dataset.day;
-
-                const imgSrc = card.dataset.img;
-                if (imgSrc) card.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18)), url('${imgSrc}')`;
-
-                const cssW = Math.max(1, Math.round(card.clientWidth));
-                const cssH = Math.max(1, Math.round(card.clientHeight));
-
-                canvas.style.width = cssW + "px";
-                canvas.style.height = cssH + "px";
-                canvas.width = Math.floor(cssW * DPR);
-                canvas.height = Math.floor(cssH * DPR);
-
-                ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-                ctx.globalCompositeOperation = "source-over";
-                ctx.fillStyle = "#d8d8d8";
-                ctx.fillRect(0, 0, cssW, cssH);
-                ctx.globalCompositeOperation = "destination-out";
-
-                card._scratch = {
-                    canvas, ctx, cssW, cssH,
-                    brush: Math.max(25, Math.round(Math.max(cssW, cssH) * 0.10)),
-                    revealed: !!scratchedDays[day]
-                };
-
-                if (card._scratch.revealed) {
-                    card.classList.add("revealed");
-                    canvas.style.display = 'none';
-                }
-                return card._scratch;
-
-            } catch (e) {
-                console.error("Failed to initialize canvas for card:", day, e);
-                return null;
-            }
-        }
-
-        function setupScratchLogic(card, s) {
-            if (!s) return;
-            const { canvas } = s;
-            let drawing = false;
-            let last = null;
-            let moveCounter = 0;
-
-            const eraseAt = (x, y) => {
-                s.ctx.beginPath();
-                s.ctx.arc(x, y, s.brush, 0, Math.PI * 2);
-                s.ctx.fill();
+                }, 350); 
             };
 
-            const onDown = (x, y, isTouch) => { 
-                if (s.revealed) return;
-                drawing = true;
-                last = { x, y };
+            const onStart = (clientX, id) => {
+                if (card.classList.contains("revealed")) return;
+                startX = clientX;
+                currentX = 0;
+                cardWidth = card.clientWidth; // Recalculate on start
+                scratch.style.transition = 'none';
+                pointerId = id;
+            };
+
+            const onMove = (clientX) => {
+                if (startX === null || card.classList.contains("revealed")) return;
+                const deltaX = clientX - startX;
+                if (deltaX > 0) { // Only allow swiping right
+                    updateDoorPosition(deltaX);
+                }
+            };
+
+            const onEnd = () => {
+                if (startX === null || card.classList.contains("revealed")) return;
+                scratch.style.transition = 'transform 0.3s ease-in-out';
                 
-                // FIX: Immediately erase the first spot touched to ensure a smooth start
-                eraseAt(x, y); 
+                const percentageSwiped = (currentX / cardWidth) * 100;
+
+                if (percentageSwiped >= REVEAL_THRESHOLD_PERCENT) {
+                    revealCard();
+                } else {
+                    // Snap back
+                    scratch.style.transform = 'translateX(0)';
+                }
+                startX = null;
+                pointerId = null;
+            };
+
+            // --- Pointer Events (Unified Touch/Mouse/Pen) ---
+            scratch.addEventListener("pointerdown", e => {
+                // Prevent scrolling when swiping horizontally
+                e.target.setPointerCapture(e.pointerId);
                 
-                if (isTouch) {
-                    document.body.style.touchAction = 'none';
-                }
-            };
-
-            const onMove = (x, y, isTouch) => { 
-                if (!drawing || s.revealed) return;
-                
-                const dist = Math.hypot(x - last.x, y - last.y);
-                const steps = Math.ceil(dist / (s.brush * 0.25));
-                for (let i = 0; i < steps; i++) {
-                    const t = i / steps;
-                    eraseAt(last.x + (x - last.x) * t, last.y + (y - last.y) * t);
-                }
-                last = { x, y };
-
-                moveCounter++;
-                if (moveCounter % 20 === 0) checkRevealed(card);
-            };
-
-            const onUp = () => {
-                if (drawing) {
-                    drawing = false;
-                    last = null;
-                    document.body.style.touchAction = ''; 
-                    checkRevealed(card);
-                }
-            };
-
-            canvas.addEventListener("pointerdown", e => {
-                e.preventDefault(); 
-                const isTouch = e.pointerType === "touch" || e.pointerType === "pen";
-                const p = localPos(canvas, e.clientX, e.clientY);
-                onDown(p.x, p.y, isTouch);
+                onStart(e.clientX, e.pointerId);
             });
 
-            canvas.addEventListener("pointermove", e => {
-                const isTouch = e.pointerType === "touch" || e.pointerType === "pen";
-                if (drawing && e.cancelable) {
-                    if (isTouch || e.pointerType === "mouse") {
-                        e.preventDefault();
-                        const p = localPos(canvas, e.clientX, e.clientY);
-                        onMove(p.x, p.y, isTouch);
-                    }
+            scratch.addEventListener("pointermove", e => {
+                if (pointerId !== null && e.pointerId === pointerId) {
+                    onMove(e.clientX);
                 }
             });
 
-            canvas.addEventListener("pointerup", onUp);
-            canvas.addEventListener("pointercancel", onUp);
-        }
-        
-        // Initial setup and event delegation for the cards
-        cards.forEach(card => {
-            const scratchState = initCanvas(card);
-            setupScratchLogic(card, scratchState);
+            scratch.addEventListener("pointerup", onEnd);
+            scratch.addEventListener("pointercancel", onEnd);
             
+            // --- Click handler for modal on revealed cards ---
             card.addEventListener("click", (e) => {
-                if (e.target.closest('a') !== null) return;
+                // If the click target is the door (meaning it wasn't fully opened) or an anchor, ignore
+                if (e.target === scratch || e.target.closest('a') !== null) return;
                 
                 if (card.classList.contains("revealed")) {
                     const contentNode = card.querySelector(".content");
                     if (contentNode) openModal(contentNode);
                 }
             });
+
+        }
+        
+        // Initial setup for all cards
+        cards.forEach(card => {
+            setupSlideLogic(card);
         });
-
-        // Resize handler re-initializes canvas
-        let rt = null;
-        window.addEventListener("resize", () => {
-            clearTimeout(rt);
-            rt = setTimeout(() => {
-                cards.forEach(card => {
-                    if (card.querySelector('.scratch') && card._scratch && !card._scratch.revealed) {
-                        const canvas = card.querySelector(".scratch");
-                        const cardEl = card.closest('.card');
-                        const scratchState = card._scratch;
-
-                        const cssW = Math.max(1, Math.round(cardEl.clientWidth));
-                        const cssH = Math.max(1, Math.round(cardEl.clientHeight));
-
-                        canvas.style.width = cssW + "px";
-                        canvas.style.height = cssH + "px";
-                        canvas.width = Math.floor(cssW * DPR);
-                        canvas.height = Math.floor(cssH * DPR);
-
-                        scratchState.ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-                        scratchState.ctx.globalCompositeOperation = "source-over";
-                        scratchState.ctx.fillStyle = "#d8d8d8";
-                        scratchState.ctx.fillRect(0, 0, cssW, cssH);
-                        scratchState.ctx.globalCompositeOperation = "destination-out";
-                    }
-                });
-            }, 120);
-        });
-
+        
+        // No need for a complex canvas resize handler now.
     } 
     
     // --- BOURBON GUESSING GAME LOGIC (All-Bottles Page Only) ---
@@ -355,10 +309,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const launchConfetti = () => {
-            const bursts = [{x: 0.2, y: 0.9}, {x: 0.8, y: 0.9}];
-            bursts.forEach(origin => {
-                confetti({ particleCount: 75, spread: 60, origin, zIndex: 10000 });
-            });
+            // Function requires the canvas-confetti library script to be present in all-bottles.html
+            if (typeof confetti !== 'undefined') {
+                const bursts = [{x: 0.2, y: 0.9}, {x: 0.8, y: 0.9}];
+                bursts.forEach(origin => {
+                    confetti({ particleCount: 75, spread: 60, origin, zIndex: 10000 });
+                });
+            } else {
+                 console.warn("Confetti library not loaded.");
+            }
         };
         
         const guessModal = document.getElementById('guessModal');

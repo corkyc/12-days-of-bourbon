@@ -331,14 +331,50 @@ header h1 {
     display: block;
 }
 
-/* Scratch Canvas */
-.scratch {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: block;
-  /* FIX: Remove explicit pan-y touch action to prevent conflicts with JS touch-action: none */
-  /* touch-action: pan-y; */ 
+/* --- SWIPE/SLIDE DOOR STYLES (for index.html) --- */
+
+/* The 'scratch' canvas element is repurposed as the sliding door */
+.card .scratch {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: block;
+    background: #5a3624; /* Door color (Bourbon Brown) */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5); /* Inner shadow for depth */
+    
+    /* Key properties for slide effect: */
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out; 
+    
+    /* Center text within the door */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #f0c674; /* Gold text */
+    font-weight: bold;
+    text-align: center;
+    padding: 10%;
+    
+    /* Prevent text selection */
+    user-select: none;
+}
+
+/* Add an indicator or text to the sliding door for better UX */
+.card .scratch::after {
+    content: 'Swipe to Open \u276F'; /* Unicode right arrow */
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: rgba(240, 198, 116, 0.7); /* Lighter gold */
+}
+
+/* The revealed state of the door (door slid open) */
+.card.revealed .scratch { 
+    transform: translateX(100%); /* Slides the door off the right side */
+    pointer-events: none; /* Make it unclickable once opened */
 }
 
 /* Content (Hidden until revealed) */
@@ -346,7 +382,7 @@ header h1 {
   position: absolute;
   inset: 0;
   padding: 0;
-  display: none; 
+  display: block; /* Content is visible underneath the door */
   color: #fff;
   z-index: 2;
   text-align: center;
@@ -354,25 +390,27 @@ header h1 {
 }
 
 /* REVEALED STATE (for grid cards) */
-.card.revealed .content { display: block; }
-.card.revealed .scratch { display: none; }
+/* The door is already handled by .card.revealed .scratch */
 .card.revealed {
   background-image: none !important;
   background-color: #3b2417; 
   border-color: #1A3D36; 
 }
-.card.revealed .content img {
+.card .content img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 0; 
   margin: 0;
 }
-.card.revealed .content h3,
-.card.revealed .content p,
-.card.revealed .content .btn {
+/* Ensure text elements are not visible until the content is explicitly opened in the modal */
+.card .content h3,
+.card .content p,
+.card .content .btn {
+  /* This ensures the content is purely visual on the main grid */
   display: none; 
 }
+
 
 /* --- MODAL (General Styling) --- */
 .modal {
@@ -618,7 +656,7 @@ header h1 {
     padding: 30px;
     position: relative; 
     text-align: center;
-    border: 4px solid #B83232; 
+    border: 44px solid #B83232; 
     
     /* FIX: Use auto margins to center content within the fixed flex container */
     margin: auto; 
