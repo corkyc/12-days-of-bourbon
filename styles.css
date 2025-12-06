@@ -242,9 +242,9 @@ header h1 {
 /* --- GRID --- */
 .grid {
   display: grid;
-  /* MODIFICATION: Set default to single column for mobile phones */
-  grid-template-columns: 1fr;
-  gap: 30px; /* INCREASED GAP for easier scrolling on mobile */
+  /* Reverting to original 2 columns for mobile before scrolling fix */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
   padding: 18px;
   max-width: 1100px;
   margin: 12px auto;
@@ -300,7 +300,7 @@ header h1 {
   position: absolute;
   right: 12px;
   top: 12px;
-  z-index: 15; /* Increased z-index */
+  z-index: 6; /* Reverting to original z-index */
   background: linear-gradient(180deg,#FFD700,#C0A04C);
   color: #1b1209;
   font-weight: 700;
@@ -337,7 +337,7 @@ header h1 {
 
 /* --- SWIPE/SLIDE DOOR STYLES (for index.html) --- */
 
-/* Updated .scratch to be a div container, containing an image and text overlay */
+/* Reverting .scratch to its initial state (minus canvas/text) and retaining necessary positioning for the custom image structure */
 .card .scratch {
     position: absolute;
     /* Use explicit 0 positioning for reliable coverage */
@@ -345,11 +345,7 @@ header h1 {
     left: 0; 
     right: 0; 
     bottom: 0; 
-    z-index: 10; /* Door slides away */
-    
-    /* ADDED: Crucial to ensure nothing peeks out during sliding animation */
-    overflow: hidden; 
-    
+    z-index: 10; 
     display: flex; 
     flex-direction: column;
     align-items: center;
@@ -367,6 +363,7 @@ header h1 {
     
     /* Prevent text selection */
     user-select: none;
+    overflow: hidden; /* Reverting overflow back here */
 }
 
 /* Style for the new cover image inside the scratch div */
