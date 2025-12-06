@@ -87,32 +87,34 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check if the current page is 'all-bottles.html'
     if (window.location.pathname.endsWith('all-bottles.html')) {
         
-        /**
-         * Shuffles the order of the card elements within their parent container.
-         */
-
         function shuffleCards() {
             if (cards.length === 0) return;
             const container = cards[0].parentNode;
 
             if (container) {
                 let cardElements = Array.from(container.children); 
+                
+                // 1. Create a Document Fragment (In-memory container)
+                const fragment = document.createDocumentFragment();
 
-                // 2. Perform Fisher-Yates Shuffle 
+                // 2. Perform Fisher-Yates Shuffle on the Array
                 for (let i = cardElements.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [cardElements[i], cardElements[j]] = [cardElements[j], cardElements[i]];
                 }
 
-                // 3. Append the shuffled elements back to the container.
-                cardElements.forEach(card => container.appendChild(card));
+                // 3. Append the shuffled elements to the fragment (no browser reflows triggered here)
+                cardElements.forEach(card => fragment.appendChild(card));
 
-                console.log("Card order shuffled successfully for all-bottles.html.");
+                // 4. Append the fragment back to the live DOM (only ONE reflow is triggered)
+                container.appendChild(fragment);
+
+                console.log("Card order shuffled successfully with Document Fragment.");
             }
         }
 
         // --- Run the randomization ---
-        shuffleCards(); 
+        shuffleCards();
 
         // --- NEW: BOURBON GUESSING GAME LOGIC (for all-bottles.html) ---
         // 1. New Confetti function (Uses canvas-confetti library loaded in HTML)
@@ -243,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             numberPlate.textContent = correctAnswer;
                             numberPlate.classList.add('show-number');
                         }
-                        resultMessage.textContent = `🎉 Correct! This is bottle ${correctAnswer}. The bottle is revealed!`;
+                        resultMessage.textContent = `🎉 Correct! 🎉 This is bottle ${correctAnswer}.`;
                         // Disable the click handler for this door after revealing
                         window.requestAnimationFrame(() => {
                             currentDoor.style.pointerEvents = 'none';
@@ -255,7 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
 							}, 10000);
                     } else {
                         // Incorrect Guess: Show message, do not reveal
-                        resultMessage.textContent = `❌ Incorrect. That's not the right bottle number. Try another bottle!`;
+                        resultMessage.textContent = `❌ Incorrect ❌ That's not the right bottle number. Try another bottle!`;
                     }
                 });
                 dayGuessInput.addEventListener('keyup', (e) => {
