@@ -282,9 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 // *** FIX: JS removal of the sliding door after animation ***
                 // This guarantees the image is cleared, solving the artifact issue.
-                setTimeout(() => {
-                    if(scratch) scratch.remove();
-                }, 0); // Changed to 0ms for instant removal
+                if(scratch) scratch.remove(); // FIX: Immediate removal after class added
                 // **********************************************************
 
                 // Show modal after a brief delay to allow animation to complete
@@ -298,10 +296,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (card.classList.contains("revealed")) return;
                 startX = clientX;
                 currentX = 0;
-                cardWidth = card.clientWidth; 
+                cardWidth = card.clientWidth; // FIX: Recalculate width on start for better mobile accuracy
                 scratch.style.transition = 'none';
                 pointerId = id;
-                e.preventDefault(); 
+                e.preventDefault(); // FIX: Prevent default browser behavior on mobile
             };
 
             const onMove = (clientX, e) => {
