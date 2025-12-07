@@ -548,7 +548,7 @@ header h1 {
 .modal-inner > .number-plate {
     position: absolute;
     top: 10px;
-    right: 100px; /* Adjusted to avoid the close button */
+    right: 100px !important; /* Adjusted to avoid the close button */
     z-index: 99999; 
 }
 
