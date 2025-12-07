@@ -378,11 +378,10 @@ header h1 {
     align-items: center;
     justify-content: flex-end; 
     
-    /* MODIFICATION: Set transition duration to 0s for instant change */
-    transition: transform 0s ease-in-out; 
+
     
     /* FIX: Explicitly disable touch default actions for better swipe */
-    touch-action: none;
+    touch-action: pan-y;
     
     /* Overlay background color for fallback or blend */
     background: rgba(90, 54, 36, 0.2); 
