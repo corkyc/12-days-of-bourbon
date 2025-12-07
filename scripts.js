@@ -355,9 +355,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
         
-        cards.forEach(card => {
-            setupSlideLogic(card);
-        });
+        // --- FIX: Defer card setup to allow mobile browser to stabilize DOM/Layout ---
+        setTimeout(() => {
+            cards.forEach(card => {
+                setupSlideLogic(card);
+            });
+        }, 100); // Wait 100ms
     } 
 
 
