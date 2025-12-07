@@ -573,7 +573,7 @@ header h1 {
 .modal-inner > .number-plate {
     position: absolute;
     top: 10px;
-    right: 100px; 
+    right: 12px; 
     z-index: 99999; 
 }
 
