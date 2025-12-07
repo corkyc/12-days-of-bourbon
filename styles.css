@@ -169,7 +169,33 @@ header h1 {
     transition: opacity 0.3s, visibility 0.3s;
     z-index: 1000; 
 }
-.back-to-top-btn.visible {
+
+/* --- SCROLL TO BOTTOM BUTTON (New Style) --- */
+.scroll-to-bottom-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px; /* Positioned on the left side */
+    width: 40px;
+    height: 40px;
+    background-color: rgba(26, 61, 54, 0.9); /* Dark Green, semi-transparent */
+    color: #FFD700; /* Gold arrow */
+    border: 2px solid #FFD700;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    opacity: 0; /* Hidden by default */
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000; 
+    text-align: center;
+    padding-top: 2px; /* Slight adjustment for triangle centering */
+}
+
+/* Share visibility class with up/down buttons */
+.back-to-top-btn.visible,
+.scroll-to-bottom-btn.visible {
     opacity: 1;
     visibility: visible;
 }

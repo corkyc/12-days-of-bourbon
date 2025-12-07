@@ -107,23 +107,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const clone = node.cloneNode(true);
         
-        // --- MODIFICATION: REMOVED PLATE REMOVAL LOGIC FOR INDEX/REVEAL PAGES ---
-        // This ensures the plate is visible in the modal for index.html/all-bottles-numbers.html
-        // const plate = clone.querySelector('.number-plate');
-        // if (plate) plate.remove();
-        // --- END MODIFICATION ---
-        
         const bourbonContainer = clone.querySelector('.bottle-container');
         let contentArea;
         
         if (bourbonContainer) {
             contentArea = bourbonContainer.querySelector('.bourbon-content').cloneNode(true);
-            
-            // --- MODIFICATION: REMOVED HIDDEN PLATE REMOVAL LOGIC FOR MATCHING PAGE ---
-            // This ensures the now-visible .hidden-number-plate is cloned into the modal
-            // const hiddenPlate = contentArea.querySelector('.hidden-number-plate');
-            // if(hiddenPlate) hiddenPlate.remove(); 
-            // --- END MODIFICATION ---
             
             modalBody.appendChild(contentArea);
         } else {
@@ -139,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 clonedPlate.style.position = 'absolute';
                 clonedPlate.style.top = '10px';
-                clonedPlate.style.right = '50px'; 
+                clonedPlate.style.right = '120px'; 
                 clonedPlate.style.zIndex = '99999'; 
                 
                 document.getElementById('modal').querySelector('.modal-inner').appendChild(clonedPlate);
@@ -540,8 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         numberPlate.textContent = correctAnswer;
                         numberPlate.classList.add('show-number');
 
-                        // *** MODIFICATION: REMOVED CLONING OF PLATE TO #guessModal ***
-                        // The plate is now visible on the card and will be cloned later by openModal into #modal
+                        // MODIFICATION: REMOVED CLONING OF PLATE TO #guessModal
                     }
                     window.requestAnimationFrame(() => {
                         launchConfetti();
@@ -598,10 +585,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- BACK TO TOP LOGIC ---
     if (backToTopBtn) {
-        backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        // NEW: Scroll to bottom button variable
+        const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+
+        // NEW: Scroll to bottom listener
+        if (scrollToBottomBtn) {
+            scrollToBottomBtn.addEventListener('click', () => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            });
+        }
+        
+        // Update scroll listener to control both buttons
         window.addEventListener('scroll', () => {
-            backToTopBtn.classList.toggle('visible', window.scrollY > 300);
+            const scrollHeight = document.body.scrollHeight;
+            const clientHeight = document.documentElement.clientHeight;
+            const scrollTop = document.documentElement.scrollTop;
+            
+            const isAtTop = scrollTop < 300;
+            const isAtBottom = (scrollTop + clientHeight) >= (scrollHeight - 100); 
+
+            // Control visibility of Up button
+            backToTopBtn.classList.toggle('visible', scrollTop > 300);
+            
+            // Control visibility of Down button
+            if (scrollToBottomBtn) {
+                // Show the down button only if not at the bottom AND scrolled down a bit
+                scrollToBottomBtn.classList.toggle('visible', !isAtBottom && !isAtTop);
+            }
         });
+        
+        // Existing back to top listener (kept separate for clarity)
+        backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
     
     // --- TEMPORARY SNOW GENERATOR ---
