@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 clonedPlate.style.position = 'absolute';
                 clonedPlate.style.top = '10px';
-                clonedPlate.style.right = '40px'; // FIX: Adjusted to 40px for precise positioning
+                clonedPlate.style.right = '40px'; 
                 clonedPlate.style.zIndex = '99999'; 
                 
                 document.getElementById('modal').querySelector('.modal-inner').appendChild(clonedPlate);
@@ -355,12 +355,24 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
         
-        // --- FIX: Defer card setup to allow mobile browser to stabilize DOM/Layout ---
-        setTimeout(() => {
+        // --- PRIMARY INITIALIZATION FUNCTION ---
+        const initializeIndexPage = () => {
             cards.forEach(card => {
                 setupSlideLogic(card);
             });
-        }, 100); // Wait 100ms
+        };
+        
+        // Initial setup on DOMContentLoaded (with previous 100ms delay)
+        setTimeout(initializeIndexPage, 100); 
+
+        // *** FIX: Use pageshow event for robust mobile initialization ***
+        window.addEventListener('pageshow', (event) => {
+            // Check if the page is coming from the back/forward cache
+            if (event.persisted) {
+                initializeIndexPage();
+            }
+        });
+        
     } 
 
 
