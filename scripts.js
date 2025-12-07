@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 clonedPlate.style.position = 'absolute';
                 clonedPlate.style.top = '10px';
-                clonedPlate.style.right = '120px'; 
+                clonedPlate.style.right = '40px'; // FIX: Adjusted to 40px for precise positioning
                 clonedPlate.style.zIndex = '99999'; 
                 
                 document.getElementById('modal').querySelector('.modal-inner').appendChild(clonedPlate);
