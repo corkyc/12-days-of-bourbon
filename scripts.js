@@ -302,6 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (cardWidth === 0) return; 
 
                 startX = clientX;
+				startY = e.clientY;
                 currentX = 0;
                 scratch.style.transition = 'none';
                 pointerId = id;
