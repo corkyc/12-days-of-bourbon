@@ -305,21 +305,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentX = 0;
                 scratch.style.transition = 'none';
                 pointerId = id;
-                e.preventDefault(); // FIX 2: Prevent default browser behavior (e.g., tap-to-click/scroll on mobile)
-                e.stopPropagation(); // FIX 3: Stop event from bubbling up to potentially trigger scrolling
+                //e.preventDefault(); // FIX 2: Prevent default browser behavior (e.g., tap-to-click/scroll on mobile)
+                //e.stopPropagation(); // FIX 3: Stop event from bubbling up to potentially trigger scrolling
             };
 
-            const onMove = (clientX, e) => {
+            const onMove = (clientX, clientY, e) => {
                 if (startX === null || card.classList.contains("revealed")) return;
                 
                 // FIX: Recalculate cardWidth here in case of dynamic resizing
                 const cardWidth = card.getBoundingClientRect().width; 
                 
                 const deltaX = clientX - startX;
-                if (deltaX > 0) { // Only allow swiping right
-                    e.preventDefault(); 
-                    updateDoorPosition(deltaX, cardWidth); // Pass the current width
-                }
+				const deltaY = Math.abs(clientY - startY);
+				// 2. CHECK: Is the movement mostly horizontal AND is the door being pulled right?
+				if (deltaX > 5 && deltaX > deltaY) { // Use a threshold of 5px for start
+					// This is a horizontal swipe: stop page scrolling and handle the door.
+					e.preventDefault(); 
+
+					// FIX: Recalculate cardWidth here in case of dynamic resizing
+					const cardWidth = card.getBoundingClientRect().width; 
+
+					// Only allow swiping right (deltaX > 0 check is implicit from the horizontal check)
+					updateDoorPosition(deltaX, cardWidth); 
+				} else if (deltaY > deltaX) {
+					// This is a vertical scroll: do nothing and let the browser scroll the page.
+				}
             };
 
             const onEnd = () => {
@@ -348,11 +358,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 onStart(e.clientX, e.pointerId, e);
             });
 
-            scratch.addEventListener("pointermove", e => {
-                if (pointerId !== null && e.pointerId === pointerId) {
-                    onMove(e.clientX, e); 
-                }
-            });
+			scratch.addEventListener("pointermove", e => {
+				if (pointerId !== null && e.pointerId === pointerId) {
+					// Pass both X and Y coordinates AND the event object
+					onMove(e.clientX, e.clientY, e); 
+				}
+			});
 
             scratch.addEventListener("pointerup", onEnd);
             scratch.addEventListener("pointercancel", onEnd);
