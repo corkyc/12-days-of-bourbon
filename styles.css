@@ -543,8 +543,7 @@ header h1 {
   display: block; 
 }
 
-/* MODAL PLATE FIX: Reposition the number plate inside the modal to sit relative to the modal container. */
-/* This is a general rule that will apply to .number-plate when its parent is positioned (like .modal-inner) */
+/* MODAL PLATE FIX (Index/Reveal Pages): Reposition the number plate inside the modal to sit relative to the modal container. */
 .modal-inner > .number-plate {
     position: absolute;
     top: 10px;
@@ -552,11 +551,10 @@ header h1 {
     z-index: 99999; 
 }
 
-/* ADDED: High-specificity fix for number plate position in the main info modal for the Matching Game */
-/* Overrides the plate's default 'right: 12px' inherited from the card layout */
+/* MODAL PLATE HIDE FIX (Matching Page): Hides the number plate when inside the general info modal (#modal) 
+   and originating from the all-bottles.html page (bourbon-content). */
 #modal-body .bourbon-content .hidden-number-plate.show-number {
-    right: 100px !important; 
-    z-index: 99999; 
+    display: none !important; /* FIX: HIDE the plate for all-bottles.html info popup */
 }
 
 #modal-body h3,
