@@ -68,32 +68,31 @@ header {
 .quote-banner {
     /* Position right below the header, spanning full width */
     width: 100%; 
-    padding: 10px 18px;
+    padding: 8px 0;
     text-align: center;
     
     /* CHRISTMAS THEME: Subtle Green/Gold for contrast */
-    background: #1A3D36; /* Dark Green */
-    border-bottom: 2px solid #FFD700; /* Gold separator */
+    background: none; /* Dark Green */
+border-top: 1px solid rgba(255, 255, 255, 0.2); 
+    border-bottom: none; 
     color: #f6eedd; /* Off-White text */
-    
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    margin-top: 10px; /* Space it below the tagline */
+    box-shadow: none;
     position: relative;
     z-index: 5; /* Keep it above the grid items */
 }
 
 .quote-banner p {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     line-height: 1.4;
     font-style: italic;
-    
-    /* Style for the quote text (optional: slightly different color) */
-    color: rgba(255, 255, 255, 0.9);
+color: #FFD700;
 }
 
 .quote-banner p br {
     display: block;
-    margin-bottom: 2px;
+    margin-bottom: 0;
 }
 
 /* Hamburger Button */
