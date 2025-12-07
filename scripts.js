@@ -362,8 +362,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
         
-        // Initial setup on DOMContentLoaded (with previous 100ms delay)
-        setTimeout(initializeIndexPage, 100); 
+        
+        window.onload = initializeIndexPage;
 
         // *** FIX: Use pageshow event for robust mobile initialization ***
         window.addEventListener('pageshow', (event) => {
