@@ -570,10 +570,11 @@ header h1 {
 }
 
 /* MODAL PLATE FIX (Index/Reveal Pages): Reposition the number plate inside the modal to sit relative to the modal container. */
+/* This is needed because the plate is a sibling of .content and must be manually positioned in the modal inner */
 .modal-inner > .number-plate {
     position: absolute;
     top: 10px;
-    right: 12px; 
+    right: 120px; 
     z-index: 99999; 
 }
 
