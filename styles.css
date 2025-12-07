@@ -76,7 +76,7 @@ header {
 border-top: 1px solid rgba(255, 255, 255, 0.2); 
     border-bottom: none; 
     color: #f6eedd; /* Off-White text */
-    margin-top: 10px; /* Space it below the tagline */
+    margin-top: 2px; /* Space it below the tagline */
     box-shadow: none;
     position: relative;
     z-index: 5; /* Keep it above the grid items */
