@@ -258,11 +258,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let startX = null;
             let currentX = 0;
-            let cardWidth = card.clientWidth;
+            // Removed cardWidth declaration here, it's now calculated in onStart
             let pointerId = null; 
 
-            const updateDoorPosition = (deltaX) => {
-                const percentage = (deltaX / cardWidth) * 100;
+            const updateDoorPosition = (deltaX, currentCardWidth) => { // Pass cardWidth explicitly
+                const percentage = (deltaX / currentCardWidth) * 100;
                 const clampedPercentage = Math.min(100, Math.max(0, percentage));
                 scratch.style.transform = `translateX(${clampedPercentage}%)`;
                 currentX = deltaX;
@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 // *** FIX: JS removal of the sliding door after animation ***
                 // This guarantees the image is cleared, solving the artifact issue.
-                if(scratch) scratch.remove(); // FIX: Immediate removal after class added
+                if(scratch) scratch.remove(); 
                 // **********************************************************
 
                 // Show modal after a brief delay to allow animation to complete
@@ -294,25 +294,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const onStart = (clientX, id, e) => {
                 if (card.classList.contains("revealed")) return;
+                
+                // FIX 1: Use getBoundingClientRect for the most accurate, rendered width on mobile
+                const cardWidth = card.getBoundingClientRect().width; 
+
+                // Guard against zero width on an unrendered element, though DOMContentLoaded should prevent this
+                if (cardWidth === 0) return; 
+
                 startX = clientX;
                 currentX = 0;
-                cardWidth = card.clientWidth; // FIX: Recalculate width on start for better mobile accuracy
                 scratch.style.transition = 'none';
                 pointerId = id;
-                e.preventDefault(); // FIX: Prevent default browser behavior on mobile
+                e.preventDefault(); // FIX 2: Prevent default browser behavior (e.g., tap-to-click/scroll on mobile)
+                e.stopPropagation(); // FIX 3: Stop event from bubbling up to potentially trigger scrolling
             };
 
             const onMove = (clientX, e) => {
                 if (startX === null || card.classList.contains("revealed")) return;
+                
+                // FIX: Recalculate cardWidth here in case of dynamic resizing
+                const cardWidth = card.getBoundingClientRect().width; 
+                
                 const deltaX = clientX - startX;
                 if (deltaX > 0) { // Only allow swiping right
                     e.preventDefault(); 
-                    updateDoorPosition(deltaX);
+                    updateDoorPosition(deltaX, cardWidth); // Pass the current width
                 }
             };
 
             const onEnd = () => {
                 if (startX === null || card.classList.contains("revealed")) return;
+                
+                // FIX: Recalculate cardWidth one last time for the final check
+                const cardWidth = card.getBoundingClientRect().width;
+                
                 scratch.style.transition = 'transform 0.3s ease-in-out';
                 
                 const percentageSwiped = (currentX / cardWidth) * 100;
@@ -361,13 +376,18 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         
         
-        window.onload = initializeIndexPage;
+        // window.onload = initializeIndexPage; // Removed original onload
 
-        // *** FIX: Use pageshow event for robust mobile initialization ***
+        // *** FIX: Use load event with timeout for robust mobile initialization on first load ***
+        window.addEventListener('load', () => {
+            setTimeout(initializeIndexPage, 100);
+        });
+
+        // *** FIX: Use pageshow event for robust mobile initialization on back/forward cache ***
         window.addEventListener('pageshow', (event) => {
             // Check if the page is coming from the back/forward cache
             if (event.persisted) {
-                initializeIndexPage();
+                setTimeout(initializeIndexPage, 100);
             }
         });
         
