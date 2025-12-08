@@ -65,6 +65,36 @@ header {
   align-items: center;
 }
 
+.quote-banner {
+    /* Position right below the header, spanning full width */
+    width: 100%; 
+    padding: 8px 0;
+    text-align: center;
+    
+    /* CHRISTMAS THEME: Subtle Green/Gold for contrast */
+    background: none; /* Dark Green */
+border-top: 1px solid rgba(255, 255, 255, 0.2); 
+    border-bottom: none; 
+    color: #f6eedd; /* Off-White text */
+    margin-top: 2px; /* Space it below the tagline */
+    box-shadow: none;
+    position: relative;
+    z-index: 5; /* Keep it above the grid items */
+}
+
+.quote-banner p {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    font-style: italic;
+color: #FFD700;
+}
+
+.quote-banner p br {
+    display: block;
+    margin-bottom: 0;
+}
+
 /* Hamburger Button */
 .hamburger {
   grid-column: 1 / 2; 
