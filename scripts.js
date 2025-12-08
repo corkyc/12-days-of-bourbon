@@ -166,14 +166,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === modal) closeModal();
     });
 
-    // --- GLOBAL BUTTONS (Updated for Fix) ---
+    // --- GLOBAL BUTTONS ---
     const resetBtnEl = document.getElementById('resetProgressBtn');
     const resetPageBtnEl = document.getElementById('resetPageBtn');
     
     // Index Page Reset
     if (resetBtnEl) resetBtnEl.addEventListener('click', resetProgress);
-    
-    // Matching Page Reset (CHANGED: Now calls resetProgress instead of just reload)
+    // Matching Page Reset
     if (resetPageBtnEl) resetPageBtnEl.addEventListener('click', resetProgress);
 
     // --- MENU LOGIC ---
@@ -352,6 +351,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const isMatchingGame = document.querySelector('.door') !== null;
 
     if (isMatchingGame) {
+        // --- TIMER VARIABLE TO PREVENT BUG ---
+        let autoCloseTimer = null;
+
         let fullBourbonList = {};
         try {
             const storedData = localStorage.getItem(BOURBON_DATA_KEY);
@@ -410,6 +412,12 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentCorrectDay = null;
 
         const toggleGameModal = (show) => {
+            // *** CLEAR TIMER WHENEVER MODAL STATE CHANGES ***
+            if (autoCloseTimer) {
+                clearTimeout(autoCloseTimer);
+                autoCloseTimer = null;
+            }
+
             if (!guessModal) return;
             if (show) {
                 guessModal.setAttribute("aria-hidden", "false"); 
@@ -446,8 +454,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (modalBourbonNameLink) modalBourbonNameLink.href = reviewUrl;
 
                 if (resultMessage) resultMessage.textContent = '';
+                resultMessage.style.color = "#1A3D36"; // Reset color
 
-                // *** CRITICAL FIX: UNLOCK BUTTONS WHEN OPENING A NEW DOOR ***
+                // *** UNLOCK BUTTONS WHEN OPENING A NEW DOOR ***
                 numberButtons.forEach(btn => {
                     btn.disabled = false;
                     btn.style.opacity = "1";
@@ -511,8 +520,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 resultMessage.style.color = "#B83232";
             }
             
-            // --- CLOSE MODAL AFTER 4 SECONDS (FOR BOTH OUTCOMES) ---
-            setTimeout(() => toggleGameModal(false), 4000); 
+            // --- CLOSE MODAL AFTER 4 SECONDS (Assign to timer variable) ---
+            autoCloseTimer = setTimeout(() => toggleGameModal(false), 4000); 
         }
     }
 
