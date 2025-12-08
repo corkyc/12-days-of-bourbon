@@ -376,6 +376,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (matchedDays[correctDay]) {
                 door.classList.add('revealed');
                 door.style.pointerEvents = 'none';
+                
+                // --- NEW BADGE PERSISTENCE ---
+                container.setAttribute('data-matched', 'true');
+                
                 const numberPlate = container.querySelector('.hidden-number-plate');
                 if (numberPlate) {
                     numberPlate.textContent = correctDay;
@@ -387,8 +391,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // --- GAME MODAL LOGIC (Guessing) ---
         const guessModal = document.getElementById('guessModal');
         const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
-        const submitButton = document.getElementById('submitGuessButton');
-        const dayGuessInput = document.getElementById('dayGuessInput');
+        
+        // (Old submitButton is removed, now we use numberButtons)
+        const numberButtons = document.querySelectorAll('.num-btn');
+        
         const resultMessage = document.getElementById('resultMessage');
         const modalBourbonImage = document.getElementById('modalBourbonImage');
         const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
@@ -403,10 +409,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!guessModal) return;
             if (show) {
                 guessModal.setAttribute("aria-hidden", "false"); 
-                guessModal.style.display = "flex"; // Changed to flex for centering
+                guessModal.style.display = "flex"; // Centered layout
                 guessModal.style.visibility = "visible";
                 guessModal.style.opacity = "1";
-                setTimeout(() => dayGuessInput.focus(), 100);
             } else {
                 guessModal.setAttribute("aria-hidden", "true");
                 guessModal.style.display = "none";
@@ -435,7 +440,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (modalBourbonProof) modalBourbonProof.textContent = proofText;
                 if (modalBourbonNameLink) modalBourbonNameLink.href = reviewUrl;
 
-                if (dayGuessInput) dayGuessInput.value = '';
                 if (resultMessage) resultMessage.textContent = '';
 
                 toggleGameModal(true);
@@ -445,39 +449,48 @@ document.addEventListener("DOMContentLoaded", () => {
         if (guessCloseButton) guessCloseButton.addEventListener('click', () => toggleGameModal(false));
         window.addEventListener('click', (e) => { if (e.target === guessModal) toggleGameModal(false); });
 
-        if (submitButton) {
-            submitButton.addEventListener('click', () => {
-                const guess = parseInt(dayGuessInput.value, 10);
-                if (!guess) {
-                    resultMessage.textContent = "Please enter a valid number (1-12).";
-                    resultMessage.style.color = "red";
-                    return;
-                }
-
-                if (guess === parseInt(currentCorrectDay, 10)) {
-                    resultMessage.textContent = "Correct! Cheers!";
-                    resultMessage.style.color = "green";
-
-                    if (currentDoor) {
-                        currentDoor.classList.add('revealed');
-                        currentDoor.style.pointerEvents = 'none';
-                        const container = currentDoor.closest('.bottle-container');
-                        const numberPlate = container.querySelector('.hidden-number-plate');
-                        if (numberPlate) {
-                            numberPlate.textContent = currentCorrectDay;
-                            numberPlate.classList.add('show-number');
-                        }
-                    }
-                    saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
-                    if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
-                    setTimeout(() => toggleGameModal(false), 1500);
-
-                } else {
-                    resultMessage.textContent = "Not quite. Try again!";
-                    resultMessage.style.color = "red";
-                    dayGuessInput.value = '';
-                }
+        // --- NEW GRID BUTTON HANDLER ---
+        numberButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const guess = parseInt(e.target.dataset.value, 10);
+                handleGuess(guess);
             });
+        });
+
+        function handleGuess(guess) {
+            if (guess === parseInt(currentCorrectDay, 10)) {
+                resultMessage.textContent = "Correct! Cheers!";
+                resultMessage.style.color = "green";
+                
+                if (currentDoor) {
+                    currentDoor.classList.add('revealed');
+                    currentDoor.style.pointerEvents = 'none';
+                    
+                    const container = currentDoor.closest('.bottle-container');
+                    
+                    // Trigger the Success Badge
+                    container.setAttribute('data-matched', 'true');
+                    
+                    const numberPlate = container.querySelector('.hidden-number-plate');
+                    if (numberPlate) {
+                        numberPlate.textContent = currentCorrectDay;
+                        numberPlate.classList.add('show-number');
+                    }
+                }
+                
+                saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
+                if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
+                setTimeout(() => toggleGameModal(false), 1200);
+
+            } else {
+                // Trigger Shake Animation
+                const modalContent = document.querySelector('#guessModal .modal-content');
+                modalContent.classList.add('shake'); // You need to add .shake to your CSS
+                setTimeout(() => modalContent.classList.remove('shake'), 400);
+
+                resultMessage.textContent = "Not quite. Try again!";
+                resultMessage.style.color = "#B83232";
+            }
         }
     }
 
@@ -492,31 +505,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     // LOGIC 4: CLICKABLE CARDS (Universal Handler)
     // ==========================================
-    // This targets 'all-bottles-numbers.html' (Reveal) AND 'all-bottles.html' (Matching - only if revealed)
-    // index.html is excluded because its cards do NOT have data-clickable="true".
-    
     const clickableCards = document.querySelectorAll('.card[data-clickable="true"]');
     
     clickableCards.forEach(card => {
         card.addEventListener('click', (e) => {
-            // 1. Do nothing if clicking a button or link inside
             if (e.target.closest('a') || e.target.closest('button')) return;
-
-            // 2. Do nothing if clicking the door (handled by Game Logic above)
             if (e.target.closest('.door')) return;
 
-            // 3. For Matching Game cards, only open Info Modal if the door is gone/revealed
             const door = card.querySelector('.door');
             if (door && !door.classList.contains('revealed')) {
-                return; // Game not won yet, don't show info
+                return; 
             }
 
-            // 4. Open Modal
-            // We pass the .content div. The openModal function knows how to handle 
-            // simple content or nested .bottle-container content.
             const contentNode = card.querySelector('.content');
             if (contentNode) openModal(contentNode);
         });
     });
 
-}); // End DOMContentLoaded
+});
