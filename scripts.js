@@ -121,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modalBody.appendChild(contentArea);
         }
 
-        // Handle Number Plate (for index and reveal pages)
         if (!bourbonContainer && originalCard) {
             let cardPlate = originalCard.querySelector('.number-plate');
             if (cardPlate) {
@@ -348,6 +347,11 @@ document.addEventListener("DOMContentLoaded", () => {
             let cardElements = Array.from(grid.querySelectorAll('.card'));
             shuffleArray(cardElements);
             cardElements.forEach(card => grid.appendChild(card));
+            
+            // --- FIX FOR FLASHING UN-SHUFFLED CONTENT ---
+            // Now that cards are re-appended in random order, make the grid visible
+            grid.style.visibility = 'visible';
+            grid.style.opacity = '1';
         }
 
         const doors = document.querySelectorAll('.door');
@@ -469,7 +473,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         cards.forEach(card => {
             card.addEventListener('click', (e) => {
-                // Prevent modal if clicking the Review Site button
                 if (e.target.closest('a')) return;
 
                 const contentNode = card.querySelector('.content');
@@ -479,5 +482,4 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-
 });
