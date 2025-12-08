@@ -377,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 door.classList.add('revealed');
                 door.style.pointerEvents = 'none';
                 
-                // --- NEW BADGE PERSISTENCE ---
+                // Persistence for Badge
                 container.setAttribute('data-matched', 'true');
                 
                 const numberPlate = container.querySelector('.hidden-number-plate');
@@ -392,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const guessModal = document.getElementById('guessModal');
         const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
         
-        // (Old submitButton is removed, now we use numberButtons)
+        // SELECT ALL GRID BUTTONS
         const numberButtons = document.querySelectorAll('.num-btn');
         
         const resultMessage = document.getElementById('resultMessage');
@@ -409,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!guessModal) return;
             if (show) {
                 guessModal.setAttribute("aria-hidden", "false"); 
-                guessModal.style.display = "flex"; // Centered layout
+                guessModal.style.display = "flex"; 
                 guessModal.style.visibility = "visible";
                 guessModal.style.opacity = "1";
             } else {
@@ -420,10 +420,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         };
 
+        // --- DOOR CLICK HANDLER ---
         document.querySelectorAll('.door').forEach(door => {
             door.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation(); // Stops immediate click so it doesn't bubble to the "Info Modal" listener
+                e.stopPropagation(); 
                 const container = door.closest('.bottle-container');
                 const name = container.dataset.bourbonName;
                 const correctDay = container.dataset.correctDay;
@@ -442,6 +443,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (resultMessage) resultMessage.textContent = '';
 
+                // *** CRITICAL FIX: UNLOCK BUTTONS WHEN OPENING A NEW DOOR ***
+                numberButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                    btn.style.cursor = "pointer";
+                });
+
                 toggleGameModal(true);
             });
         });
@@ -449,7 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (guessCloseButton) guessCloseButton.addEventListener('click', () => toggleGameModal(false));
         window.addEventListener('click', (e) => { if (e.target === guessModal) toggleGameModal(false); });
 
-        // --- NEW GRID BUTTON HANDLER ---
+        // --- GRID BUTTON HANDLER ---
         numberButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const guess = parseInt(e.target.dataset.value, 10);
@@ -457,8 +465,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-function handleGuess(guess) {
-            // 1. LOCK ALL BUTTONS IMMEDIATELY (User cannot change guess)
+        function handleGuess(guess) {
+            // 1. LOCK ALL BUTTONS IMMEDIATELY 
             numberButtons.forEach(btn => {
                 btn.disabled = true;
                 btn.style.opacity = "0.5";
@@ -466,16 +474,16 @@ function handleGuess(guess) {
             });
 
             if (guess === parseInt(currentCorrectDay, 10)) {
-                // --- CORRECT GUESS ---
+                // --- CORRECT ---
                 resultMessage.textContent = "Correct! Cheers!";
                 resultMessage.style.color = "green";
-
+                
                 if (currentDoor) {
                     currentDoor.classList.add('revealed');
                     currentDoor.style.pointerEvents = 'none';
                     
                     const container = currentDoor.closest('.bottle-container');
-                    container.setAttribute('data-matched', 'true'); // Show Badge
+                    container.setAttribute('data-matched', 'true');
                     
                     const numberPlate = container.querySelector('.hidden-number-plate');
                     if (numberPlate) {
@@ -488,7 +496,7 @@ function handleGuess(guess) {
                 if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
 
             } else {
-                // --- INCORRECT GUESS ---
+                // --- INCORRECT ---
                 const modalContent = document.querySelector('#guessModal .modal-content');
                 if (modalContent) {
                     modalContent.classList.add('shake');
@@ -498,10 +506,9 @@ function handleGuess(guess) {
                 resultMessage.textContent = "Wrong bottle! Try another one...";
                 resultMessage.style.color = "#B83232";
             }
-
-            // --- CLOSING LOGIC (Applies to BOTH Correct and Incorrect) ---
-            // Closes modal after 4 seconds so they have to pick a door again.
-            setTimeout(() => toggleGameModal(false), 4000);
+            
+            // --- CLOSE MODAL AFTER 4 SECONDS (FOR BOTH OUTCOMES) ---
+            setTimeout(() => toggleGameModal(false), 4000); 
         }
     }
 
