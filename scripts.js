@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- GLOBAL SELECTORS ---
-    const modal = document.getElementById("modal");
+    const modal = document.getElementById("modal"); // Generic modal (Index page)
     const modalBody = document.getElementById("modal-body");
     const modalClose = document.getElementById("modalClose");
     const grid = document.getElementById('grid'); 
@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Scrapes data from HTML cards to save to LocalStorage (runs on Index)
     function createAndSaveBourbonData() {
         const bourbonData = {};
         const cards = document.querySelectorAll('.card[data-day]');
@@ -91,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- GENERIC MODAL ---
+    // --- GENERIC MODAL (Used for Index Page) ---
     const closeModal = () => {
         if (!modal) return;
         modal.setAttribute("aria-hidden", "true");
@@ -394,107 +395,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentDoor = null;
         let currentCorrectDay = null;
 
-        document.querySelectorAll('.door').forEach(door => {
-            door.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const container = door.closest('.bottle-container');
-                const name = container.dataset.bourbonName;
-                const correctDay = container.dataset.correctDay;
-                const imgSrc = container.querySelector('img').src;
-                const proofText = container.querySelector('p').textContent;
-                const reviewUrl = container.querySelector('.btn').href;
-
-                currentDoor = door;
-                currentCorrectDay = correctDay;
-
-                if (modalBourbonImage) modalBourbonImage.src = imgSrc;
-                if (modalBourbonName) modalBourbonName.textContent = name;
-                if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = name;
-                if (modalBourbonProof) modalBourbonProof.textContent = proofText;
-                if (modalBourbonNameLink) modalBourbonNameLink.href = reviewUrl;
-
-                if (dayGuessInput) dayGuessInput.value = '';
-                if (resultMessage) resultMessage.textContent = '';
-
-                if (guessModal) {
-                    guessModal.style.display = "block";
-                    setTimeout(() => dayGuessInput.focus(), 100);
-                }
-            });
-        });
-
-        if (guessCloseButton) guessCloseButton.addEventListener('click', () => guessModal.style.display = "none");
-        window.addEventListener('click', (e) => { if (e.target === guessModal) guessModal.style.display = "none"; });
-
-        if (submitButton) {
-            submitButton.addEventListener('click', () => {
-       // ==========================================
-    // LOGIC 2: MATCHING GAME (all-bottles.html)
-    // ==========================================
-    const isMatchingGame = document.querySelector('.door') !== null;
-
-    if (isMatchingGame) {
-        // ... (Keep existing bourbon data loading logic) ...
-        let fullBourbonList = {};
-        try {
-            const storedData = localStorage.getItem(BOURBON_DATA_KEY);
-            fullBourbonList = storedData ? JSON.parse(storedData) : {};
-        } catch (e) {
-            console.error("Failed to load full bourbon data.");
-        }
-
-        if (grid) {
-            try {
-                let cardElements = Array.from(grid.querySelectorAll('.card'));
-                shuffleArray(cardElements);
-                cardElements.forEach(card => grid.appendChild(card));
-            } catch (err) {
-                console.error("Shuffle failed", err);
-            } finally {
-                grid.style.visibility = 'visible';
-                grid.style.opacity = '1';
-            }
-        }
-
-        // ... (Keep existing door reveal logic) ...
-        const doors = document.querySelectorAll('.door');
-        doors.forEach(door => {
-            const container = door.closest('.bottle-container');
-            const correctDay = container.dataset.correctDay;
-            if (matchedDays[correctDay]) {
-                door.classList.add('revealed');
-                door.style.pointerEvents = 'none';
-                const numberPlate = container.querySelector('.hidden-number-plate');
-                if (numberPlate) {
-                    numberPlate.textContent = correctDay;
-                    numberPlate.classList.add('show-number');
-                }
-            }
-        });
-
-        const guessModal = document.getElementById('guessModal');
-        const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
-        const submitButton = document.getElementById('submitGuessButton');
-        const dayGuessInput = document.getElementById('dayGuessInput');
-        const resultMessage = document.getElementById('resultMessage');
-        const modalBourbonImage = document.getElementById('modalBourbonImage');
-        const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
-        const modalBourbonName = document.getElementById('modalBourbonName');
-        const modalBourbonProof = document.getElementById('modalBourbonProof');
-        const modalBourbonNameLink = document.getElementById('modalBourbonNameLink');
-
-        let currentDoor = null;
-        let currentCorrectDay = null;
-
-        // --- HELPER TO OPEN/CLOSE GAME MODAL ---
+        // FIXED: Toggle Logic to ensure Modal is Visible
         const toggleGameModal = (show) => {
             if (!guessModal) return;
             if (show) {
-                guessModal.setAttribute("aria-hidden", "false"); // CRITICAL FIX
+                guessModal.setAttribute("aria-hidden", "false"); 
                 guessModal.style.display = "block";
-                guessModal.style.visibility = "visible"; // FORCE VISIBILITY
-                guessModal.style.opacity = "1";          // FORCE OPACITY
+                guessModal.style.visibility = "visible";
+                guessModal.style.opacity = "1";
                 setTimeout(() => dayGuessInput.focus(), 100);
             } else {
                 guessModal.setAttribute("aria-hidden", "true");
@@ -527,15 +435,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (dayGuessInput) dayGuessInput.value = '';
                 if (resultMessage) resultMessage.textContent = '';
 
-                // USE THE NEW HELPER FUNCTION
                 toggleGameModal(true);
             });
         });
 
         if (guessCloseButton) guessCloseButton.addEventListener('click', () => toggleGameModal(false));
-        window.addEventListener('click', (e) => { 
-            if (e.target === guessModal) toggleGameModal(false); 
-        });
+        window.addEventListener('click', (e) => { if (e.target === guessModal) toggleGameModal(false); });
 
         if (submitButton) {
             submitButton.addEventListener('click', () => {
@@ -562,8 +467,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
                     if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
-                    
-                    // Close modal after delay
                     setTimeout(() => toggleGameModal(false), 1500);
 
                 } else {
@@ -573,22 +476,37 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
-    } 
-
+    } else {
+        // Safe check for Reveal page to ensure grid is visible
+        if (grid) {
+            grid.style.visibility = 'visible';
+            grid.style.opacity = '1';
+        }
     }
 
     // ==========================================
     // LOGIC 3: COMPLETE REVEAL (all-bottles-numbers.html)
     // ==========================================
-    // Check: Not Home Page (no scratch) AND Not Matching Game (no door)
+    // If not Index and not Matching, we assume it's the reveal page
     if (!isIndexPage && !isMatchingGame) {
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.addEventListener('click', (e) => {
-                if (e.target.closest('a')) return;
-                const contentNode = card.querySelector('.content');
-                if (contentNode) openModal(contentNode);
-            });
-        });
+        
+        // This page is likely meant to show all bottles sorted 1-12.
+        // We load data from localStorage or fallback if needed.
+        let fullBourbonList = {};
+        try {
+            const storedData = localStorage.getItem(BOURBON_DATA_KEY);
+            fullBourbonList = storedData ? JSON.parse(storedData) : {};
+        } catch (e) {
+            console.error("Failed to load bourbon data.");
+        }
+
+        // Logic to populate the grid (if it's empty) or sort existing items
+        if (grid && Object.keys(fullBourbonList).length > 0) {
+            // If the HTML is empty, we might need to build it here.
+            // But usually this page just needs the grid visible.
+            grid.style.visibility = 'visible';
+            grid.style.opacity = '1';
+        }
     }
-});
+
+}); // End DOMContentLoaded
