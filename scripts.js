@@ -26,13 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		cards.forEach(card => {
 			const day = card.dataset.day;
 			const name = card.querySelector('h3').textContent;
-			// Extract proof from the content paragraph or data attribute
-			let proof = card.dataset.proof; 
-			if (!proof) { // Check paragraph content as fallback
-			    const pTag = card.querySelector('.content p');
-			    if (pTag && pTag.textContent.toLowerCase().includes('proof:')) {
-			        proof = pTag.textContent.replace('Proof: ', '').replace('%', '').trim();
-			    }
+			
+			// Extract proof string directly from the <p> tag, which the user stated is correct.
+			let proof = 'N/A';
+			const pTag = card.querySelector('.content p');
+			if (pTag) {
+			    proof = pTag.textContent.trim(); // E.g., "100 Proof"
+			} else if (card.dataset.proof) {
+                // Fallback to data-proof if the p tag is missing
+			    proof = `${card.dataset.proof} Proof`; 
 			}
 			
             // Capture Review URL from the content link
@@ -521,8 +523,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 
                 const modalBourbonProof = document.getElementById('modalBourbonProof');
-                const proofText = proof !== 'N/A' && !String(proof).includes('%') ? `${proof}%` : proof;
-                if (modalBourbonProof) modalBourbonProof.textContent = ` (Proof: ${proofText})`;  
+                const proofText = proof; // Use the stored string directly (e.g., '100 Proof')
+                if (modalBourbonProof) modalBourbonProof.textContent = ` (${proofText})`;  
                 if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = bourbonName || 'this bottle';
                 
                 if (modalBourbonImage && imgSrc) {
