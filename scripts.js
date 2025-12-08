@@ -480,7 +480,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
                 if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
-                setTimeout(() => toggleGameModal(false), 1200);
+                setTimeout(() => toggleGameModal(false), 4000);
 
             } else {
                 // Trigger Shake Animation
