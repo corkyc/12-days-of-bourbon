@@ -795,3 +795,40 @@ header h1 {
     background-color: #ccc;
     cursor: not-allowed;
 }
+
+/* --- REVEALED CARD STYLING --- */
+
+/* 1. Base style for cards once the door is opened */
+.card.revealed {
+    cursor: pointer;
+    border: 2px solid #c5a059; /* Bourbon/Gold accent color */
+    box-shadow: 0 0 8px rgba(197, 160, 89, 0.3); /* Subtle outer glow */
+    transition: all 0.3s ease; /* Smooth animation for hover */
+}
+
+/* 2. Hover effect to encourage clicking */
+.card.revealed:hover {
+    transform: translateY(-3px); /* Lifts the card slightly */
+    border-color: #f0c070; /* Brighter gold on hover */
+    box-shadow: 0 6px 15px rgba(197, 160, 89, 0.5); /* Stronger glow */
+}
+
+/* 3. Optional: Add a small "View Info" label if you want it very explicit */
+.card.revealed::after {
+    content: "View Info";
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 0.7rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2px 6px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.card.revealed:hover::after {
+    opacity: 1;
+}
