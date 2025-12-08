@@ -166,11 +166,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === modal) closeModal();
     });
 
-    // --- GLOBAL BUTTONS ---
+    // --- GLOBAL BUTTONS (Updated for Fix) ---
     const resetBtnEl = document.getElementById('resetProgressBtn');
     const resetPageBtnEl = document.getElementById('resetPageBtn');
+    
+    // Index Page Reset
     if (resetBtnEl) resetBtnEl.addEventListener('click', resetProgress);
-    if (resetPageBtnEl) resetPageBtnEl.addEventListener('click', () => window.location.reload());
+    
+    // Matching Page Reset (CHANGED: Now calls resetProgress instead of just reload)
+    if (resetPageBtnEl) resetPageBtnEl.addEventListener('click', resetProgress);
 
     // --- MENU LOGIC ---
     const hamburgerBtn = document.getElementById('hamburgerBtn');
