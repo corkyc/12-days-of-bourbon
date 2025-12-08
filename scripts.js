@@ -429,6 +429,116 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (submitButton) {
             submitButton.addEventListener('click', () => {
+       // ==========================================
+    // LOGIC 2: MATCHING GAME (all-bottles.html)
+    // ==========================================
+    const isMatchingGame = document.querySelector('.door') !== null;
+
+    if (isMatchingGame) {
+        // ... (Keep existing bourbon data loading logic) ...
+        let fullBourbonList = {};
+        try {
+            const storedData = localStorage.getItem(BOURBON_DATA_KEY);
+            fullBourbonList = storedData ? JSON.parse(storedData) : {};
+        } catch (e) {
+            console.error("Failed to load full bourbon data.");
+        }
+
+        if (grid) {
+            try {
+                let cardElements = Array.from(grid.querySelectorAll('.card'));
+                shuffleArray(cardElements);
+                cardElements.forEach(card => grid.appendChild(card));
+            } catch (err) {
+                console.error("Shuffle failed", err);
+            } finally {
+                grid.style.visibility = 'visible';
+                grid.style.opacity = '1';
+            }
+        }
+
+        // ... (Keep existing door reveal logic) ...
+        const doors = document.querySelectorAll('.door');
+        doors.forEach(door => {
+            const container = door.closest('.bottle-container');
+            const correctDay = container.dataset.correctDay;
+            if (matchedDays[correctDay]) {
+                door.classList.add('revealed');
+                door.style.pointerEvents = 'none';
+                const numberPlate = container.querySelector('.hidden-number-plate');
+                if (numberPlate) {
+                    numberPlate.textContent = correctDay;
+                    numberPlate.classList.add('show-number');
+                }
+            }
+        });
+
+        const guessModal = document.getElementById('guessModal');
+        const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
+        const submitButton = document.getElementById('submitGuessButton');
+        const dayGuessInput = document.getElementById('dayGuessInput');
+        const resultMessage = document.getElementById('resultMessage');
+        const modalBourbonImage = document.getElementById('modalBourbonImage');
+        const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
+        const modalBourbonName = document.getElementById('modalBourbonName');
+        const modalBourbonProof = document.getElementById('modalBourbonProof');
+        const modalBourbonNameLink = document.getElementById('modalBourbonNameLink');
+
+        let currentDoor = null;
+        let currentCorrectDay = null;
+
+        // --- HELPER TO OPEN/CLOSE GAME MODAL ---
+        const toggleGameModal = (show) => {
+            if (!guessModal) return;
+            if (show) {
+                guessModal.setAttribute("aria-hidden", "false"); // CRITICAL FIX
+                guessModal.style.display = "block";
+                guessModal.style.visibility = "visible"; // FORCE VISIBILITY
+                guessModal.style.opacity = "1";          // FORCE OPACITY
+                setTimeout(() => dayGuessInput.focus(), 100);
+            } else {
+                guessModal.setAttribute("aria-hidden", "true");
+                guessModal.style.display = "none";
+                guessModal.style.visibility = "hidden";
+                guessModal.style.opacity = "0";
+            }
+        };
+
+        document.querySelectorAll('.door').forEach(door => {
+            door.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const container = door.closest('.bottle-container');
+                const name = container.dataset.bourbonName;
+                const correctDay = container.dataset.correctDay;
+                const imgSrc = container.querySelector('img').src;
+                const proofText = container.querySelector('p').textContent;
+                const reviewUrl = container.querySelector('.btn').href;
+
+                currentDoor = door;
+                currentCorrectDay = correctDay;
+
+                if (modalBourbonImage) modalBourbonImage.src = imgSrc;
+                if (modalBourbonName) modalBourbonName.textContent = name;
+                if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = name;
+                if (modalBourbonProof) modalBourbonProof.textContent = proofText;
+                if (modalBourbonNameLink) modalBourbonNameLink.href = reviewUrl;
+
+                if (dayGuessInput) dayGuessInput.value = '';
+                if (resultMessage) resultMessage.textContent = '';
+
+                // USE THE NEW HELPER FUNCTION
+                toggleGameModal(true);
+            });
+        });
+
+        if (guessCloseButton) guessCloseButton.addEventListener('click', () => toggleGameModal(false));
+        window.addEventListener('click', (e) => { 
+            if (e.target === guessModal) toggleGameModal(false); 
+        });
+
+        if (submitButton) {
+            submitButton.addEventListener('click', () => {
                 const guess = parseInt(dayGuessInput.value, 10);
                 if (!guess) {
                     resultMessage.textContent = "Please enter a valid number (1-12).";
@@ -452,7 +562,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
                     if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
-                    setTimeout(() => guessModal.style.display = "none", 1500);
+                    
+                    // Close modal after delay
+                    setTimeout(() => toggleGameModal(false), 1500);
 
                 } else {
                     resultMessage.textContent = "Not quite. Try again!";
@@ -461,14 +573,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
-    } else {
-        // --- SAFEGUARD ---
-        // If we are NOT on the matching game page (like all-bottles-numbers.html),
-        // we must explicitly make the grid visible in case CSS hid it.
-        if (grid) {
-            grid.style.visibility = 'visible';
-            grid.style.opacity = '1';
-        }
+    } 
+
     }
 
     // ==========================================
