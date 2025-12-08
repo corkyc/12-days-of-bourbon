@@ -493,18 +493,29 @@ header h1 {
   display: none; 
 }
 
-
 /* --- MODAL (General Styling) --- */
 .modal {
   position: fixed;
   inset: 0;
-  display: none;
+  z-index: 9999;
+  
+  /* Flexbox is now ALWAYS on for layout, but we hide it visually */
+  display: flex; 
   align-items: center;
   justify-content: center;
+  
+  /* Background and Transitions */
   background: rgba(0,0,0,0.8); 
-  z-index: 9999;
+  opacity: 0;
+  visibility: hidden; /* Hides it from mouse clicks when closed */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-.modal[aria-hidden="false"] { display: flex; }
+
+/* When JS sets aria-hidden="false", we simply fade it in */
+.modal[aria-hidden="false"] { 
+  opacity: 1;
+  visibility: visible;
+}
 
 .modal-inner {
   background: #fff;
@@ -513,8 +524,17 @@ header h1 {
   max-width: 520px;
   border-radius: 10px;
   padding: 24px;
-  position: relative; /* Provides positioning context for the plate */
+  position: relative; 
   text-align: center;
+  
+  /* Animation: Start slightly smaller and scale up */
+  transform: scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* When the modal opens, scale the inner card to normal size */
+.modal[aria-hidden="false"] .modal-inner {
+  transform: scale(1);
 }
 
 .modal-close {
@@ -527,8 +547,9 @@ header h1 {
   border: none;
   cursor: pointer;
   color: #333;
-  z-index: 999999; /* Ensure close button is on top */
+  z-index: 999999; 
 }
+
 
 /* Confirmation Modal Overrides */
 .confirmation .modal-inner {
