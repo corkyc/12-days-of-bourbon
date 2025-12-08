@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("modal");
     const modalBody = document.getElementById("modal-body");
     const modalClose = document.getElementById("modalClose");
+    const grid = document.getElementById('grid'); 
 
     // --- CONSTANTS & PERSISTENCE ---
     const STORAGE_KEY = 'scratchedDays';
@@ -29,24 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let proof = 'N/A';
             const pTag = card.querySelector('.content p');
-            if (pTag) {
-                proof = pTag.textContent.trim();
-            } else if (card.dataset.proof) {
-                proof = `${card.dataset.proof} Proof`;
-            }
+            if (pTag) proof = pTag.textContent.trim();
+            else if (card.dataset.proof) proof = `${card.dataset.proof} Proof`;
 
             const reviewLinkElement = card.querySelector('.content a.btn');
             const reviewUrl = reviewLinkElement ? reviewLinkElement.href : '#';
             const imgSrc = card.dataset.img;
             const modalImgSrc = card.dataset.modalImg;
 
-            bourbonData[day] = {
-                name,
-                proof: proof || 'N/A',
-                imgSrc,
-                modalImgSrc,
-                reviewUrl
-            };
+            bourbonData[day] = { name, proof: proof || 'N/A', imgSrc, modalImgSrc, reviewUrl };
         });
 
         try {
@@ -58,7 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
+    // Only run data creation if we are on a page that has data-day cards (Index)
+    if (document.querySelector('.card[data-day]')) {
         createAndSaveBourbonData();
     }
 
@@ -66,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const storedScratched = localStorage.getItem(STORAGE_KEY);
             scratchedDays = storedScratched ? JSON.parse(storedScratched) : {};
-
             const storedMatched = localStorage.getItem(MATCHED_DAYS_KEY);
             matchedDays = storedMatched ? JSON.parse(storedMatched) : {};
         } catch (e) {
@@ -99,13 +91,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- GENERIC MODAL (Used by Index & Reveal Pages) ---
-    const closeModal = () => modal ? modal.setAttribute("aria-hidden", "true") : null;
+    // --- GENERIC MODAL ---
+    const closeModal = () => {
+        if (!modal) return;
+        modal.setAttribute("aria-hidden", "true");
+        
+        // Remove any injected number plates to prevent stacking
+        const modalInner = modal.querySelector('.modal-inner');
+        if (modalInner) {
+            const existingPlate = modalInner.querySelector('.number-plate');
+            if (existingPlate) existingPlate.remove();
+        }
+    };
 
     function openModal(node) {
         if (!modalBody || !node || !node.cloneNode) return;
 
+        // 1. Clean up previous content
         modalBody.innerHTML = "";
+        
+        // 2. Clean up previous number plates
+        const modalInner = document.getElementById('modal').querySelector('.modal-inner');
+        const existingPlate = modalInner.querySelector('.number-plate');
+        if (existingPlate) existingPlate.remove();
+
         const originalCard = node.closest('.card');
         let modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
 
@@ -121,22 +130,21 @@ document.addEventListener("DOMContentLoaded", () => {
             modalBody.appendChild(contentArea);
         }
 
+        // 3. Inject Number Plate (if applicable)
         if (!bourbonContainer && originalCard) {
             let cardPlate = originalCard.querySelector('.number-plate');
             if (cardPlate) {
                 const clonedPlate = cardPlate.cloneNode(true);
                 clonedPlate.style.position = 'absolute';
                 clonedPlate.style.top = '10px';
-                clonedPlate.style.right = '40px';
-                clonedPlate.style.zIndex = '99999';
-                document.getElementById('modal').querySelector('.modal-inner').appendChild(clonedPlate);
+                clonedPlate.style.right = '50px'; 
+                clonedPlate.style.zIndex = '99990'; 
+                modalInner.appendChild(clonedPlate);
             }
         }
 
         let imgElement = modalBody.querySelector('img');
-        if (imgElement && modalImgSrc) {
-            imgElement.src = modalImgSrc;
-        }
+        if (imgElement && modalImgSrc) imgElement.src = modalImgSrc;
 
         const h3 = contentArea.querySelector('h3');
         const p = contentArea.querySelector('p');
@@ -214,10 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // PAGE SPECIFIC LOGIC: INDEX (HOME)
+    // LOGIC 1: INDEX PAGE (SWIPE DOORS)
     // ==========================================
-    if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
-
+    const isIndexPage = document.querySelector('.scratch') !== null;
+    
+    if (isIndexPage) {
         const REVEAL_THRESHOLD_PERCENT = 60;
         const cards = Array.from(document.querySelectorAll(".card"));
 
@@ -244,7 +253,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!scratch) return;
 
-            // Swipe Logic
             let startX = null;
             let startY = null;
             let currentX = 0;
@@ -323,7 +331,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const initializeIndexPage = () => cards.forEach(card => setupSlideLogic(card));
-
         window.addEventListener('load', () => setTimeout(initializeIndexPage, 100));
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) setTimeout(initializeIndexPage, 100);
@@ -331,9 +338,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // PAGE SPECIFIC LOGIC: BOURBON MATCHING (GUESS GAME)
+    // LOGIC 2: MATCHING GAME (all-bottles.html)
     // ==========================================
-    if (window.location.pathname.endsWith('all-bottles.html')) {
+    const isMatchingGame = document.querySelector('.door') !== null;
+
+    if (isMatchingGame) {
         let fullBourbonList = {};
         try {
             const storedData = localStorage.getItem(BOURBON_DATA_KEY);
@@ -342,16 +351,18 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Failed to load full bourbon data.");
         }
 
-        const grid = document.getElementById('grid');
         if (grid) {
-            let cardElements = Array.from(grid.querySelectorAll('.card'));
-            shuffleArray(cardElements);
-            cardElements.forEach(card => grid.appendChild(card));
-            
-            // --- FIX FOR FLASHING UN-SHUFFLED CONTENT ---
-            // Now that cards are re-appended in random order, make the grid visible
-            grid.style.visibility = 'visible';
-            grid.style.opacity = '1';
+            try {
+                let cardElements = Array.from(grid.querySelectorAll('.card'));
+                shuffleArray(cardElements);
+                cardElements.forEach(card => grid.appendChild(card));
+            } catch (err) {
+                console.error("Shuffle failed", err);
+            } finally {
+                // Ensure grid is visible after shuffle
+                grid.style.visibility = 'visible';
+                grid.style.opacity = '1';
+            }
         }
 
         const doors = document.querySelectorAll('.door');
@@ -385,7 +396,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.querySelectorAll('.door').forEach(door => {
             door.addEventListener('click', (e) => {
-                e.preventDefault(); 
+                e.preventDefault();
                 e.stopPropagation();
                 const container = door.closest('.bottle-container');
                 const name = container.dataset.bourbonName;
@@ -405,7 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (dayGuessInput) dayGuessInput.value = '';
                 if (resultMessage) resultMessage.textContent = '';
-                
+
                 if (guessModal) {
                     guessModal.style.display = "block";
                     setTimeout(() => dayGuessInput.focus(), 100);
@@ -413,16 +424,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        if (guessCloseButton) {
-            guessCloseButton.addEventListener('click', () => {
-                guessModal.style.display = "none";
-            });
-        }
-        window.addEventListener('click', (e) => {
-            if (e.target === guessModal) {
-                guessModal.style.display = "none";
-            }
-        });
+        if (guessCloseButton) guessCloseButton.addEventListener('click', () => guessModal.style.display = "none");
+        window.addEventListener('click', (e) => { if (e.target === guessModal) guessModal.style.display = "none"; });
 
         if (submitButton) {
             submitButton.addEventListener('click', () => {
@@ -436,7 +439,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (guess === parseInt(currentCorrectDay, 10)) {
                     resultMessage.textContent = "Correct! Cheers!";
                     resultMessage.style.color = "green";
-                    
+
                     if (currentDoor) {
                         currentDoor.classList.add('revealed');
                         currentDoor.style.pointerEvents = 'none';
@@ -448,13 +451,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
                     saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
-
-                    if (typeof confetti !== 'undefined') {
-                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
-                    }
-                    setTimeout(() => {
-                        guessModal.style.display = "none";
-                    }, 1500);
+                    if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
+                    setTimeout(() => guessModal.style.display = "none", 1500);
 
                 } else {
                     resultMessage.textContent = "Not quite. Try again!";
@@ -463,22 +461,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+    } else {
+        // --- SAFEGUARD ---
+        // If we are NOT on the matching game page (like all-bottles-numbers.html),
+        // we must explicitly make the grid visible in case CSS hid it.
+        if (grid) {
+            grid.style.visibility = 'visible';
+            grid.style.opacity = '1';
+        }
     }
 
     // ==========================================
-    // PAGE SPECIFIC LOGIC: COMPLETE REVEAL (all-bottles-numbers.html)
+    // LOGIC 3: COMPLETE REVEAL (all-bottles-numbers.html)
     // ==========================================
-    if (window.location.pathname.endsWith('all-bottles-numbers.html')) {
+    // Check: Not Home Page (no scratch) AND Not Matching Game (no door)
+    if (!isIndexPage && !isMatchingGame) {
         const cards = document.querySelectorAll('.card');
-        
         cards.forEach(card => {
             card.addEventListener('click', (e) => {
                 if (e.target.closest('a')) return;
-
                 const contentNode = card.querySelector('.content');
-                if (contentNode) {
-                    openModal(contentNode);
-                }
+                if (contentNode) openModal(contentNode);
             });
         });
     }
