@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const cards = Array.from(document.querySelectorAll(".card"));
+    // --- GLOBAL SELECTORS ---
     const modal = document.getElementById("modal");
     const modalBody = document.getElementById("modal-body");
     const modalClose = document.getElementById("modalClose");
-    const backToTopBtn = document.getElementById('backToTopBtn');
 
     // --- CONSTANTS & PERSISTENCE ---
     const STORAGE_KEY = 'scratchedDays';
@@ -12,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let scratchedDays = {};
     let matchedDays = {};
 
+    // --- HELPER FUNCTIONS ---
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const day = card.dataset.day;
             const name = card.querySelector('h3').textContent;
 
-            // Extract proof string directly from the <p> tag
             let proof = 'N/A';
             const pTag = card.querySelector('.content p');
             if (pTag) {
@@ -36,10 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 proof = `${card.dataset.proof} Proof`;
             }
 
-            // Capture Review URL from the content link
             const reviewLinkElement = card.querySelector('.content a.btn');
             const reviewUrl = reviewLinkElement ? reviewLinkElement.href : '#';
-
             const imgSrc = card.dataset.img;
             const modalImgSrc = card.dataset.modalImg;
 
@@ -77,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Load progress immediately on init
     loadProgress();
 
     function saveProgress(key, day) {
@@ -103,8 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- GENERIC MODAL & UI FUNCTIONS ---
-
+    // --- GENERIC MODAL (Used by Index Page) ---
     const closeModal = () => modal ? modal.setAttribute("aria-hidden", "true") : null;
 
     function openModal(node) {
@@ -115,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
         let modalImgSrc = originalCard ? originalCard.dataset.modalImg : null;
 
         const clone = node.cloneNode(true);
-
         const bourbonContainer = clone.querySelector('.bottle-container');
         let contentArea;
 
@@ -127,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
             modalBody.appendChild(contentArea);
         }
 
-        // --- MODIFICATION for Number Plate in Modal ---
         if (!bourbonContainer && originalCard) {
             let cardPlate = originalCard.querySelector('.number-plate');
             if (cardPlate) {
@@ -161,12 +154,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target === modal) closeModal();
     });
 
+    // --- GLOBAL BUTTONS ---
     const resetBtnEl = document.getElementById('resetProgressBtn');
     const resetPageBtnEl = document.getElementById('resetPageBtn');
     if (resetBtnEl) resetBtnEl.addEventListener('click', resetProgress);
     if (resetPageBtnEl) resetPageBtnEl.addEventListener('click', () => window.location.reload());
 
-    // --- NAVIGATION / MENU LOGIC ---
+    // --- MENU LOGIC ---
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const mobileMenu = document.getElementById('mobile-menu');
     const menuClose = document.getElementById('menuClose');
@@ -176,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmMessage = document.getElementById('confirmMessage');
     const confirmYes = document.getElementById('confirmYes');
     const confirmNo = document.getElementById('confirmNo');
-
     let confirmedLinkHref = null;
 
     const closeConfirmModal = () => {
@@ -200,9 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (confirmNo) confirmNo.addEventListener('click', closeConfirmModal);
     if (confirmYes) confirmYes.addEventListener('click', () => {
-        if (confirmedLinkHref) {
-            window.location.href = confirmedLinkHref;
-        }
+        if (confirmedLinkHref) window.location.href = confirmedLinkHref;
         closeConfirmModal();
     });
     if (confirmModalEl) confirmModalEl.addEventListener("click", (e) => {
@@ -222,49 +213,40 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- SLIDE/SWIPE REVEAL LOGIC (Index Page Only) ---
+    // ==========================================
+    // PAGE SPECIFIC LOGIC: INDEX (HOME)
+    // ==========================================
     if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
 
         const REVEAL_THRESHOLD_PERCENT = 60;
+        const cards = Array.from(document.querySelectorAll(".card"));
 
         function setupSlideLogic(card) {
             const scratch = card.querySelector(".scratch");
             const day = card.dataset.day;
             const isRevealed = !!scratchedDays[day];
 
-            // ---------------------------------------------------------
-            // CRITICAL FIX: Attach Click Event Listener BEFORE returns
-            // ---------------------------------------------------------
+            // 1. Attach CLICK listener immediately (Fixes the navigation bug)
             card.addEventListener("click", (e) => {
-                // Prevent modal opening if clicking the "Review" link
                 if (e.target.closest('a') !== null) return;
-
-                // Open modal if the card is revealed (visually or logically)
                 if (card.classList.contains("revealed")) {
                     const contentNode = card.querySelector(".content");
                     if (contentNode) openModal(contentNode);
                 }
             });
 
-            // Handle Already Revealed State
+            // 2. Handle Already Revealed
             if (isRevealed) {
                 const contentImg = card.querySelector(".content img");
-                if (contentImg) {
-                    contentImg.src = card.dataset.img;
-                }
+                if (contentImg) contentImg.src = card.dataset.img;
                 card.classList.add("revealed");
-
-                // Remove scratch element on load if already revealed
                 if (scratch) scratch.remove();
-
-                // Exit function; swipe logic not needed, but click listener is active
                 return;
             }
 
-            // Safety check: if not revealed yet but scratch is missing
             if (!scratch) return;
 
-            // --- Swipe Logic ---
+            // 3. Swipe Logic
             let startX = null;
             let startY = null;
             let currentX = 0;
@@ -283,9 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 scratch.style.pointerEvents = 'none';
 
                 const contentImg = card.querySelector(".content img");
-                if (contentImg && card.dataset.img) {
-                    contentImg.src = card.dataset.img;
-                }
+                if (contentImg && card.dataset.img) contentImg.src = card.dataset.img;
 
                 if (scratch) scratch.remove();
 
@@ -297,10 +277,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const onStart = (clientX, id, e) => {
                 if (card.classList.contains("revealed")) return;
-
                 const cardWidth = card.getBoundingClientRect().width;
                 if (cardWidth === 0) return;
-
                 startX = clientX;
                 startY = e.clientY;
                 currentX = 0;
@@ -310,10 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const onMove = (clientX, clientY, e) => {
                 if (startX === null || card.classList.contains("revealed")) return;
-
                 const deltaX = clientX - startX;
                 const deltaY = Math.abs(clientY - startY);
-
                 if (deltaX > 5 && deltaX > deltaY) {
                     e.preventDefault();
                     const cardWidth = card.getBoundingClientRect().width;
@@ -323,10 +299,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const onEnd = () => {
                 if (startX === null || card.classList.contains("revealed")) return;
-
                 const cardWidth = card.getBoundingClientRect().width;
                 scratch.style.transition = 'transform 0.3s ease-in-out';
-
                 const percentageSwiped = (currentX / cardWidth) * 100;
 
                 if (percentageSwiped >= REVEAL_THRESHOLD_PERCENT) {
@@ -342,35 +316,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.target.setPointerCapture(e.pointerId);
                 onStart(e.clientX, e.pointerId, e);
             });
-
             scratch.addEventListener("pointermove", e => {
                 if (pointerId !== null && e.pointerId === pointerId) {
                     onMove(e.clientX, e.clientY, e);
                 }
             });
-
             scratch.addEventListener("pointerup", onEnd);
             scratch.addEventListener("pointercancel", onEnd);
         }
 
-        const initializeIndexPage = () => {
-            cards.forEach(card => {
-                setupSlideLogic(card);
-            });
-        };
+        const initializeIndexPage = () => cards.forEach(card => setupSlideLogic(card));
 
-        window.addEventListener('load', () => {
-            setTimeout(initializeIndexPage, 100);
-        });
-
+        window.addEventListener('load', () => setTimeout(initializeIndexPage, 100));
         window.addEventListener('pageshow', (event) => {
-            if (event.persisted) {
-                setTimeout(initializeIndexPage, 100);
-            }
+            if (event.persisted) setTimeout(initializeIndexPage, 100);
         });
     }
 
-    // --- BOURBON GUESSING GAME LOGIC (All-Bottles Page Only) ---
+    // ==========================================
+    // PAGE SPECIFIC LOGIC: ALL BOTTLES (MATCHING)
+    // ==========================================
     if (window.location.pathname.endsWith('all-bottles.html')) {
         let fullBourbonList = {};
         try {
@@ -380,6 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Failed to load full bourbon data.");
         }
 
+        // 1. Shuffle
         const grid = document.getElementById('grid');
         if (grid) {
             let cardElements = Array.from(grid.querySelectorAll('.card'));
@@ -387,15 +353,14 @@ document.addEventListener("DOMContentLoaded", () => {
             cardElements.forEach(card => grid.appendChild(card));
         }
 
+        // 2. Load Progress
         const doors = document.querySelectorAll('.door');
         doors.forEach(door => {
             const container = door.closest('.bottle-container');
             const correctDay = container.dataset.correctDay;
-
             if (matchedDays[correctDay]) {
                 door.classList.add('revealed');
                 door.style.pointerEvents = 'none';
-
                 const numberPlate = container.querySelector('.hidden-number-plate');
                 if (numberPlate) {
                     numberPlate.textContent = correctDay;
@@ -404,19 +369,117 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        const launchConfetti = () => {
-            if (typeof confetti !== 'undefined') {
-                const bursts = [{ x: 0.2, y: 0.9 }, { x: 0.8, y: 0.9 }];
-                bursts.forEach(origin => {
-                    confetti({ particleCount: 75, spread: 60, origin, zIndex: 10000 });
-                });
-            } else {
-                console.warn("Confetti library not loaded.");
-            }
-        };
+        // 3. Guessing Game Modal Logic
+        const guessModal = document.getElementById('guessModal');
+        const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
+        const submitButton = document.getElementById('submitGuessButton');
+        const dayGuessInput = document.getElementById('dayGuessInput');
+        const resultMessage = document.getElementById('resultMessage');
+        const modalBourbonImage = document.getElementById('modalBourbonImage');
+        const modalBourbonNameGuessPrompt = document.getElementById('modalBourbonNameGuessPrompt');
+        const modalBourbonName = document.getElementById('modalBourbonName');
+        const modalBourbonProof = document.getElementById('modalBourbonProof');
+        const modalBourbonNameLink = document.getElementById('modalBourbonNameLink');
 
-        // Note: The rest of the guessing game logic (handling clicks on doors, opening guess modal, etc.)
-        // was not fully provided in the snippet, but would normally go here.
-        // Assuming your existing logic handles the .door clicks separately.
+        let currentDoor = null;
+        let currentCorrectDay = null;
+
+        // Add Click Listeners to Doors
+        document.querySelectorAll('.door').forEach(door => {
+            door.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                e.stopPropagation();
+
+                const container = door.closest('.bottle-container');
+                const name = container.dataset.bourbonName;
+                const correctDay = container.dataset.correctDay;
+                
+                // Get image and info from the DOM structure
+                const imgSrc = container.querySelector('img').src;
+                const proofText = container.querySelector('p').textContent;
+                const reviewUrl = container.querySelector('.btn').href;
+
+                currentDoor = door;
+                currentCorrectDay = correctDay;
+
+                // Populate the Guess Modal
+                if (modalBourbonImage) modalBourbonImage.src = imgSrc;
+                if (modalBourbonName) modalBourbonName.textContent = name;
+                if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = name;
+                if (modalBourbonProof) modalBourbonProof.textContent = proofText;
+                if (modalBourbonNameLink) modalBourbonNameLink.href = reviewUrl;
+
+                // Reset inputs and show modal
+                if (dayGuessInput) dayGuessInput.value = '';
+                if (resultMessage) resultMessage.textContent = '';
+                
+                if (guessModal) {
+                    guessModal.style.display = "block";
+                    // Focus input for better UX
+                    setTimeout(() => dayGuessInput.focus(), 100);
+                }
+            });
+        });
+
+        // Close Guess Modal
+        if (guessCloseButton) {
+            guessCloseButton.addEventListener('click', () => {
+                guessModal.style.display = "none";
+            });
+        }
+        window.addEventListener('click', (e) => {
+            if (e.target === guessModal) {
+                guessModal.style.display = "none";
+            }
+        });
+
+        // Submit Guess
+        if (submitButton) {
+            submitButton.addEventListener('click', () => {
+                const guess = parseInt(dayGuessInput.value, 10);
+                if (!guess) {
+                    resultMessage.textContent = "Please enter a valid number (1-12).";
+                    resultMessage.style.color = "red";
+                    return;
+                }
+
+                if (guess === parseInt(currentCorrectDay, 10)) {
+                    // Correct!
+                    resultMessage.textContent = "Correct! Cheers!";
+                    resultMessage.style.color = "green";
+                    
+                    // Reveal Logic
+                    if (currentDoor) {
+                        currentDoor.classList.add('revealed');
+                        currentDoor.style.pointerEvents = 'none';
+                        
+                        const container = currentDoor.closest('.bottle-container');
+                        const numberPlate = container.querySelector('.hidden-number-plate');
+                        if (numberPlate) {
+                            numberPlate.textContent = currentCorrectDay;
+                            numberPlate.classList.add('show-number');
+                        }
+                    }
+
+                    saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
+
+                    // Launch Confetti
+                    if (typeof confetti !== 'undefined') {
+                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
+                    }
+
+                    // Close modal automatically after success
+                    setTimeout(() => {
+                        guessModal.style.display = "none";
+                    }, 1500);
+
+                } else {
+                    // Incorrect
+                    resultMessage.textContent = "Not quite. Try again!";
+                    resultMessage.style.color = "red";
+                    dayGuessInput.value = '';
+                }
+            });
+        }
     }
 });
