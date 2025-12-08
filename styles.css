@@ -859,3 +859,70 @@ header h1 {
   75% { transform: translateX(5px); }
 }
 .shake-input { animation: shake 0.3s; border-color: red !important; }
+
+/* --- SUCCESS BADGE (Fix #2) --- */
+.success-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg) scale(0);
+    background: rgba(40, 167, 69, 0.9); /* Green */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'Rye', serif;
+    font-size: 1.5rem;
+    border: 3px solid #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 5;
+    pointer-events: none;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0;
+}
+
+/* Show badge when revealed */
+.door.revealed ~ .bourbon-content .success-badge, /* If looking at matching game structure */
+.bottle-container[data-matched="true"] .success-badge {
+    transform: translate(-50%, -50%) rotate(-15deg) scale(1);
+    opacity: 1;
+}
+
+/* --- NUMBER GRID (Fix #3 Mobile) --- */
+.number-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.num-btn {
+    background: #1A3D36;
+    color: #FFD700;
+    border: 2px solid #B83232;
+    padding: 15px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.num-btn:hover {
+    background: #25554b;
+    transform: scale(1.05);
+}
+
+.num-btn:active {
+    transform: scale(0.95);
+}
+
+/* Shake Animation (Fix #2) */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+.shake {
+    animation: shake 0.4s ease-in-out;
+    border-color: #ff4444 !important;
+}
