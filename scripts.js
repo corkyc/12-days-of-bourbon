@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- GENERIC MODAL (Used for Index Page) ---
+    // --- GENERIC MODAL (Used for Index & Reveal Pages) ---
     const closeModal = () => {
         if (!modal) return;
         modal.setAttribute("aria-hidden", "true");
@@ -123,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const bourbonContainer = clone.querySelector('.bottle-container');
         let contentArea;
 
+        // Determine if we are cloning a complex Matching Card or a Simple Index Card
         if (bourbonContainer) {
             contentArea = bourbonContainer.querySelector('.bourbon-content').cloneNode(true);
             modalBody.appendChild(contentArea);
@@ -131,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
             modalBody.appendChild(contentArea);
         }
 
-        // 3. Inject Number Plate (if applicable)
+        // 3. Inject Number Plate (if applicable and not on matching page)
         if (!bourbonContainer && originalCard) {
             let cardPlate = originalCard.querySelector('.number-plate');
             if (cardPlate) {
@@ -144,9 +145,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // 4. Update Image Source to High Res Modal Version if available
         let imgElement = modalBody.querySelector('img');
         if (imgElement && modalImgSrc) imgElement.src = modalImgSrc;
 
+        // 5. Force elements to display block (since they are hidden in grid view)
         const h3 = contentArea.querySelector('h3');
         const p = contentArea.querySelector('p');
         const btn = contentArea.querySelector('.btn');
@@ -238,6 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             card.addEventListener("click", (e) => {
                 if (e.target.closest('a') !== null) return;
+                // Only open modal if revealed
                 if (card.classList.contains("revealed")) {
                     const contentNode = card.querySelector(".content");
                     if (contentNode) openModal(contentNode);
@@ -360,7 +364,6 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {
                 console.error("Shuffle failed", err);
             } finally {
-                // Ensure grid is visible after shuffle
                 grid.style.visibility = 'visible';
                 grid.style.opacity = '1';
             }
@@ -381,6 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+        // --- GAME MODAL LOGIC (Guessing) ---
         const guessModal = document.getElementById('guessModal');
         const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
         const submitButton = document.getElementById('submitGuessButton');
@@ -395,12 +399,11 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentDoor = null;
         let currentCorrectDay = null;
 
-        // FIXED: Toggle Logic to ensure Modal is Visible
         const toggleGameModal = (show) => {
             if (!guessModal) return;
             if (show) {
                 guessModal.setAttribute("aria-hidden", "false"); 
-                guessModal.style.display = "block";
+                guessModal.style.display = "flex"; // Changed to flex for centering
                 guessModal.style.visibility = "visible";
                 guessModal.style.opacity = "1";
                 setTimeout(() => dayGuessInput.focus(), 100);
@@ -415,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll('.door').forEach(door => {
             door.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation();
+                e.stopPropagation(); // Stops immediate click so it doesn't bubble to the "Info Modal" listener
                 const container = door.closest('.bottle-container');
                 const name = container.dataset.bourbonName;
                 const correctDay = container.dataset.correctDay;
@@ -476,37 +479,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
-    } else {
-        // Safe check for Reveal page to ensure grid is visible
-        if (grid) {
-            grid.style.visibility = 'visible';
-            grid.style.opacity = '1';
-        }
     }
 
     // ==========================================
-    // LOGIC 3: COMPLETE REVEAL (all-bottles-numbers.html)
+    // LOGIC 3: ENSURE GRID VISIBILITY (For pages without doors)
     // ==========================================
-    // If not Index and not Matching, we assume it's the reveal page
-    if (!isIndexPage && !isMatchingGame) {
-        
-        // This page is likely meant to show all bottles sorted 1-12.
-        // We load data from localStorage or fallback if needed.
-        let fullBourbonList = {};
-        try {
-            const storedData = localStorage.getItem(BOURBON_DATA_KEY);
-            fullBourbonList = storedData ? JSON.parse(storedData) : {};
-        } catch (e) {
-            console.error("Failed to load bourbon data.");
-        }
-
-        // Logic to populate the grid (if it's empty) or sort existing items
-        if (grid && Object.keys(fullBourbonList).length > 0) {
-            // If the HTML is empty, we might need to build it here.
-            // But usually this page just needs the grid visible.
-            grid.style.visibility = 'visible';
-            grid.style.opacity = '1';
-        }
+    if (!isIndexPage && !isMatchingGame && grid) {
+        grid.style.visibility = 'visible';
+        grid.style.opacity = '1';
     }
+
+    // ==========================================
+    // LOGIC 4: CLICKABLE CARDS (Universal Handler)
+    // ==========================================
+    // This targets 'all-bottles-numbers.html' (Reveal) AND 'all-bottles.html' (Matching - only if revealed)
+    // index.html is excluded because its cards do NOT have data-clickable="true".
+    
+    const clickableCards = document.querySelectorAll('.card[data-clickable="true"]');
+    
+    clickableCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            // 1. Do nothing if clicking a button or link inside
+            if (e.target.closest('a') || e.target.closest('button')) return;
+
+            // 2. Do nothing if clicking the door (handled by Game Logic above)
+            if (e.target.closest('.door')) return;
+
+            // 3. For Matching Game cards, only open Info Modal if the door is gone/revealed
+            const door = card.querySelector('.door');
+            if (door && !door.classList.contains('revealed')) {
+                return; // Game not won yet, don't show info
+            }
+
+            // 4. Open Modal
+            // We pass the .content div. The openModal function knows how to handle 
+            // simple content or nested .bottle-container content.
+            const contentNode = card.querySelector('.content');
+            if (contentNode) openModal(contentNode);
+        });
+    });
 
 }); // End DOMContentLoaded
