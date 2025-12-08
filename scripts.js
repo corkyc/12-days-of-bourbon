@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- GENERIC MODAL (Used by Index Page) ---
+    // --- GENERIC MODAL (Used by Index & Reveal Pages) ---
     const closeModal = () => modal ? modal.setAttribute("aria-hidden", "true") : null;
 
     function openModal(node) {
@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
             modalBody.appendChild(contentArea);
         }
 
+        // Handle Number Plate (for index and reveal pages)
         if (!bourbonContainer && originalCard) {
             let cardPlate = originalCard.querySelector('.number-plate');
             if (cardPlate) {
@@ -226,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const day = card.dataset.day;
             const isRevealed = !!scratchedDays[day];
 
-            // 1. Attach CLICK listener immediately (Fixes the navigation bug)
             card.addEventListener("click", (e) => {
                 if (e.target.closest('a') !== null) return;
                 if (card.classList.contains("revealed")) {
@@ -235,7 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // 2. Handle Already Revealed
             if (isRevealed) {
                 const contentImg = card.querySelector(".content img");
                 if (contentImg) contentImg.src = card.dataset.img;
@@ -246,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!scratch) return;
 
-            // 3. Swipe Logic
+            // Swipe Logic
             let startX = null;
             let startY = null;
             let currentX = 0;
@@ -302,7 +301,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const cardWidth = card.getBoundingClientRect().width;
                 scratch.style.transition = 'transform 0.3s ease-in-out';
                 const percentageSwiped = (currentX / cardWidth) * 100;
-
                 if (percentageSwiped >= REVEAL_THRESHOLD_PERCENT) {
                     revealCard();
                 } else {
@@ -334,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // PAGE SPECIFIC LOGIC: ALL BOTTLES (MATCHING)
+    // PAGE SPECIFIC LOGIC: BOURBON MATCHING (GUESS GAME)
     // ==========================================
     if (window.location.pathname.endsWith('all-bottles.html')) {
         let fullBourbonList = {};
@@ -345,7 +343,6 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Failed to load full bourbon data.");
         }
 
-        // 1. Shuffle
         const grid = document.getElementById('grid');
         if (grid) {
             let cardElements = Array.from(grid.querySelectorAll('.card'));
@@ -353,7 +350,6 @@ document.addEventListener("DOMContentLoaded", () => {
             cardElements.forEach(card => grid.appendChild(card));
         }
 
-        // 2. Load Progress
         const doors = document.querySelectorAll('.door');
         doors.forEach(door => {
             const container = door.closest('.bottle-container');
@@ -369,7 +365,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // 3. Guessing Game Modal Logic
         const guessModal = document.getElementById('guessModal');
         const guessCloseButton = guessModal ? guessModal.querySelector('.close-button') : null;
         const submitButton = document.getElementById('submitGuessButton');
@@ -384,17 +379,13 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentDoor = null;
         let currentCorrectDay = null;
 
-        // Add Click Listeners to Doors
         document.querySelectorAll('.door').forEach(door => {
             door.addEventListener('click', (e) => {
                 e.preventDefault(); 
                 e.stopPropagation();
-
                 const container = door.closest('.bottle-container');
                 const name = container.dataset.bourbonName;
                 const correctDay = container.dataset.correctDay;
-                
-                // Get image and info from the DOM structure
                 const imgSrc = container.querySelector('img').src;
                 const proofText = container.querySelector('p').textContent;
                 const reviewUrl = container.querySelector('.btn').href;
@@ -402,26 +393,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentDoor = door;
                 currentCorrectDay = correctDay;
 
-                // Populate the Guess Modal
                 if (modalBourbonImage) modalBourbonImage.src = imgSrc;
                 if (modalBourbonName) modalBourbonName.textContent = name;
                 if (modalBourbonNameGuessPrompt) modalBourbonNameGuessPrompt.textContent = name;
                 if (modalBourbonProof) modalBourbonProof.textContent = proofText;
                 if (modalBourbonNameLink) modalBourbonNameLink.href = reviewUrl;
 
-                // Reset inputs and show modal
                 if (dayGuessInput) dayGuessInput.value = '';
                 if (resultMessage) resultMessage.textContent = '';
                 
                 if (guessModal) {
                     guessModal.style.display = "block";
-                    // Focus input for better UX
                     setTimeout(() => dayGuessInput.focus(), 100);
                 }
             });
         });
 
-        // Close Guess Modal
         if (guessCloseButton) {
             guessCloseButton.addEventListener('click', () => {
                 guessModal.style.display = "none";
@@ -433,7 +420,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Submit Guess
         if (submitButton) {
             submitButton.addEventListener('click', () => {
                 const guess = parseInt(dayGuessInput.value, 10);
@@ -444,15 +430,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 if (guess === parseInt(currentCorrectDay, 10)) {
-                    // Correct!
                     resultMessage.textContent = "Correct! Cheers!";
                     resultMessage.style.color = "green";
                     
-                    // Reveal Logic
                     if (currentDoor) {
                         currentDoor.classList.add('revealed');
                         currentDoor.style.pointerEvents = 'none';
-                        
                         const container = currentDoor.closest('.bottle-container');
                         const numberPlate = container.querySelector('.hidden-number-plate');
                         if (numberPlate) {
@@ -460,21 +443,16 @@ document.addEventListener("DOMContentLoaded", () => {
                             numberPlate.classList.add('show-number');
                         }
                     }
-
                     saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
 
-                    // Launch Confetti
                     if (typeof confetti !== 'undefined') {
                         confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
                     }
-
-                    // Close modal automatically after success
                     setTimeout(() => {
                         guessModal.style.display = "none";
                     }, 1500);
 
                 } else {
-                    // Incorrect
                     resultMessage.textContent = "Not quite. Try again!";
                     resultMessage.style.color = "red";
                     dayGuessInput.value = '';
@@ -482,4 +460,24 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
+
+    // ==========================================
+    // PAGE SPECIFIC LOGIC: COMPLETE REVEAL (all-bottles-numbers.html)
+    // ==========================================
+    if (window.location.pathname.endsWith('all-bottles-numbers.html')) {
+        const cards = document.querySelectorAll('.card');
+        
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Prevent modal if clicking the Review Site button
+                if (e.target.closest('a')) return;
+
+                const contentNode = card.querySelector('.content');
+                if (contentNode) {
+                    openModal(contentNode);
+                }
+            });
+        });
+    }
+
 });
