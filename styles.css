@@ -926,6 +926,15 @@ header h1 {
     animation: shake 0.4s ease-in-out;
     border-color: #ff4444 !important;
 }
+
+/* --- DISABLED BUTTON STATE --- */
+.num-btn:disabled {
+    background-color: #555 !important;
+    border-color: #888 !important;
+    color: #aaa !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
 h1, h2, .number-plate, .success-badge { 
     font-family: 'Rye', serif; 
 }
