@@ -457,19 +457,25 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        function handleGuess(guess) {
+function handleGuess(guess) {
+            // 1. LOCK ALL BUTTONS IMMEDIATELY (User cannot change guess)
+            numberButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = "0.5";
+                btn.style.cursor = "not-allowed";
+            });
+
             if (guess === parseInt(currentCorrectDay, 10)) {
+                // --- CORRECT GUESS ---
                 resultMessage.textContent = "Correct! Cheers!";
                 resultMessage.style.color = "green";
-                
+
                 if (currentDoor) {
                     currentDoor.classList.add('revealed');
                     currentDoor.style.pointerEvents = 'none';
                     
                     const container = currentDoor.closest('.bottle-container');
-                    
-                    // Trigger the Success Badge
-                    container.setAttribute('data-matched', 'true');
+                    container.setAttribute('data-matched', 'true'); // Show Badge
                     
                     const numberPlate = container.querySelector('.hidden-number-plate');
                     if (numberPlate) {
@@ -480,17 +486,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 saveProgress(MATCHED_DAYS_KEY, currentCorrectDay);
                 if (typeof confetti !== 'undefined') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 10001 });
-                setTimeout(() => toggleGameModal(false), 4000);
 
             } else {
-                // Trigger Shake Animation
+                // --- INCORRECT GUESS ---
                 const modalContent = document.querySelector('#guessModal .modal-content');
-                modalContent.classList.add('shake'); // You need to add .shake to your CSS
-                setTimeout(() => modalContent.classList.remove('shake'), 400);
+                if (modalContent) {
+                    modalContent.classList.add('shake');
+                    setTimeout(() => modalContent.classList.remove('shake'), 400);
+                }
 
-                resultMessage.textContent = "Not quite. Try again!";
+                resultMessage.textContent = "Wrong bottle! Try another one...";
                 resultMessage.style.color = "#B83232";
             }
+
+            // --- CLOSING LOGIC (Applies to BOTH Correct and Incorrect) ---
+            // Closes modal after 4 seconds so they have to pick a door again.
+            setTimeout(() => toggleGameModal(false), 4000);
         }
     }
 
