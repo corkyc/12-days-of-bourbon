@@ -50,7 +50,27 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error saving bourbon data:", e);
         }
     }
-
+	// --- PRELOAD LOGIC (Speed Boost) ---
+		// Start downloading the high-res image as soon as the user hovers over a card
+		const allCards = document.querySelectorAll('.card');
+		allCards.forEach(card => {
+			card.addEventListener('mouseenter', () => {
+				const modalImg = card.dataset.modalImg;
+				if (modalImg) {
+					const preload = new Image();
+					preload.src = modalImg; // Browser caches this automatically
+				}
+			}, { once: true }); // Ensure this only runs once per card
+			
+			// Also trigger on touchstart for mobile users to get a slight head start
+			card.addEventListener('touchstart', () => {
+				const modalImg = card.dataset.modalImg;
+				if (modalImg) {
+					const preload = new Image();
+					preload.src = modalImg;
+				}
+			}, { once: true, passive: true });
+		});
     // Only run data creation if we are on a page that has data-day cards (Index)
     if (document.querySelector('.card[data-day]')) {
         createAndSaveBourbonData();
@@ -145,9 +165,22 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 4. Update Image Source to High Res Modal Version if available
-        let imgElement = modalBody.querySelector('img');
-        if (imgElement && modalImgSrc) imgElement.src = modalImgSrc;
+	// 4. Update Image Source to High Res Modal Version (The "Blur-Up" Fix)
+			let imgElement = modalBody.querySelector('img');
+			if (imgElement && modalImgSrc) {
+				// A. Add a class to indicate we are waiting (for CSS styling)
+				imgElement.classList.add('img-loading');
+
+				// B. Load the high-res image in the background
+				const highRes = new Image();
+				highRes.src = modalImgSrc;
+				
+				// C. Once loaded, swap the src and remove the loading class
+				highRes.onload = () => {
+					imgElement.src = modalImgSrc;
+					imgElement.classList.remove('img-loading');
+				};
+			}
 
         // 5. Force elements to display block (since they are hidden in grid view)
         const h3 = contentArea.querySelector('h3');

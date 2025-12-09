@@ -938,3 +938,20 @@ header h1 {
 h1, h2, .number-plate, .success-badge { 
     font-family: 'Rye', serif; 
 }
+
+/* --- MODAL IMAGE LOADING (Blur-up Effect) --- */
+
+/* When the modal first opens, the low-res thumbnail is still there. 
+   We blur it slightly and reduce opacity to show it's "loading". */
+#modal-body img.img-loading {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+    /* Optional: Limit height to prevent layout jumps if aspect ratios differ */
+    min-height: 200px; 
+}
+
+/* Once the class is removed by JS, it sharpens instantly */
+#modal-body img {
+    filter: blur(0);
+    transition: filter 0.5s ease;
+}
