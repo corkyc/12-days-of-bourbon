@@ -532,7 +532,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (guess === parseInt(currentCorrectDay, 10)) {
                 // --- CORRECT ---
-                resultMessage.textContent = "Correct! Cheers!";
+                resultMessage.innerHTML = "<strong>Correct bottle! Cheers!</strong>";
                 resultMessage.style.color = "green";
                 
                 if (currentDoor) {
