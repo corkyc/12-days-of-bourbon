@@ -278,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const isIndexPage = document.querySelector('.scratch') !== null;
     
     if (isIndexPage) {
-        const REVEAL_THRESHOLD_PERCENT = 75;
+        const REVEAL_THRESHOLD_PERCENT = 60;
         const cards = Array.from(document.querySelectorAll(".card"));
 
         function setupSlideLogic(card) {
