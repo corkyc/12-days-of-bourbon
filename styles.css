@@ -66,28 +66,38 @@ header {
 }
 
 .quote-banner {
-    /* Position right below the header, spanning full width */
-    width: 100%; 
-    padding: 8px 0;
+    /* Layout */
+    width: 100%;
+    padding: 12px 20px;
     text-align: center;
-    
-    /* CHRISTMAS THEME: Subtle Green/Gold for contrast */
-    background: none; /* Dark Green */
-border-top: 1px solid rgba(255, 255, 255, 0.2); 
-    border-bottom: none; 
-    color: #f6eedd; /* Off-White text */
-    margin-top: 2px; /* Space it below the tagline */
-    box-shadow: none;
     position: relative;
-    z-index: 5; /* Keep it above the grid items */
+    z-index: 5;
+    
+    /* Visuals */
+    background-color: rgba(0, 0, 0, 0.25); /* Dark transparent band */
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3); /* Subtle gold border */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    
+    /* Spacing */
+    margin-bottom: 15px; /* Push the grid down slightly */
 }
 
 .quote-banner p {
-    margin: 0;
-    font-size: 0.85rem;
-    line-height: 1.4;
+    margin: 0 auto; /* Center the text block */
+    max-width: 700px; /* Prevent lines from getting too long on desktop */
+    font-size: 0.95rem;
+    line-height: 1.5;
     font-style: italic;
-color: #FFD700;
+    color: #FFD700; /* Gold text */
+    letter-spacing: 0.5px;
+}
+
+.quote-banner p em {
+    /* Style for the author name if you wrap it in <em> tags */
+    font-style: normal;
+    font-weight: bold;
+    color: #f6eedd; /* Off-white for contrast */
+    font-size: 0.85rem;
 }
 
 .quote-banner p br {
