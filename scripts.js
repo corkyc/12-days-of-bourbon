@@ -152,15 +152,26 @@ document.addEventListener("DOMContentLoaded", () => {
             modalBody.appendChild(contentArea);
         }
 
-        // 3. Inject Number Plate (if applicable and not on matching page)
-        if (!bourbonContainer && originalCard) {
+        // 3. Inject Number Plate (Updated to work for all pages)
+        if (originalCard) {
             let cardPlate = originalCard.querySelector('.number-plate');
-            if (cardPlate) {
+            
+            // Check if the plate exists and is meant to be visible (has show-number if it's a hidden type)
+            const isHiddenType = cardPlate && cardPlate.classList.contains('hidden-number-plate');
+            const isVisible = cardPlate && (!isHiddenType || cardPlate.classList.contains('show-number'));
+
+            if (cardPlate && isVisible) {
                 const clonedPlate = cardPlate.cloneNode(true);
                 clonedPlate.style.position = 'absolute';
                 clonedPlate.style.top = '10px';
                 clonedPlate.style.right = '50px'; 
                 clonedPlate.style.zIndex = '99990'; 
+                
+                // Ensure the clone is visible even if it was hidden in the card flow
+                if (isHiddenType) {
+                    clonedPlate.style.display = 'block';
+                }
+
                 modalInner.appendChild(clonedPlate);
             }
         }
